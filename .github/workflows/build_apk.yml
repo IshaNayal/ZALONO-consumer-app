@@ -39,6 +39,9 @@ jobs:
             flutter create . --platforms=android --org com.zalono.app --project-name zalono
           fi
 
+          # Remove default widget test if generated to avoid template test failure
+          rm -f test/widget_test.dart
+
           # Ensure Android Gradle settings are optimized for CI
           if [ -f "android/gradle.properties" ]; then
             echo "org.gradle.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=512m" >> android/gradle.properties
@@ -58,10 +61,15 @@ jobs:
           cd flutter_zalono
           flutter pub get
 
+      - name: Validate Dart code
+        run: |
+          cd flutter_zalono
+          flutter analyze --no-fatal-infos
+
       - name: Build Android APK (Debug - Sideloadable on any phone)
         run: |
           cd flutter_zalono
-          flutter build apk --debug
+          flutter build apk --debug -v
 
       - name: Build Android APK (Release)
         run: |

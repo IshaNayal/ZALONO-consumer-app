@@ -67,7 +67,7 @@ class ZalonoProvider extends ChangeNotifier {
   }
 
   void advanceQueueStatus(String bookingId) {
-    final booking = _bookings.firstWhere((b) => b.id === bookingId, orElse: () => _bookings.first);
+    final booking = _bookings.firstWhere((b) => b.id == bookingId, orElse: () => _bookings.first);
     if (booking.status == AppointmentStatus.booked) {
       booking.status = AppointmentStatus.checkedIn;
     } else if (booking.status == AppointmentStatus.checkedIn) {
