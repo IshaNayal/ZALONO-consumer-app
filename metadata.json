@@ -1,0 +1,6 @@
+{
+  "name": "Zalono - Real-Time Salon Booking & Live Slots",
+  "description": "Look Your Best. Without Waiting. Availability-first salon booking with live slot tracking, smart travel buffer times, and partner salon management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
