@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'theme/app_theme.dart';
 import 'providers/zalono_provider.dart';
 import 'screens/consumer/home_screen.dart';
+import 'screens/consumer/salon_list_screen.dart';
+import 'screens/consumer/my_bookings_screen.dart';
 import 'screens/partner/partner_dashboard_screen.dart';
 
 void main() {
@@ -54,9 +56,9 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       ConsumerHomeScreen(
         onSwitchToPartner: () => setState(() => _isPartnerMode = true),
       ),
-      const Center(child: Text('Explore Salons & Map')),
-      const Center(child: Text('My Bookings')),
-      const Center(child: Text('Profile & Preferences')),
+      const SalonListScreen(categoryName: 'All Salons', timeOption: 'now'),
+      const MyBookingsScreen(),
+      const MyBookingsScreen(),
     ];
 
     return Scaffold(

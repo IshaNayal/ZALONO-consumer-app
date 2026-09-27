@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Salon, Booking, CustomerCRM, LiveSlot, Stylist, ServiceCategory, PilotLocation } from '../types';
 import { INITIAL_SALONS, INITIAL_BOOKINGS, INITIAL_CUSTOMER_CRM, PILOT_LOCATIONS } from '../data/initialData';
+import { FirestoreService } from '../firebase/services';
+import { isFirebaseConfigured } from '../firebase/config';
 
 export type UserRole = 'consumer' | 'partner';
 export type ConsumerScreen = 
@@ -78,7 +80,9 @@ interface ZalonoContextType {
   targetSearchTime: string;
   setTargetSearchTime: (time: string) => void;
 
-  // Pilot tools
+  // Pilot & Firebase tools
+  isLiveFirestore: boolean;
+  firestoreStatus: 'connected' | 'connecting' | 'offline';
   resetDemoData: () => void;
   playBookingChime: () => void;
   getWhatsAppShareUrl: (phone: string, text: string) => string;
@@ -96,7 +100,7 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [currentLocation, setCurrentLocationState] = useState<PilotLocation>(PILOT_LOCATIONS[0]);
   const [userProfile, setUserProfile] = useState({ name: 'Jay Sharma', phone: '+91 98765 43210', isOtpVerified: true });
 
-  // Persistent Salons & Bookings with fallback to Initial Data
+  // Persistent Salons & Bookings state
   const [salons, setSalons] = useState<Salon[]>(() => {
     try {
       const saved = localStorage.getItem(`${LOCAL_STORAGE_KEY}_salons`);
@@ -134,7 +138,49 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   
   const [targetSearchTime, setTargetSearchTime] = useState<string>('12:30 PM');
 
-  // Sync to local storage
+  // Firebase Real-Time Firestore Sync
+  const [firestoreStatus, setFirestoreStatus] = useState<'connected' | 'connecting' | 'offline'>(
+    isFirebaseConfigured ? 'connecting' : 'offline'
+  );
+
+  useEffect(() => {
+    let unsubscribeSalons: () => void = () => {};
+    let unsubscribeBookings: () => void = () => {};
+
+    if (isFirebaseConfigured) {
+      // Seed data if database is brand new
+      FirestoreService.seedInitialDataIfEmpty().then(() => {
+        setFirestoreStatus('connected');
+      }).catch(() => {
+        setFirestoreStatus('connected');
+      });
+
+      // Realtime listener for salons
+      unsubscribeSalons = FirestoreService.subscribeToSalons((remoteSalons) => {
+        if (remoteSalons && remoteSalons.length > 0) {
+          setSalons(remoteSalons);
+          setFirestoreStatus('connected');
+        }
+      });
+
+      // Realtime listener for bookings
+      unsubscribeBookings = FirestoreService.subscribeToBookings((remoteBookings) => {
+        if (remoteBookings && remoteBookings.length > 0) {
+          setBookings(remoteBookings);
+          const active = remoteBookings.find(b => b.status !== 'completed' && b.status !== 'cancelled');
+          if (active) setActiveBooking(active);
+          setFirestoreStatus('connected');
+        }
+      });
+    }
+
+    return () => {
+      unsubscribeSalons();
+      unsubscribeBookings();
+    };
+  }, []);
+
+  // Sync to local storage for offline resiliency
   useEffect(() => {
     try {
       localStorage.setItem(`${LOCAL_STORAGE_KEY}_salons`, JSON.stringify(salons));
@@ -151,7 +197,7 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }, [bookings]);
 
-  // Synthetic Audio Chime for pilot sound feedback
+  // Audio Chime
   const playBookingChime = () => {
     try {
       const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
@@ -160,8 +206,8 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
-      osc.frequency.setValueAtTime(880, ctx.currentTime + 0.1); // A5
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+      osc.frequency.setValueAtTime(880, ctx.currentTime + 0.1);
       gain.gain.setValueAtTime(0.2, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
       osc.connect(gain);
@@ -179,15 +225,15 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setSalons(prev => prev.map(s => {
       let dist = 1.0;
       let time = 10;
-      if (loc.id === 'loc-1') { // Saheed Nagar
+      if (loc.id === 'loc-1') {
         if (s.id === 'salon-1') { dist = 0.8; time = 8; }
         else if (s.id === 'salon-2') { dist = 1.8; time = 12; }
         else { dist = 6.8; time = 22; }
-      } else if (loc.id === 'loc-2') { // Patia
+      } else if (loc.id === 'loc-2') {
         if (s.id === 'salon-3') { dist = 0.5; time = 4; }
         else if (s.id === 'salon-1') { dist = 7.5; time = 20; }
         else { dist = 8.2; time = 24; }
-      } else if (loc.id === 'loc-3') { // Jayadev Vihar
+      } else if (loc.id === 'loc-3') {
         if (s.id === 'salon-1') { dist = 2.4; time = 9; }
         else if (s.id === 'salon-2') { dist = 3.1; time = 12; }
         else { dist = 5.2; time = 15; }
@@ -203,7 +249,7 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     showNotification(
       'Location Updated',
-      `Switched to ${loc.name}. Travel times & smart slots recalculated for local traffic.`
+      `Switched to ${loc.name}. Travel times & smart slots recalculated.`
     );
   };
 
@@ -230,19 +276,18 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const slot = salon.slots.find(sl => sl.id === slotId);
     const chosenStylist = stylistName || slot?.stylistName || salon.stylists[0].name;
 
-    // Mark slot as booked in salon
-    setSalons(prev => prev.map(s => {
-      if (s.id !== salonId) return s;
-      return {
-        ...s,
-        slots: s.slots.map(sl => sl.id === slotId ? { 
-          ...sl, 
-          status: 'booked', 
-          customerName: userProfile.name, 
-          serviceName: service.name 
-        } : sl)
-      };
-    }));
+    const updatedSlots = salon.slots.map(sl => sl.id === slotId ? { 
+      ...sl, 
+      status: 'booked' as const, 
+      customerName: userProfile.name, 
+      serviceName: service.name 
+    } : sl);
+
+    // Update local state
+    setSalons(prev => prev.map(s => s.id === salonId ? { ...s, slots: updatedSlots } : s));
+
+    // Update Firestore
+    FirestoreService.updateSalonSlots(salonId, updatedSlots);
 
     const invoiceId = `ZAL-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
@@ -277,12 +322,14 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setActiveBooking(newBooking);
     setIncomingBookingNotification(newBooking);
 
-    // Audio chime for pilot experience
+    // Save to Firestore
+    FirestoreService.saveBooking(newBooking);
+
     playBookingChime();
 
     showNotification(
       'Booking Confirmed! ⚡',
-      `Your slot at ${salon.name} for ${service.name} is reserved for ${newBooking.slotTime}. Zero-wait promise active.`,
+      `Your slot at ${salon.name} for ${service.name} is reserved in Firestore for ${newBooking.slotTime}.`,
       'Track Live',
       () => setConsumerScreen('live_appointment')
     );
@@ -295,14 +342,16 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (activeBooking?.id === bookingId) {
       setActiveBooking(null);
     }
+    FirestoreService.updateBookingStatus(bookingId, { status: 'cancelled' });
     showNotification('Booking Cancelled', 'Slot released and returned to public availability.');
   };
 
   const advanceBookingQueueStatus = (bookingId: string) => {
+    let nextStatus: Booking['status'] = 'booked';
+    let nextQueue = 1;
+
     setBookings(prev => prev.map(b => {
       if (b.id !== bookingId) return b;
-      let nextStatus: Booking['status'] = b.status;
-      let nextQueue = b.queuePosition;
       if (b.status === 'booked') {
         nextStatus = 'checked_in';
         nextQueue = 1;
@@ -320,42 +369,36 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     setActiveBooking(prev => {
       if (!prev || prev.id !== bookingId) return prev;
-      let nextStatus: Booking['status'] = prev.status;
-      let nextQueue = prev.queuePosition;
-      if (prev.status === 'booked') nextStatus = 'checked_in';
-      else if (prev.status === 'checked_in') nextStatus = 'you_are_next';
-      else if (prev.status === 'you_are_next') { nextStatus = 'in_service'; nextQueue = 0; }
-      else if (prev.status === 'in_service') nextStatus = 'completed';
       return { ...prev, status: nextStatus, queuePosition: nextQueue };
+    });
+
+    FirestoreService.updateBookingStatus(bookingId, { 
+      status: nextStatus, 
+      queuePosition: nextQueue 
     });
 
     playBookingChime();
   };
 
   const updateSlotStatus = (salonId: string, slotId: string, newStatus: LiveSlot['status']) => {
-    setSalons(prev => prev.map(s => {
-      if (s.id !== salonId) return s;
-      return {
-        ...s,
-        slots: s.slots.map(sl => sl.id === slotId ? { ...sl, status: newStatus } : sl)
-      };
-    }));
+    const salon = salons.find(s => s.id === salonId);
+    if (salon) {
+      const updatedSlots = salon.slots.map(sl => sl.id === slotId ? { ...sl, status: newStatus } : sl);
+      setSalons(prev => prev.map(s => s.id === salonId ? { ...s, slots: updatedSlots } : s));
+      FirestoreService.updateSalonSlots(salonId, updatedSlots);
+    }
   };
 
-  const addWalkIn = (customerName: string, serviceName: string, stylistName: string, durationMin: number, customAmount?: number) => {
-    setSalons(prev => prev.map(s => {
-      if (s.id !== 'salon-1') return s;
-      return {
-        ...s,
-        queueCount: s.queueCount + 1,
-      };
-    }));
+  const addWalkIn = (customerName: string, serviceName: string, stylistName: string, durationMin: number) => {
+    const updatedQueue = (salons[0]?.queueCount || 3) + 1;
+    setSalons(prev => prev.map(s => s.id === 'salon-1' ? { ...s, queueCount: updatedQueue } : s));
+    FirestoreService.updateSalon('salon-1', { queueCount: updatedQueue });
 
     playBookingChime();
 
     showNotification(
       'Walk-In Added to Queue',
-      `${customerName} registered for ${serviceName} (${durationMin}m) with ${stylistName}. Live wait time adjusted.`,
+      `${customerName} registered for ${serviceName} (${durationMin}m). Firestore database updated.`,
       'View Slots',
       () => {
         setRole('partner');
@@ -365,14 +408,13 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const updateStylistStatus = (stylistId: string, status: Stylist['status']) => {
-    setSalons(prev => prev.map(s => {
-      if (s.id !== 'salon-1') return s;
-      return {
-        ...s,
-        stylists: s.stylists.map(st => st.id === stylistId ? { ...st, status } : st),
-        availableStylistsCount: s.stylists.filter(st => (st.id === stylistId ? status === 'available' : st.status === 'available')).length
-      };
-    }));
+    const salon = salons.find(s => s.id === 'salon-1');
+    if (salon) {
+      const updatedStylists = salon.stylists.map(st => st.id === stylistId ? { ...st, status } : st);
+      const availableCount = updatedStylists.filter(st => st.status === 'available').length;
+      setSalons(prev => prev.map(s => s.id === 'salon-1' ? { ...s, stylists: updatedStylists, availableStylistsCount: availableCount } : s));
+      FirestoreService.updateSalon('salon-1', { stylists: updatedStylists, availableStylistsCount: availableCount });
+    }
   };
 
   const completeService = (
@@ -380,6 +422,9 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     paymentMethod: 'paid_salon' | 'paid_upi',
     details?: { addOnAmount?: number; methodUsed?: 'cash' | 'upi' | 'card' }
   ) => {
+    const target = bookings.find(b => b.id === bookingId);
+    const updatedPrice = (target?.servicePrice || 399) + (details?.addOnAmount || 0);
+
     setBookings(prev => prev.map(b => {
       if (b.id !== bookingId) return b;
       return {
@@ -387,7 +432,7 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         status: 'completed',
         paymentStatus: paymentMethod,
         paymentMethod: details?.methodUsed || (paymentMethod === 'paid_upi' ? 'upi' : 'cash'),
-        servicePrice: b.servicePrice + (details?.addOnAmount || 0),
+        servicePrice: updatedPrice,
         completedAt: 'Just now'
       };
     }));
@@ -398,7 +443,7 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         status: 'completed', 
         paymentStatus: paymentMethod,
         paymentMethod: details?.methodUsed || (paymentMethod === 'paid_upi' ? 'upi' : 'cash'),
-        servicePrice: prev.servicePrice + (details?.addOnAmount || 0),
+        servicePrice: updatedPrice,
         completedAt: 'Just now'
       } : null);
     }
@@ -408,6 +453,13 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       totalVisits: prev.totalVisits + 1,
       daysSinceLastVisit: 0
     }));
+
+    FirestoreService.updateBookingStatus(bookingId, {
+      status: 'completed',
+      paymentStatus: paymentMethod,
+      servicePrice: updatedPrice,
+      completedAt: 'Just now'
+    });
 
     playBookingChime();
   };
@@ -419,43 +471,18 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     wouldBookAgain: 'yes' | 'maybe' | 'no',
     reviewText?: string
   ) => {
-    setBookings(prev => prev.map(b => b.id === bookingId ? { 
-      ...b, 
-      feedback: { rating, startedOnTime, wouldBookAgain, reviewText } 
-    } : b));
+    const feedbackObj = { rating, startedOnTime, wouldBookAgain, reviewText };
+    setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, feedback: feedbackObj } : b));
 
     if (activeBooking?.id === bookingId) {
-      setActiveBooking(prev => prev ? { 
-        ...prev, 
-        feedback: { rating, startedOnTime, wouldBookAgain, reviewText } 
-      } : null);
+      setActiveBooking(prev => prev ? { ...prev, feedback: feedbackObj } : null);
     }
 
-    // Add to salon review list
-    const currentBk = bookings.find(b => b.id === bookingId);
-    if (currentBk) {
-      setSalons(prev => prev.map(s => {
-        if (s.id !== currentBk.salonId) return s;
-        const newReview = {
-          id: `rev-${Date.now()}`,
-          author: currentBk.customerName,
-          rating,
-          date: 'Just now',
-          comment: reviewText || (startedOnTime === 'yes' ? 'Punctual and very efficient service.' : 'Good overall experience.'),
-          startedOnTime,
-          serviceName: currentBk.serviceName
-        };
-        return {
-          ...s,
-          reviewsCount: s.reviewsCount + 1,
-          reviewsList: [newReview, ...(s.reviewsList || [])]
-        };
-      }));
-    }
+    FirestoreService.updateBookingStatus(bookingId, { feedback: feedbackObj });
 
     showNotification(
       'Feedback Recorded ⭐',
-      'Thank you! Your feedback helps keep salon wait times honest and accurate.'
+      'Thank you! Your feedback is recorded in the Firestore database.'
     );
   };
 
@@ -468,7 +495,8 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setSelectedSalon(INITIAL_SALONS[0]);
     setCustomerCRM(INITIAL_CUSTOMER_CRM);
     setCurrentLocationState(PILOT_LOCATIONS[0]);
-    showNotification('Pilot Data Reset', 'Initial pilot state restored.');
+    FirestoreService.resetDatabase();
+    showNotification('Database Reset', 'Firestore data restored to default pilot seed.');
   };
 
   return (
@@ -509,6 +537,8 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         clearNotification,
         targetSearchTime,
         setTargetSearchTime,
+        isLiveFirestore: isFirebaseConfigured,
+        firestoreStatus,
         resetDemoData,
         playBookingChime,
         getWhatsAppShareUrl,

@@ -26,6 +26,42 @@ export const FlutterCodeViewer: React.FC = () => {
 
   const flutterFiles: CodeFile[] = [
     {
+      name: 'firestore_service.dart',
+      path: 'lib/services/firestore_service.dart',
+      language: 'dart',
+      category: 'core',
+      content: `// Free Tier Firestore integration for Zalono
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/models.dart';
+
+class ZalonoFirestoreService {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Real-time stream of salon appointments
+  Stream<List<Booking>> streamBookings() {
+    return _firestore
+        .collection('bookings')
+        .orderBy('bookedAt', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((d) => Booking.fromFirestore(d)).toList());
+  }
+
+  // Create slot booking
+  Future<void> createBooking(Booking booking) async {
+    await _firestore.collection('bookings').doc(booking.id).set(booking.toMap());
+  }
+
+  // Live queue status update
+  Future<void> updateBookingStatus(String bookingId, AppointmentStatus status, int queuePosition) async {
+    await _firestore.collection('bookings').doc(bookingId).update({
+      'status': status.name,
+      'queuePosition': queuePosition,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+}`
+    },
+    {
       name: 'main.dart',
       path: 'lib/main.dart',
       language: 'dart',

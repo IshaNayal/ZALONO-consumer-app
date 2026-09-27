@@ -4,6 +4,8 @@ import '../../theme/app_theme.dart';
 import '../../providers/zalono_provider.dart';
 import 'salon_detail_screen.dart';
 import 'live_appointment_screen.dart';
+import 'service_time_screen.dart';
+import 'salon_list_screen.dart';
 
 class ConsumerHomeScreen extends StatelessWidget {
   final VoidCallback onSwitchToPartner;
@@ -104,13 +106,13 @@ class ConsumerHomeScreen extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   children: [
-                    _buildCategoryItem(Icons.content_cut_rounded, 'Haircut', isSelected: true),
-                    _buildCategoryItem(Icons.color_lens_outlined, 'Hair Color'),
-                    _buildCategoryItem(Icons.face_retouching_natural, 'Facial'),
-                    _buildCategoryItem(Icons.face_unlock_outlined, 'Beard'),
-                    _buildCategoryItem(Icons.spa_outlined, 'Hair Spa'),
-                    _buildCategoryItem(Icons.pan_tool_outlined, 'Manicure'),
-                    _buildCategoryItem(Icons.more_horiz, 'More'),
+                    _buildCategoryItem(context, Icons.content_cut_rounded, 'Haircut', isSelected: true),
+                    _buildCategoryItem(context, Icons.color_lens_outlined, 'Hair Color'),
+                    _buildCategoryItem(context, Icons.face_retouching_natural, 'Facial'),
+                    _buildCategoryItem(context, Icons.face_unlock_outlined, 'Beard'),
+                    _buildCategoryItem(context, Icons.spa_outlined, 'Hair Spa'),
+                    _buildCategoryItem(context, Icons.pan_tool_outlined, 'Manicure'),
+                    _buildCategoryItem(context, Icons.more_horiz, 'More'),
                   ],
                 ),
               ),
@@ -130,13 +132,13 @@ class ConsumerHomeScreen extends StatelessWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        _buildTimeChip('⚡ Now', isSelected: true),
+                        _buildTimeChip(context, '⚡ Now', isSelected: true),
                         const SizedBox(width: 8),
-                        _buildTimeChip('30 min'),
+                        _buildTimeChip(context, '30 min'),
                         const SizedBox(width: 8),
-                        _buildTimeChip('Today'),
+                        _buildTimeChip(context, 'Today'),
                         const SizedBox(width: 8),
-                        _buildTimeChip('Tomorrow'),
+                        _buildTimeChip(context, 'Tomorrow'),
                       ],
                     ),
                   ],
@@ -289,45 +291,68 @@ class ConsumerHomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryItem(IconData icon, String title, {bool isSelected = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6),
-      child: Column(
-        children: [
-          Container(
-            width: 54,
-            height: 54,
-            decoration: BoxDecoration(
-              color: isSelected ? ZalonoTheme.primaryLight : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: isSelected ? ZalonoTheme.primaryBurgundy : Colors.grey.shade200,
-                width: isSelected ? 1.5 : 1,
-              ),
-            ),
-            child: Icon(icon, color: isSelected ? ZalonoTheme.primaryBurgundy : Colors.grey.shade700, size: 24),
+  Widget _buildCategoryItem(BuildContext context, IconData icon, String title, {bool isSelected = false}) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ServiceTimeScreen(categoryName: title),
           ),
-          const SizedBox(height: 6),
-          Text(title, style: TextStyle(fontSize: 11, fontWeight: isSelected ? FontWeight.bold : FontWeight.w500)),
-        ],
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+        child: Column(
+          children: [
+            Container(
+              width: 54,
+              height: 54,
+              decoration: BoxDecoration(
+                color: isSelected ? ZalonoTheme.primaryLight : Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isSelected ? ZalonoTheme.primaryBurgundy : Colors.grey.shade200,
+                  width: isSelected ? 1.5 : 1,
+                ),
+              ),
+              child: Icon(icon, color: isSelected ? ZalonoTheme.primaryBurgundy : Colors.grey.shade700, size: 24),
+            ),
+            const SizedBox(height: 6),
+            Text(title, style: TextStyle(fontSize: 11, fontWeight: isSelected ? FontWeight.bold : FontWeight.w500)),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildTimeChip(String text, {bool isSelected = false}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: isSelected ? ZalonoTheme.primaryBurgundy : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: isSelected ? ZalonoTheme.primaryBurgundy : Colors.grey.shade300),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-          color: isSelected ? Colors.white : Colors.grey.shade800,
+  Widget _buildTimeChip(BuildContext context, String text, {bool isSelected = false}) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => SalonListScreen(
+              categoryName: 'Haircut',
+              timeOption: text.contains('Now') ? 'now' : text,
+            ),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? ZalonoTheme.primaryBurgundy : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: isSelected ? ZalonoTheme.primaryBurgundy : Colors.grey.shade300),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            color: isSelected ? Colors.white : Colors.grey.shade800,
+          ),
         ),
       ),
     );

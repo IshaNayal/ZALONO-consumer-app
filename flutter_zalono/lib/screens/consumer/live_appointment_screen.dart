@@ -5,13 +5,21 @@ import '../../models/models.dart';
 import '../../providers/zalono_provider.dart';
 
 class LiveAppointmentScreen extends StatelessWidget {
-  final Booking booking;
+  final Booking? booking;
 
-  const LiveAppointmentScreen({super.key, required this.booking});
+  const LiveAppointmentScreen({super.key, this.booking});
 
   @override
   Widget build(BuildContext context) {
     final zalono = Provider.of<ZalonoProvider>(context);
+    final currentBooking = booking ?? zalono.activeBooking ?? (zalono.bookings.isNotEmpty ? zalono.bookings.first : null);
+
+    if (currentBooking == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Live Appointment')),
+        body: const Center(child: Text('No active booking found.')),
+      );
+    }
 
     return Scaffold(
       backgroundColor: ZalonoTheme.backgroundLight,
@@ -43,8 +51,8 @@ class LiveAppointmentScreen extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(booking.salonName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                          Text('${booking.serviceName} · ₹${booking.servicePrice.toInt()} · ${booking.serviceDuration} min', style: TextStyle(fontSize: 13, color: Colors.grey.shade700)),
+                          Text(currentBooking.salonName, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                          Text('${currentBooking.serviceName} · ₹${currentBooking.servicePrice.toInt()} · ${currentBooking.serviceDuration} min', style: TextStyle(fontSize: 13, color: Colors.grey.shade700)),
                         ],
                       ),
                       Container(
@@ -69,9 +77,9 @@ class LiveAppointmentScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildQuickStat('Slot Time', booking.slotTime),
+                      _buildQuickStat('Slot Time', currentBooking.slotTime),
                       _buildQuickStat('Expected Wait', '0-5 min'),
-                      _buildQuickStat('Stylist', booking.stylistName),
+                      _buildQuickStat('Stylist', currentBooking.stylistName.isEmpty ? 'Assigned Expert' : currentBooking.stylistName),
                     ],
                   ),
                 ],
@@ -167,7 +175,7 @@ class LiveAppointmentScreen extends StatelessWidget {
             // Advance Demo Stepper Button (For interactive testing)
             TextButton.icon(
               onPressed: () {
-                zalono.advanceQueueStatus(booking.id);
+                zalono.advanceQueueStatus(currentBooking.id);
               },
               icon: const Icon(Icons.fast_forward_rounded, size: 16),
               label: const Text('Simulate Next Status Step'),

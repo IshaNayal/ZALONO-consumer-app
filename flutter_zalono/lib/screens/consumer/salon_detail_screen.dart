@@ -4,6 +4,7 @@ import '../../theme/app_theme.dart';
 import '../../models/models.dart';
 import '../../providers/zalono_provider.dart';
 import 'live_appointment_screen.dart';
+import 'booking_confirmation_screen.dart';
 
 class SalonDetailScreen extends StatefulWidget {
   final Salon salon;
@@ -316,7 +317,9 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
                     zalono.bookSlot(salon: salon, slot: targetSlot, service: selectedService);
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (_) => LiveAppointmentScreen(booking: zalono.activeBooking!)),
+                      MaterialPageRoute(
+                        builder: (_) => BookingConfirmationScreen(booking: zalono.activeBooking!),
+                      ),
                     );
                   },
                   style: OutlinedButton.styleFrom(
@@ -341,7 +344,9 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
                     zalono.bookSlot(salon: salon, slot: targetSlot, service: selectedService);
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (_) => LiveAppointmentScreen(booking: zalono.activeBooking!)),
+                      MaterialPageRoute(
+                        builder: (_) => BookingConfirmationScreen(booking: zalono.activeBooking!),
+                      ),
                     );
                   },
                   style: ElevatedButton.styleFrom(

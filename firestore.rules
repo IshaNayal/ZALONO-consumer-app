@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Salons collection - public read for discovery & real-time slots, write for partner updates
+    match /salons/{salonId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Bookings collection - live appointment queue, creation, status tracking & payment
+    match /bookings/{bookingId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // CRM and customer history
+    match /crm/{customerId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Pilot metadata & configuration
+    match /pilot_meta/{metaId} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}
