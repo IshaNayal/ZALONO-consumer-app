@@ -16,6 +16,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   shared_preferences: ^2.2.2
   url_launcher: ^6.2.4
+  http: ^1.2.0
   # firebase_core and cloud_firestore require google-services.json which isn't present for pure UI/local builds
   # firebase_core: ^2.27.0
   # cloud_firestore: ^4.15.8

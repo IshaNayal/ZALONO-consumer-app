@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../models/models.dart';
+import '../services/api_service.dart';
 
 class ZalonoProvider extends ChangeNotifier {
   List<Salon> _salons = [];
@@ -11,9 +12,28 @@ class ZalonoProvider extends ChangeNotifier {
   String _currentLocation = 'Saheed Nagar';
   String _timePreference = 'now';
   Map<String, dynamic>? _incomingBookingNotification;
+  bool _isBackendConnected = false;
 
   ZalonoProvider() {
     _initializeData();
+    _checkAndSyncBackend();
+  }
+
+  bool get isBackendConnected => _isBackendConnected;
+
+  Future<void> _checkAndSyncBackend() async {
+    final available = await ApiService.isBackendAvailable();
+    _isBackendConnected = available;
+    if (available) {
+      final remoteSalons = await ApiService.fetchSalons();
+      if (remoteSalons != null && remoteSalons.isNotEmpty) {
+        _salons = remoteSalons;
+        if (_selectedSalon != null) {
+          _selectedSalon = _salons.firstWhere((s) => s.id == _selectedSalon!.id, orElse: () => _salons.first);
+        }
+      }
+    }
+    notifyListeners();
   }
 
   List<Salon> get salons => _salons;
