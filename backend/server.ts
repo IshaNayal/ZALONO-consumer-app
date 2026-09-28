@@ -355,11 +355,56 @@ app.get('/api/crm', (req: Request, res: Response) => {
 
 // Serve frontend if built (for full-stack deployment on Render)
 const distPath = path.resolve(process.cwd(), 'dist');
-if (fs.existsSync(distPath)) {
+if (fs.existsSync(distPath) && fs.existsSync(path.join(distPath, 'index.html'))) {
   app.use(express.static(distPath));
   app.get('*', (req: Request, res: Response, next) => {
     if (req.path.startsWith('/api')) return next();
     res.sendFile(path.join(distPath, 'index.html'));
+  });
+} else {
+  // Graceful fallback root route if frontend was not built
+  app.get('/', (req: Request, res: Response) => {
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Zalono Backend API</title>
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #faf9f8; color: #222; margin: 0; padding: 40px 20px; display: flex; justify-content: center; }
+          .card { background: white; border-radius: 16px; padding: 32px; max-width: 600px; width: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.06); border: 1px solid #eae7e4; }
+          h1 { color: #5a0a1e; margin-top: 0; }
+          .status { display: inline-block; background: #e8f5e9; color: #2e7d32; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; margin-bottom: 20px; }
+          ul { list-style: none; padding: 0; }
+          li { margin: 12px 0; }
+          a { color: #5a0a1e; font-weight: 600; text-decoration: none; background: #fcf4f6; padding: 6px 12px; border-radius: 8px; display: inline-block; }
+          a:hover { background: #f8e5e9; }
+          .tip { margin-top: 24px; padding: 14px; background: #fff8e1; border-left: 4px solid #ffa000; border-radius: 4px; font-size: 13px; color: #5d4037; }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+          <h1>Zalono Backend API</h1>
+          <div class="status">● Status: ONLINE</div>
+          <p>The backend service is running successfully on Render.</p>
+          <h3>Available Endpoints:</h3>
+          <ul>
+            <li><a href="/api/health" target="_blank">GET /api/health</a> - Server status & statistics</li>
+            <li><a href="/api/salons" target="_blank">GET /api/salons</a> - Partner salons & live slots</li>
+            <li><a href="/api/bookings" target="_blank">GET /api/bookings</a> - Active bookings & queue tracker</li>
+            <li><a href="/api/locations" target="_blank">GET /api/locations</a> - Pilot locations in Bhubaneswar</li>
+            <li><a href="/api/crm" target="_blank">GET /api/crm</a> - Customer CRM metrics</li>
+            <li><a href="/api/events" target="_blank">GET /api/events</a> - Server-Sent Events (SSE) stream</li>
+          </ul>
+          <div class="tip">
+            💡 <strong>Want to see the web app UI here?</strong><br/>
+            In Render Dashboard, change your <strong>Build Command</strong> to:
+            <code>npm install && npm run build</code> and redeploy.
+          </div>
+        </div>
+      </body>
+      </html>
+    `);
   });
 }
 
