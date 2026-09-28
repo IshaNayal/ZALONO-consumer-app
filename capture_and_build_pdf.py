@@ -6,19 +6,6 @@ import urllib.request
 import websocket
 from PIL import Image, ImageDraw, ImageFont
 
-def get_page_info():
-    # Discover remote debugging port
-    for port in [61852, 53322]:
-        try:
-            req = urllib.request.urlopen(f"http://127.0.0.1:{port}/json", timeout=2)
-            pages = json.loads(req.read().decode('utf-8'))
-            for p in pages:
-                if p.get('type') == 'page' and 'localhost' in p.get('url', ''):
-                    return port, p['webSocketDebuggerUrl'], p['url']
-        except Exception:
-            continue
-    raise RuntimeError("Could not find Chrome page")
-
 SCREENS = [
     {
         "id": "home",
@@ -137,9 +124,11 @@ SCREENS = [
 ]
 
 def capture_all():
-    port, ws_url, base_url = get_page_info()
-    base_clean = base_url.split('?')[0].rstrip('/')
-    print(f"Connecting to Chrome on port {port}...")
+    req = urllib.request.urlopen("http://127.0.0.1:61852/json")
+    pages = json.loads(req.read().decode('utf-8'))
+    ws_url = [p['webSocketDebuggerUrl'] for p in pages if p.get('type') == 'page'][0]
+
+    print("Connecting to Chrome on port 61852...")
     ws = websocket.create_connection(ws_url, timeout=10, suppress_origin=True)
 
     msg_id = 1
@@ -166,12 +155,27 @@ def capture_all():
 
     captured_files = []
 
-    print("Beginning screen captures...")
+    print("Beginning interactive screen captures...")
+    time.sleep(1.0)
+
     for idx, sc in enumerate(SCREENS):
-        target_url = f"{base_clean}/?screen={sc['id']}"
         print(f"[{idx+1}/{len(SCREENS)}] Capturing: {sc['title']}...")
-        send_cmd("Page.navigate", {"url": target_url})
-        time.sleep(1.8) # Allow Flutter to settle and render
+
+        # Advance screen via ArrowRight key press in Flutter
+        send_cmd("Input.dispatchKeyEvent", {
+            "type": "rawKeyDown",
+            "key": "ArrowRight",
+            "code": "ArrowRight",
+            "windowsVirtualKeyCode": 39
+        })
+        send_cmd("Input.dispatchKeyEvent", {
+            "type": "keyUp",
+            "key": "ArrowRight",
+            "code": "ArrowRight",
+            "windowsVirtualKeyCode": 39
+        })
+
+        time.sleep(0.7) # Allow Flutter to animate and settle
 
         res = send_cmd("Page.captureScreenshot", {"format": "png"})
         img_bytes = base64.b64decode(res["data"])
@@ -193,24 +197,38 @@ def capture_all():
     PAGE_W = 1240
     PAGE_H = 1754
 
+    # Try loading a TrueType font if available, else default font
+    font_title = None
+    font_sub = None
+    font_desc = None
+    for font_path in ["C:\\Windows\\Fonts\\arial.ttf", "C:\\Windows\\Fonts\\segoeui.ttf"]:
+        if os.path.exists(font_path):
+            try:
+                font_title = ImageFont.truetype(font_path, 32)
+                font_sub = ImageFont.truetype(font_path, 20)
+                font_desc = ImageFont.truetype(font_path, 22)
+                break
+            except Exception:
+                pass
+
     for sc, img_path in captured_files:
         page = Image.new("RGB", (PAGE_W, PAGE_H), color=(248, 249, 250))
         draw = ImageDraw.Draw(page)
 
         # Header Bar
         draw.rectangle([(0, 0), (PAGE_W, 110)], fill=(90, 10, 30)) # Zalono Burgundy
-        draw.text((60, 24), "ZALONO", fill=(255, 255, 255))
-        draw.text((60, 58), "Real-Time Salon Booking & Live Slots Platform", fill=(230, 210, 215))
-        draw.text((PAGE_W - 320, 40), f"Module: {sc['module']}", fill=(255, 255, 255))
+        draw.text((60, 20), "ZALONO", fill=(255, 255, 255), font=font_title)
+        draw.text((60, 65), "Real-Time Salon Booking & Live Slots Platform", fill=(230, 210, 215), font=font_sub)
+        draw.text((PAGE_W - 380, 42), f"Module: {sc['module']}", fill=(255, 255, 255), font=font_sub)
 
         # Screen Title and Description
-        draw.text((60, 135), sc["title"], fill=(25, 25, 25))
-        draw.text((60, 175), sc["desc"], fill=(80, 80, 80))
+        draw.text((60, 130), sc["title"], fill=(25, 25, 25), font=font_title)
+        draw.text((60, 175), sc["desc"], fill=(80, 80, 80), font=font_desc)
 
         # Screenshot Frame
         screenshot = Image.open(img_path)
         # Target size to fit cleanly on A4
-        max_h = 1340
+        max_h = 1350
         aspect = screenshot.width / screenshot.height
         new_h = max_h
         new_w = int(new_h * aspect)
@@ -225,8 +243,9 @@ def capture_all():
 
         # Footer
         draw.rectangle([(0, PAGE_H - 45), (PAGE_W, PAGE_H)], fill=(235, 235, 240))
-        draw.text((60, PAGE_H - 32), "Zalono Pilot Release • Confidential", fill=(120, 120, 120))
-        draw.text((PAGE_W - 200, PAGE_H - 32), f"Page {captured_files.index((sc, img_path)) + 1} of {len(captured_files)}", fill=(120, 120, 120))
+        draw.text((60, PAGE_H - 35), "Zalono Pilot Release | Confidential", fill=(120, 120, 120), font=font_sub)
+        page_idx = captured_files.index((sc, img_path)) + 1
+        draw.text((PAGE_W - 220, PAGE_H - 35), f"Page {page_idx} of {len(captured_files)}", fill=(120, 120, 120), font=font_sub)
 
         pdf_pages.append(page)
 
@@ -238,7 +257,7 @@ def capture_all():
             append_images=pdf_pages[1:],
             resolution=150.0
         )
-        print(f"✅ Generated PDF document: {pdf_path} ({len(pdf_pages)} pages)")
+        print(f"SUCCESS: Generated PDF document at: {pdf_path} ({len(pdf_pages)} pages)")
 
 if __name__ == "__main__":
     capture_all()
