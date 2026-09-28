@@ -57,11 +57,12 @@ export const LastMinuteSlotsModal: React.FC = () => {
         <div className="w-7"></div>
       </div>
 
-      <div className="p-4 space-y-3">
+      <div className="w-full max-w-6xl mx-auto p-4 sm:px-6 space-y-3">
         <p className="text-xs text-slate-600 bg-amber-50 border border-amber-200 p-2.5 rounded-xl">
           ⚡ <strong>Cancellations & Live Openings:</strong> Grab these slots in the next 90 minutes before someone else snaps them up!
         </p>
 
+        <div className="grid gap-3 md:grid-cols-2">
         {lastMinuteItems.map((item) => (
           <div key={item.id} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -91,6 +92,7 @@ export const LastMinuteSlotsModal: React.FC = () => {
             </button>
           </div>
         ))}
+        </div>
       </div>
     </div>
   );

@@ -40,7 +40,7 @@ export const BookingsScreen: React.FC = () => {
       </div>
 
       {/* Segmented Control */}
-      <div className="p-4">
+      <div className="w-full max-w-6xl mx-auto p-4 sm:px-6">
         <div className="bg-slate-200/80 p-1 rounded-xl flex items-center">
           <button
             onClick={() => setTab('upcoming')}
@@ -81,7 +81,7 @@ export const BookingsScreen: React.FC = () => {
         </div>
 
         {/* Bookings List */}
-        <div className="mt-4 space-y-3">
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
           {(tab === 'upcoming' ? upcomingBookings : pastBookings).map((bk) => (
             <div key={bk.id} className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
               <div className="flex items-center justify-between pb-2 border-b border-slate-100">

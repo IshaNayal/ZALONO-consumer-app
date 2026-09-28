@@ -52,7 +52,7 @@ export const ManageSlotsScreen: React.FC = () => {
         </button>
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="w-full max-w-6xl mx-auto p-4 sm:px-6 space-y-4">
         {/* Horizontal Date Picker */}
         <div className="flex items-center justify-between gap-1.5 bg-white p-2 rounded-2xl border border-slate-200">
           {days.map((d) => (
@@ -77,7 +77,7 @@ export const ManageSlotsScreen: React.FC = () => {
         </p>
 
         {/* Slots List */}
-        <div className="space-y-2">
+        <div className="grid gap-2 md:grid-cols-2">
           {salon.slots.map((slot) => {
             const isAvailable = slot.status === 'available';
             const isBooked = slot.status === 'booked';

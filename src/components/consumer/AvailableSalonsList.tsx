@@ -85,7 +85,8 @@ export const AvailableSalonsList: React.FC = () => {
       </div>
 
       {/* Salons list with Smart Slots */}
-      <div className="p-4 space-y-4">
+      <div className="w-full max-w-6xl mx-auto p-4 sm:px-6">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {filteredSalons.map((salon, index) => (
           <div
             key={salon.id}
@@ -186,6 +187,7 @@ export const AvailableSalonsList: React.FC = () => {
             </button>
           </div>
         ))}
+        </div>
       </div>
     </div>
   );

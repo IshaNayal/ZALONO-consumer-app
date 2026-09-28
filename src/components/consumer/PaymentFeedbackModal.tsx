@@ -78,7 +78,7 @@ export const PaymentFeedbackModal: React.FC = () => {
         <div className="w-7"></div>
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="w-full max-w-xl mx-auto p-4 sm:px-6 space-y-4">
         {step === 'payment' && (
           <div className="space-y-4">
             {/* Visit Summary Card */}

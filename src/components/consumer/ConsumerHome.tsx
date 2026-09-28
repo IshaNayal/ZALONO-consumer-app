@@ -85,7 +85,7 @@ export const ConsumerHome: React.FC = () => {
             title="Change pilot area in Bhubaneswar"
           >
             <MapPin className="w-3 h-3 text-[#80142B]" />
-            <span className="max-w-25` truncate">{currentLocation.name}</span>
+            <span className="max-w-25 truncate">{currentLocation.name}</span>
             <ChevronDown className="w-3 h-3 text-slate-500" />
           </button>
         </div>
@@ -109,7 +109,7 @@ export const ConsumerHome: React.FC = () => {
       </header>
 
       {/* Main Content Body */}
-      <div className="px-5 pt-4 space-y-4">
+      <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 pt-4 pb-6 space-y-4">
         
         {/* User Greeting */}
         <div>
@@ -138,7 +138,7 @@ export const ConsumerHome: React.FC = () => {
         </form>
 
         {/* Service Categories Grid */}
-        <div className="grid grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-4 md:grid-cols-8 gap-2.5">
           {categories.map((cat) => {
             const isSelected = selectedCategory === cat.label;
             return (
@@ -173,7 +173,7 @@ export const ConsumerHome: React.FC = () => {
             </button>
           </div>
           
-          <div className="grid grid-cols-4 gap-1.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
             {[
               { id: 'now', label: '⚡ Now', sub: 'Fastest' },
               { id: '30min', label: '30 min', sub: 'On the way' },
@@ -288,7 +288,7 @@ export const ConsumerHome: React.FC = () => {
             </button>
           </div>
 
-          <div className="space-y-3">
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {salons.map((salon) => (
               <div 
                 key={salon.id}
@@ -363,7 +363,8 @@ export const ConsumerHome: React.FC = () => {
       </div>
 
       {/* Fixed Bottom Navigation Bar (Consumer) */}
-      <nav className="fixed bottom-0 left-0 right-0 max-w-92.5 mx-auto bg-white/95 backdrop-blur-md border-t border-slate-200 py-2 px-6 flex items-center justify-between z-30 shadow-lg">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 z-30 shadow-lg">
+        <div className="w-full max-w-6xl mx-auto py-2 px-4 sm:px-6 flex items-center justify-between">
         <button 
           onClick={() => setConsumerScreen('home')}
           className="flex flex-col items-center text-[#80142B]"
@@ -395,6 +396,7 @@ export const ConsumerHome: React.FC = () => {
           <User className="w-5 h-5" />
           <span className="text-[10px] font-medium mt-1">Profile</span>
         </button>
+        </div>
       </nav>
     </div>
   );

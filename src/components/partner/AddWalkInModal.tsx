@@ -30,7 +30,7 @@ export const AddWalkInModal: React.FC = () => {
         <div className="w-7"></div>
       </div>
 
-      <div className="p-5 space-y-4">
+      <div className="w-full max-w-2xl mx-auto p-5 sm:px-6 space-y-4">
         <div className="space-y-1">
           <label className="text-xs font-bold text-slate-700">Customer Name</label>
           <input

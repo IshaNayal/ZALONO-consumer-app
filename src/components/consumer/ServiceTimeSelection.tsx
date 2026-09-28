@@ -30,14 +30,14 @@ export const ServiceTimeSelection: React.FC = () => {
         <h1 className="text-base font-bold text-slate-900">{selectedCategory}</h1>
       </div>
 
-      <div className="p-5 space-y-5">
+      <div className="w-full max-w-6xl mx-auto p-5 sm:px-6 space-y-5">
         <div>
           <h2 className="text-lg font-bold text-slate-900">When would you like to go?</h2>
           <p className="text-xs text-slate-500 mt-0.5">Choose when you want your service</p>
         </div>
 
         {/* Options list */}
-        <div className="space-y-2.5">
+        <div className="grid gap-2.5 md:grid-cols-2">
           <button
             onClick={() => handleSelectTime('now')}
             className="w-full p-4 bg-white hover:bg-rose-50/40 rounded-2xl border-2 border-[#80142B] flex items-center justify-between shadow-xs transition-all text-left"

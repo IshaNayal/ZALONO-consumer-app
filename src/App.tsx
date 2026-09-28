@@ -1,6 +1,5 @@
 import React from 'react';
 import { ZalonoProvider, useZalono } from './context/ZalonoContext';
-import { DeviceShell } from './components/common/DeviceShell';
 import { PushNotificationBanner } from './components/common/PushNotificationBanner';
 
 // Consumer Screens
@@ -19,6 +18,12 @@ import { PaymentFeedbackModal } from './components/consumer/PaymentFeedbackModal
 // Partner Screens
 import { PartnerDashboard } from './components/partner/PartnerDashboard';
 import { ManageSlotsScreen } from './components/partner/ManageSlotsScreen';
+import { StaffManagementModal } from './components/partner/StaffManagementModal';
+import { IncomingBookingModal } from './components/partner/IncomingBookingModal';
+import { AddWalkInModal } from './components/partner/AddWalkInModal';
+import { DuringServiceScreen } from './components/partner/DuringServiceScreen';
+import { CustomerCRMModal } from './components/partner/CustomerCRMModal';
+import { PartnerAnalyticsModal } from './components/partner/PartnerAnalyticsModal';
 
 const AppScreenRouter: React.FC = () => {
   const { 
@@ -67,17 +72,29 @@ const AppScreenRouter: React.FC = () => {
         return <PartnerDashboard />;
       case 'manage_slots':
         return <ManageSlotsScreen />;
+      case 'staff':
+        return <StaffManagementModal />;
+      case 'incoming_bookings':
+        return <IncomingBookingModal />;
+      case 'walk_in':
+        return <AddWalkInModal />;
+      case 'during_service':
+        return <DuringServiceScreen />;
+      case 'crm':
+        return <CustomerCRMModal />;
+      case 'analytics':
+        return <PartnerAnalyticsModal />;
       default:
         return <PartnerDashboard />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#F0EDE6] flex items-center justify-center p-0 sm:p-4 select-none">
-      <DeviceShell deviceLabel={role === 'consumer' ? 'Zalono' : 'Zalono Partner'}>
-        <PushNotificationBanner />
+    <div className="min-h-screen w-full bg-[#FAF9F6] flex flex-col text-slate-900">
+      <PushNotificationBanner />
+      <div className="flex-1 flex flex-col min-h-0">
         {role === 'consumer' ? renderConsumerScreen() : renderPartnerScreen()}
-      </DeviceShell>
+      </div>
     </div>
   );
 };

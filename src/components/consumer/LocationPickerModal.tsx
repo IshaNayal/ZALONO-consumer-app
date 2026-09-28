@@ -30,7 +30,7 @@ export const LocationPickerModal: React.FC = () => {
         <div className="w-7"></div>
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="w-full max-w-6xl mx-auto p-4 sm:px-6 space-y-4">
         <div className="p-3 bg-blue-50 border border-blue-200 rounded-2xl flex items-start gap-2.5">
           <Compass className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
           <p className="text-xs text-blue-900 leading-relaxed">
@@ -38,7 +38,7 @@ export const LocationPickerModal: React.FC = () => {
           </p>
         </div>
 
-        <div className="space-y-2.5">
+        <div className="grid gap-2.5 md:grid-cols-2">
           {locationsList.map((loc) => {
             const isSelected = currentLocation.id === loc.id;
             return (

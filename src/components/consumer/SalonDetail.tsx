@@ -148,11 +148,11 @@ export const SalonDetail: React.FC = () => {
       </div>
 
       {/* Tab Content */}
-      <div className="p-4 space-y-4">
+      <div className="w-full max-w-6xl mx-auto p-4 sm:px-6 space-y-4">
         {activeTab === 'services' && (
           <div>
             <h2 className="text-sm font-bold text-slate-900 mb-2.5">Select Service</h2>
-            <div className="space-y-2">
+            <div className="grid gap-2 md:grid-cols-2">
               {selectedSalon.services.map((srv) => {
                 const isSelected = selectedService.id === srv.id;
                 return (
@@ -292,7 +292,7 @@ export const SalonDetail: React.FC = () => {
           </div>
 
           {/* Slot Cards Grid */}
-          <div className="grid grid-cols-4 gap-2 mt-3">
+          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 mt-3">
             {selectedSalon.slots
               .filter(s => s.hourGroup === selectedHour)
               .map((slot) => {
@@ -357,8 +357,8 @@ export const SalonDetail: React.FC = () => {
       </div>
 
       {/* Sticky Bottom Dual CTA Bar */}
-      <div className="fixed bottom-0 left-0 right-0 max-w-97.5 mx-auto bg-white/95 backdrop-blur-md p-3.5 border-t border-slate-200 shadow-xl z-30">
-        <div className="grid grid-cols-2 gap-2.5">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md p-3.5 border-t border-slate-200 shadow-xl z-30">
+        <div className="w-full max-w-6xl mx-auto grid grid-cols-2 gap-2.5">
           <button
             onClick={() => handleBook('sl-4')}
             className="py-2.5 px-2 border-2 border-[#80142B] text-[#80142B] rounded-xl font-bold text-xs hover:bg-rose-50 transition-colors text-center"

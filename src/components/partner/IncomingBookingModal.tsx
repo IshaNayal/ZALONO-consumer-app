@@ -41,7 +41,7 @@ export const IncomingBookingModal: React.FC = () => {
         <div className="w-7"></div>
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="w-full max-w-6xl mx-auto p-4 sm:px-6 space-y-4">
         {/* Urgent New Booking Card */}
         <div className="bg-white p-4 rounded-2xl border-2 border-[#80142B] shadow-md space-y-3">
           <div className="flex items-center justify-between">
@@ -105,7 +105,7 @@ export const IncomingBookingModal: React.FC = () => {
         {/* Upcoming Day Bookings list */}
         <div>
           <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Upcoming Today</h3>
-          <div className="space-y-2">
+          <div className="grid gap-2 md:grid-cols-2">
             <div className="p-3 bg-white rounded-xl border border-slate-200 flex items-center justify-between text-xs">
               <div>
                 <span className="font-bold text-slate-900">12:15 PM · Facial Glow</span>

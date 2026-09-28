@@ -25,7 +25,7 @@ export const BookingConfirmationModal: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col justify-between bg-white p-6">
-      <div className="flex flex-col items-center text-center pt-6 space-y-4">
+      <div className="w-full max-w-2xl mx-auto flex flex-col items-center text-center pt-6 space-y-4">
         {/* Animated Checkmark Circle */}
         <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center ring-8 ring-emerald-50">
           <CheckCircle2 className="w-12 h-12 text-emerald-600 stroke-[2.5]" />
@@ -106,7 +106,7 @@ export const BookingConfirmationModal: React.FC = () => {
       </div>
 
       {/* Done Button */}
-      <div className="pt-6">
+      <div className="pt-6 w-full max-w-2xl mx-auto">
         <button
           onClick={() => setConsumerScreen('live_appointment')}
           className="w-full py-3 bg-[#80142B] text-white rounded-xl font-bold text-sm shadow-md hover:bg-[#681023] transition-colors"

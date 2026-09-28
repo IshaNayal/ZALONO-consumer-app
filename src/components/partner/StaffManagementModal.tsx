@@ -28,12 +28,12 @@ export const StaffManagementModal: React.FC = () => {
         <div className="w-7"></div>
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="w-full max-w-6xl mx-auto p-4 sm:px-6 space-y-4">
         <p className="text-xs text-slate-600 bg-blue-50 border border-blue-200 p-2.5 rounded-xl">
           👥 <strong>Live Roster & Shifts:</strong> Toggle stylist availability or set breaks so online slot bookings sync dynamically without overbooking.
         </p>
 
-        <div className="space-y-3">
+        <div className="grid gap-3 md:grid-cols-2">
           {salon.stylists.map((st) => (
             <div key={st.id} className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs space-y-3">
               <div className="flex items-start justify-between">

@@ -59,7 +59,7 @@ export const PartnerDashboard: React.FC = () => {
         </div>
       </header>
 
-      <div className="p-4 space-y-4">
+      <div className="w-full max-w-6xl mx-auto p-4 sm:px-6 space-y-4">
         {/* Salon Greeting & Status Banner */}
         <div className="flex items-center justify-between">
           <div>
@@ -90,7 +90,7 @@ export const PartnerDashboard: React.FC = () => {
         )}
 
         {/* 4 Metric Cards Grid */}
-        <div className="grid grid-cols-2 gap-2.5">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
           <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs">
             <div className="flex items-center justify-between text-slate-500">
               <span className="text-xs font-semibold">Appointments</span>
@@ -139,7 +139,7 @@ export const PartnerDashboard: React.FC = () => {
         {/* Quick Operations Hub (6 Action Buttons) */}
         <div>
           <h2 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Salon Operations</h2>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 lg:grid-cols-6 gap-2">
             <button
               onClick={() => setPartnerScreen('manage_slots')}
               className="p-3 bg-white hover:bg-slate-50 rounded-2xl border border-slate-200 text-center flex flex-col items-center shadow-xs transition-colors"

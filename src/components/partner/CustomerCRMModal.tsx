@@ -25,7 +25,7 @@ export const CustomerCRMModal: React.FC = () => {
         <div className="w-7"></div>
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="w-full max-w-6xl mx-auto p-4 sm:px-6 space-y-4">
         {/* Profile Card */}
         <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex items-center gap-3">
           <div className="w-14 h-14 rounded-full bg-[#F9E8EC] text-[#80142B] flex items-center justify-center font-bold text-xl">

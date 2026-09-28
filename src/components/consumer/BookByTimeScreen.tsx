@@ -36,7 +36,7 @@ export const BookByTimeScreen: React.FC = () => {
         <div className="w-7"></div>
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="w-full max-w-6xl mx-auto p-4 sm:px-6 space-y-4">
         {/* Time Selector Box */}
         <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
@@ -55,7 +55,7 @@ export const BookByTimeScreen: React.FC = () => {
           </div>
 
           {/* Day selection */}
-          <div className="grid grid-cols-2 gap-2 pt-1">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
             <button
               onClick={() => setSelectedDay('today')}
               className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
@@ -97,7 +97,7 @@ export const BookByTimeScreen: React.FC = () => {
         </div>
 
         {/* Available Salons at this time */}
-        <div className="space-y-3">
+        <div className="grid gap-3 md:grid-cols-2">
           {salons.map((salon) => (
             <div key={salon.id} className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between">
               <div className="flex items-center gap-3">

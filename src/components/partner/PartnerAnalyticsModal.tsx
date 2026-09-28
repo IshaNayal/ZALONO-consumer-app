@@ -28,7 +28,7 @@ export const PartnerAnalyticsModal: React.FC = () => {
         <div className="w-7"></div>
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="w-full max-w-6xl mx-auto p-4 sm:px-6 space-y-4">
         {/* Time Filter Pills */}
         <div className="flex items-center gap-1.5 bg-slate-200/80 p-1 rounded-xl text-xs">
           {['7D', '30D', '3M', 'Custom'].map((t, idx) => (
@@ -44,7 +44,7 @@ export const PartnerAnalyticsModal: React.FC = () => {
         </div>
 
         {/* 4 Metric Cards */}
-        <div className="grid grid-cols-2 gap-2.5">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
           <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs">
             <span className="text-[11px] text-slate-500 font-semibold block">Total Revenue</span>
             <p className="text-xl font-bold text-slate-900 font-mono mt-1">₹1,08,420</p>
