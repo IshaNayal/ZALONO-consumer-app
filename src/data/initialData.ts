@@ -35,7 +35,7 @@ export const INITIAL_SALONS: Salon[] = [
     isVerified: true,
     happyCustomersCount: '1000+',
     upiId: 'lookssalon.bbsr@icici',
-    phone: '+91 98765 43210',
+    phone: '+91 00000 00000',
     services: [
       { id: 'srv-1', name: 'Haircut', price: 399, durationMinutes: 45, category: 'Haircut', description: 'Consultation, precision cut, wash & premium styling' },
       { id: 'srv-2', name: 'Haircut + Beard', price: 599, durationMinutes: 60, category: 'Haircut', description: 'Haircut with hot towel beard shape & oil finish' },
@@ -54,7 +54,7 @@ export const INITIAL_SALONS: Salon[] = [
         rating: 4.9,
         status: 'available',
         shiftHours: '10:00 AM – 7:00 PM',
-        phone: '+91 98765 11111'
+        phone: '+91 00000 00000'
       },
       {
         id: 'sty-2',
@@ -66,7 +66,7 @@ export const INITIAL_SALONS: Salon[] = [
         currentCustomer: 'Ananya S.',
         currentService: 'Hair Color',
         shiftHours: '10:00 AM – 7:00 PM',
-        phone: '+91 98765 22222'
+        phone: '+91 00000 00000'
       },
       {
         id: 'sty-3',
@@ -138,8 +138,8 @@ export const INITIAL_SALONS: Salon[] = [
       { id: 'srv-203', name: 'Facial Glow', price: 699, durationMinutes: 45, category: 'Facial', description: 'Instant deep-cleanse' },
     ],
     stylists: [
-      { id: 'sty-21', name: 'Karan', role: 'Stylist', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200', rating: 4.6, status: 'available', shiftHours: '10:00 AM – 7:00 PM', phone: '+91 98765 66666' },
-      { id: 'sty-22', name: 'Tanvi', role: 'Specialist', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200', rating: 4.5, status: 'with_customer', shiftHours: '10:00 AM – 7:00 PM', phone: '+91 98765 77777' }
+      { id: 'sty-21', name: 'Karan', role: 'Stylist', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200', rating: 4.6, status: 'available', shiftHours: '10:00 AM – 7:00 PM', phone: '+91 00000 00000' },
+      { id: 'sty-22', name: 'Tanvi', role: 'Specialist', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200', rating: 4.5, status: 'with_customer', shiftHours: '10:00 AM – 7:00 PM', phone: '+91 00000 00000' }
     ],
     slots: [
       { id: 'sl-21', time: '11:45 AM', hourGroup: '11 AM', status: 'available', isEarliest: true, stylistName: 'Karan', price: 349 },
@@ -208,7 +208,7 @@ export const INITIAL_BOOKINGS: Booking[] = [
     stylistId: 'sty-1',
     stylistName: 'Rahul',
     customerName: 'Jay Sharma',
-    customerPhone: '+91 98765 43210',
+    customerPhone: '+91 00000 00000',
     status: 'you_are_next',
     expectedWaitMin: '0-5 minutes',
     queuePosition: 1,
@@ -234,7 +234,7 @@ export const INITIAL_BOOKINGS: Booking[] = [
     stylistId: 'sty-21',
     stylistName: 'Karan',
     customerName: 'Jay Sharma',
-    customerPhone: '+91 98765 43210',
+    customerPhone: '+91 00000 00000',
     status: 'completed',
     expectedWaitMin: '0 min',
     queuePosition: 0,
@@ -256,7 +256,7 @@ export const INITIAL_BOOKINGS: Booking[] = [
 export const INITIAL_CUSTOMER_CRM: CustomerCRM = {
   id: 'cust-1',
   name: 'Jay Sharma',
-  phone: '+91 98765 43210',
+  phone: '+91 00000 00000',
   customerSince: 'Aug 2025',
   totalVisits: 5,
   avgSpend: 470,

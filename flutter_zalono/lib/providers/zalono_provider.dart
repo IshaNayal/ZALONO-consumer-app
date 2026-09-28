@@ -7,7 +7,10 @@ class ZalonoProvider extends ChangeNotifier {
   Booking? _activeBooking;
   Salon? _selectedSalon;
   String _selectedCategory = 'Haircut';
-  int _currentQueuePosition = 1;
+  final int _currentQueuePosition = 1;
+  String _currentLocation = 'Saheed Nagar';
+  String _timePreference = 'now';
+  Map<String, dynamic>? _incomingBookingNotification;
 
   ZalonoProvider() {
     _initializeData();
@@ -19,6 +22,9 @@ class ZalonoProvider extends ChangeNotifier {
   Salon? get selectedSalon => _selectedSalon;
   String get selectedCategory => _selectedCategory;
   int get currentQueuePosition => _currentQueuePosition;
+  String get currentLocation => _currentLocation;
+  String get timePreference => _timePreference;
+  Map<String, dynamic>? get incomingBookingNotification => _incomingBookingNotification;
 
   void selectCategory(String category) {
     _selectedCategory = category;
@@ -27,6 +33,50 @@ class ZalonoProvider extends ChangeNotifier {
 
   void selectSalon(Salon salon) {
     _selectedSalon = salon;
+    notifyListeners();
+  }
+
+  void setSelectedSalon(Salon salon) {
+    _selectedSalon = salon;
+    notifyListeners();
+  }
+
+  void setLocation(String location) {
+    _currentLocation = location;
+    notifyListeners();
+  }
+
+  void updateStylistStatus(String salonId, String stylistId, StylistStatus status) {
+    for (var salon in _salons) {
+      if (salon.id == salonId) {
+        for (var stylist in salon.stylists) {
+          if (stylist.id == stylistId) {
+            stylist.status = status;
+            notifyListeners();
+            return;
+          }
+        }
+      }
+    }
+  }
+
+  void setActiveBooking(Booking booking) {
+    _activeBooking = booking;
+    notifyListeners();
+  }
+
+  void setTimePreference(String preference) {
+    _timePreference = preference;
+    notifyListeners();
+  }
+
+  void setIncomingBookingNotification(Map<String, dynamic> notification) {
+    _incomingBookingNotification = notification;
+    notifyListeners();
+  }
+
+  void clearIncomingNotification() {
+    _incomingBookingNotification = null;
     notifyListeners();
   }
 
@@ -53,8 +103,8 @@ class ZalonoProvider extends ChangeNotifier {
       distanceKm: salon.distanceKm,
       travelTimeMin: salon.travelTimeMin,
       stylistName: chosenStylist,
-      customerName: 'Jay Sharma',
-      customerPhone: '+91 98765 43210',
+      customerName: 'Isha Nayal',
+      customerPhone: '+91 00000 00000',
       status: AppointmentStatus.booked,
       expectedWaitMin: '0-5 minutes',
       queuePosition: 1,
@@ -169,8 +219,8 @@ class ZalonoProvider extends ChangeNotifier {
         distanceKm: 0.8,
         travelTimeMin: 8,
         stylistName: 'Rahul',
-        customerName: 'Jay Sharma',
-        customerPhone: '+91 98765 43210',
+        customerName: 'Isha Nayal',
+        customerPhone: '+91 00000 00000',
         status: AppointmentStatus.youAreNext,
         expectedWaitMin: '0-5 minutes',
         queuePosition: 1,

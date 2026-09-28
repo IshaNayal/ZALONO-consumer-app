@@ -85,7 +85,7 @@ export const ConsumerHome: React.FC = () => {
             title="Change pilot area in Bhubaneswar"
           >
             <MapPin className="w-3 h-3 text-[#80142B]" />
-            <span className="max-w-[100px] truncate">{currentLocation.name}</span>
+            <span className="max-w-25` truncate">{currentLocation.name}</span>
             <ChevronDown className="w-3 h-3 text-slate-500" />
           </button>
         </div>
@@ -202,7 +202,7 @@ export const ConsumerHome: React.FC = () => {
         {activeBooking && activeBooking.status !== 'completed' && (
           <div 
             onClick={() => setConsumerScreen('live_appointment')}
-            className="p-3.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl shadow-md cursor-pointer hover:opacity-95 transition-all flex items-center justify-between"
+            className="p-3.5 bg-linear-to-r from-emerald-500 to-teal-600 text-white rounded-2xl shadow-md cursor-pointer hover:opacity-95 transition-all flex items-center justify-between"
           >
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-xs">
@@ -363,7 +363,7 @@ export const ConsumerHome: React.FC = () => {
       </div>
 
       {/* Fixed Bottom Navigation Bar (Consumer) */}
-      <nav className="fixed bottom-0 left-0 right-0 max-w-[370px] mx-auto bg-white/95 backdrop-blur-md border-t border-slate-200 py-2 px-6 flex items-center justify-between z-30 shadow-lg">
+      <nav className="fixed bottom-0 left-0 right-0 max-w-92.5 mx-auto bg-white/95 backdrop-blur-md border-t border-slate-200 py-2 px-6 flex items-center justify-between z-30 shadow-lg">
         <button 
           onClick={() => setConsumerScreen('home')}
           className="flex flex-col items-center text-[#80142B]"

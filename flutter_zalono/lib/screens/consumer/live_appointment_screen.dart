@@ -61,8 +61,8 @@ class LiveAppointmentScreen extends StatelessWidget {
                           color: ZalonoTheme.accentGreenLight,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Row(
-                          children: const [
+                        child: const Row(
+                          children: [
                             Icon(Icons.check, size: 14, color: ZalonoTheme.accentGreen),
                             SizedBox(width: 4),
                             Text('On time', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: ZalonoTheme.accentGreen)),

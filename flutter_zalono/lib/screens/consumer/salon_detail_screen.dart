@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../models/models.dart';
 import '../../providers/zalono_provider.dart';
-import 'live_appointment_screen.dart';
+//import 'live_appointment_screen.dart';
 import 'booking_confirmation_screen.dart';
 
 class SalonDetailScreen extends StatefulWidget {
@@ -38,7 +38,7 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
             expandedHeight: 220,
             pinned: true,
             leading: CircleAvatar(
-              backgroundColor: Colors.white.withOpacity(0.9),
+              backgroundColor: Colors.white.withValues(),
               child: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black87),
                 onPressed: () => Navigator.pop(context),
@@ -46,7 +46,7 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
             ),
             actions: [
               CircleAvatar(
-                backgroundColor: Colors.white.withOpacity(0.9),
+                backgroundColor: Colors.white.withValues(),
                 child: IconButton(
                   icon: const Icon(Icons.favorite_border, color: Colors.black87),
                   onPressed: () {},
@@ -54,7 +54,7 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
               ),
               const SizedBox(width: 8),
               CircleAvatar(
-                backgroundColor: Colors.white.withOpacity(0.9),
+                backgroundColor: Colors.white.withValues(),
                 child: IconButton(
                   icon: const Icon(Icons.share_outlined, color: Colors.black87),
                   onPressed: () {},
@@ -77,9 +77,9 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          Colors.black.withOpacity(0.3),
+                          Colors.black.withValues(),
                           Colors.transparent,
-                          Colors.black.withOpacity(0.6),
+                          Colors.black.withValues(),
                         ],
                       ),
                     ),
@@ -107,8 +107,8 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
                           color: ZalonoTheme.accentGreenLight,
                           borderRadius: BorderRadius.circular(6),
                         ),
-                        child: Row(
-                          children: const [
+                        child: const Row(
+                          children: [
                             Icon(Icons.circle, size: 8, color: ZalonoTheme.accentGreen),
                             SizedBox(width: 4),
                             Text('Open · Closes 9:00 PM', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: ZalonoTheme.accentGreen)),
@@ -207,9 +207,9 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
+                    children: [
                       Text('Live Availability - Today', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
                       Text('Real-time sync', style: TextStyle(fontSize: 11, color: ZalonoTheme.accentGreen, fontWeight: FontWeight.bold)),
                     ],
@@ -271,10 +271,10 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
                     decoration: BoxDecoration(
                       color: ZalonoTheme.accentGreenLight,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: ZalonoTheme.accentGreen.withOpacity(0.3)),
+                      border: Border.all(color: ZalonoTheme.accentGreen.withValues()),
                     ),
-                    child: Row(
-                      children: const [
+                    child: const Row(
+                      children: [
                         Icon(Icons.check_circle_rounded, color: ZalonoTheme.accentGreen, size: 20),
                         SizedBox(width: 10),
                         Expanded(
@@ -304,7 +304,7 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 10, offset: const Offset(0, -4)),
+            BoxShadow(color: Colors.black.withValues(), blurRadius: 10, offset: const Offset(0, -4)),
           ],
         ),
         child: SafeArea(

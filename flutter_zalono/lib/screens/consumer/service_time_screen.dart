@@ -124,11 +124,12 @@ class _ServiceTimeScreenState extends State<ServiceTimeScreen> {
                         lastDate: DateTime.now().add(const Duration(days: 14)),
                       );
                       if (pickedDate != null) {
+                        if (!context.mounted) return;
                         final pickedTime = await showTimePicker(
                           context: context,
                           initialTime: _selectedCustomTime,
                         );
-                        if (pickedTime != null) {
+                        if (pickedTime != null && context.mounted) {
                           setState(() {
                             _selectedDate = pickedDate;
                             _selectedCustomTime = pickedTime;
@@ -149,7 +150,7 @@ class _ServiceTimeScreenState extends State<ServiceTimeScreen> {
                 color: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(),
                     blurRadius: 10,
                     offset: const Offset(0, -3),
                   ),
@@ -179,9 +180,9 @@ class _ServiceTimeScreenState extends State<ServiceTimeScreen> {
                     ),
                     elevation: 0,
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       Text(
                         'Show Available Salons',
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -231,8 +232,8 @@ class _ServiceTimeScreenState extends State<ServiceTimeScreen> {
           boxShadow: [
             BoxShadow(
               color: isSelected
-                  ? ZalonoTheme.primaryBurgundy.withOpacity(0.08)
-                  : Colors.black.withOpacity(0.02),
+                  ? ZalonoTheme.primaryBurgundy.withValues()
+                  : Colors.black.withValues(),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -296,14 +297,14 @@ class _ServiceTimeScreenState extends State<ServiceTimeScreen> {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(Icons.schedule, size: 12, color: Colors.emerald.shade700),
+                      const Icon(Icons.schedule, size: 12, color: ZalonoTheme.accentGreen),
                       const SizedBox(width: 4),
                       Text(
                         waitEstimate,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: Colors.emerald.shade700,
+                          color: ZalonoTheme.accentGreen,
                         ),
                       ),
                     ],

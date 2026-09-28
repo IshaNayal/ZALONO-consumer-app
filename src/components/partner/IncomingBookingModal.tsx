@@ -61,7 +61,7 @@ export const IncomingBookingModal: React.FC = () => {
                 <h2 className="text-sm font-bold text-slate-900">Jay Sharma</h2>
                 <span className="text-[10px] bg-blue-100 text-blue-800 px-1.5 py-0.2 rounded font-semibold">New Client</span>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5">+91 98765 43210</p>
+              <p className="text-xs text-slate-500 mt-0.5">+91 00000 00000</p>
             </div>
           </div>
 

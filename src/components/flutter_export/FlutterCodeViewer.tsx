@@ -135,7 +135,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
           border: Border(top: BorderSide(color: Colors.grey.shade200, width: 1)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withValues(),
               blurRadius: 10,
               offset: const Offset(0, -2),
             )
@@ -422,7 +422,7 @@ class ZalonoProvider extends ChangeNotifier {
       travelTimeMin: salon.travelTimeMin,
       stylistName: chosenStylist,
       customerName: 'Jay Sharma',
-      customerPhone: '+91 98765 43210',
+      customerPhone: '+91 00000 00000',
       status: AppointmentStatus.booked,
       expectedWaitMin: '0-5 minutes',
       queuePosition: 1,

@@ -98,7 +98,7 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [partnerScreen, setPartnerScreen] = useState<PartnerScreen>('dashboard');
   
   const [currentLocation, setCurrentLocationState] = useState<PilotLocation>(PILOT_LOCATIONS[0]);
-  const [userProfile, setUserProfile] = useState({ name: 'Jay Sharma', phone: '+91 98765 43210', isOtpVerified: true });
+  const [userProfile, setUserProfile] = useState({ name: 'Jay Sharma', phone: '+91 00000 00000', isOtpVerified: true });
 
   // Persistent Salons & Bookings state
   const [salons, setSalons] = useState<Salon[]>(() => {

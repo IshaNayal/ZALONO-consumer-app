@@ -6,6 +6,9 @@ import 'salon_detail_screen.dart';
 import 'live_appointment_screen.dart';
 import 'service_time_screen.dart';
 import 'salon_list_screen.dart';
+import 'location_picker_screen.dart';
+import 'last_minute_slots_screen.dart';
+import 'book_by_time_screen.dart';
 
 class ConsumerHomeScreen extends StatelessWidget {
   final VoidCallback onSwitchToPartner;
@@ -30,7 +33,7 @@ class ConsumerHomeScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Text(
+                        const Text(
                           'Zalono',
                           style: TextStyle(
                             fontFamily: 'Playfair Display',
@@ -41,19 +44,32 @@ class ConsumerHomeScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            children: const [
-                              Icon(Icons.location_on, size: 14, color: ZalonoTheme.primaryBurgundy),
-                              SizedBox(width: 4),
-                              Text('Bhubaneswar', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-                              Icon(Icons.keyboard_arrow_down, size: 16),
-                            ],
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const LocationPickerScreen(),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.location_on, size: 14, color: ZalonoTheme.primaryBurgundy),
+                                const SizedBox(width: 4),
+                                Text(
+                                  zalono.currentLocation,
+                                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                                ),
+                                const Icon(Icons.keyboard_arrow_down, size: 16),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -125,9 +141,39 @@ class ConsumerHomeScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'When do you want to go?',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'When do you want to go?',
+                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const BookByTimeScreen(),
+                              ),
+                            );
+                          },
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Reverse Search',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: ZalonoTheme.primaryBurgundy,
+                                ),
+                              ),
+                              SizedBox(width: 4),
+                              Icon(Icons.arrow_forward_ios, size: 12, color: ZalonoTheme.primaryBurgundy),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 8),
                     Row(
@@ -142,6 +188,48 @@ class ConsumerHomeScreen extends StatelessWidget {
                       ],
                     ),
                   ],
+                ),
+              ),
+            ),
+
+            // AI Natural Language Slot Finder
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: ZalonoTheme.primaryLight,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: ZalonoTheme.primaryBurgundy.withValues()),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(
+                            hintText: 'AI Slot Finder: "Haircut tomorrow after 6 near Patia"...',
+                            hintStyle: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
+                            prefixIcon: const Icon(Icons.search_rounded, size: 20, color: ZalonoTheme.primaryBurgundy),
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.send_rounded, color: ZalonoTheme.primaryBurgundy, size: 20),
+                              onPressed: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('AI Search: Finding matches...'),
+                                    backgroundColor: ZalonoTheme.primaryBurgundy,
+                                    behavior: SnackBarBehavior.floating,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -221,7 +309,7 @@ class ConsumerHomeScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: ZalonoTheme.accentGreenLight,
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: ZalonoTheme.accentGreen.withOpacity(0.3)),
+                        border: Border.all(color: ZalonoTheme.accentGreen.withValues()),
                       ),
                       child: Row(
                         children: [
@@ -238,8 +326,8 @@ class ConsumerHomeScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  children: const [
+                                const Row(
+                                  children: [
                                     Text('LIVE APPOINTMENT', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: ZalonoTheme.accentGreen)),
                                     SizedBox(width: 6),
                                     Text('· Position 1 in Queue', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
@@ -257,13 +345,72 @@ class ConsumerHomeScreen extends StatelessWidget {
                 ),
               ),
 
-            // Available Salons Near You List
+            // Last-Minute Slots Banner
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const LastMinuteSlotsScreen(),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.shade50,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.amber.shade200),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.amber.shade500,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(Icons.flash_on_rounded, color: Colors.white, size: 20),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Last-Minute Openings',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.amber.shade900,
+                                ),
+                              ),
+                              Text(
+                                'Slots opening in next 90 min near ${zalono.currentLocation}',
+                                style: TextStyle(fontSize: 11, color: Colors.amber.shade800),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(Icons.arrow_forward_ios, size: 14, color: Colors.amber.shade700),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            // Available Salons Near You List
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
+                  children: [
                     Text('Available near you', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                     Text('Fastest slots', style: TextStyle(fontSize: 12, color: ZalonoTheme.primaryBurgundy, fontWeight: FontWeight.w600)),
                   ],
@@ -377,8 +524,8 @@ class ConsumerHomeScreen extends StatelessWidget {
                   color: ZalonoTheme.accentGreenLight,
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: Row(
-                  children: const [
+                child: const Row(
+                  children: [
                     Icon(Icons.circle, size: 8, color: ZalonoTheme.accentGreen),
                     SizedBox(width: 4),
                     Text('Available now', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: ZalonoTheme.accentGreen)),

@@ -62,12 +62,12 @@ class MyBookingsScreen extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: isLive ? ZalonoTheme.primaryBurgundy.withOpacity(0.3) : Colors.grey.shade200,
+                        color: isLive ? ZalonoTheme.primaryBurgundy.withValues() : Colors.grey.shade200,
                         width: isLive ? 1.5 : 1,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.03),
+                          color: Colors.black.withValues(),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -189,8 +189,8 @@ class MyBookingsScreen extends StatelessWidget {
         label = 'You\'re Next!';
         break;
       case AppointmentStatus.inService:
-        bg = Colors.emerald.shade50;
-        text = Colors.emerald.shade700;
+        bg = ZalonoTheme.accentGreenLight;
+        text = ZalonoTheme.accentGreen;
         label = 'In Chair';
         break;
       case AppointmentStatus.completed:

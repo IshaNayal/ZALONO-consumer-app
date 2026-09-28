@@ -5,18 +5,21 @@ import 'providers/zalono_provider.dart';
 import 'screens/consumer/home_screen.dart';
 import 'screens/consumer/salon_list_screen.dart';
 import 'screens/consumer/my_bookings_screen.dart';
+import 'screens/consumer/consumer_profile_screen.dart';
+//import 'screens/consumer/location_picker_screen.dart';
+//import 'screens/consumer/last_minute_slots_screen.dart';
+//import 'screens/consumer/book_by_time_screen.dart';
 import 'screens/partner/partner_dashboard_screen.dart';
+//import 'screens/partner/staff_management_screen.dart';
+//import 'screens/partner/add_walk_in_screen.dart';
+//import 'screens/partner/customer_crm_screen.dart';
+//import 'screens/partner/analytics_screen.dart';
+// import 'screens/partner/during_service_screen.dart';
+//import 'screens/partner/incoming_bookings_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ZalonoProvider()),
-      ],
-      child: const ZalonoApp(),
-    ),
-  );
+  runApp(const ZalonoApp());
 }
 
 class ZalonoApp extends StatelessWidget {
@@ -24,11 +27,16 @@ class ZalonoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Zalono - Look Your Best. Without Waiting.',
-      debugShowCheckedModeBanner: false,
-      theme: ZalonoTheme.lightTheme,
-      home: const MainNavigationShell(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ZalonoProvider()),
+      ],
+      child: MaterialApp(
+        title: 'Zalono - Look Your Best. Without Waiting.',
+        debugShowCheckedModeBanner: false,
+        theme: ZalonoTheme.lightTheme,
+        home: const MainNavigationShell(),
+      ),
     );
   }
 }
@@ -58,7 +66,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       ),
       const SalonListScreen(categoryName: 'All Salons', timeOption: 'now'),
       const MyBookingsScreen(),
-      const MyBookingsScreen(),
+      const ConsumerProfileScreen(),
     ];
 
     return Scaffold(
@@ -69,7 +77,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
           border: Border(top: BorderSide(color: Colors.grey.shade200, width: 1)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 10,
               offset: const Offset(0, -2),
             )

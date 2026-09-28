@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+//import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../models/models.dart';
-import '../../providers/zalono_provider.dart';
+//import '../../providers/zalono_provider.dart';
 import 'live_appointment_screen.dart';
 
 class BookingConfirmationScreen extends StatelessWidget {
@@ -45,13 +45,13 @@ class BookingConfirmationScreen extends StatelessWidget {
                 width: 76,
                 height: 76,
                 decoration: BoxDecoration(
-                  color: Colors.emerald.shade50,
+                  color: ZalonoTheme.accentGreenLight,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.emerald.shade200, width: 2),
+                  border: Border.all(color: ZalonoTheme.accentGreen.withValues(), width: 2),
                 ),
                 child: const Icon(
                   Icons.check_circle_rounded,
-                  color: Colors.emerald,
+                  color: ZalonoTheme.accentGreen,
                   size: 48,
                 ),
               ),
@@ -111,7 +111,7 @@ class BookingConfirmationScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.emerald.shade100,
+                            color: ZalonoTheme.accentGreenLight,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: const Text(
@@ -119,7 +119,7 @@ class BookingConfirmationScreen extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
-                              color: Colors.emerald,
+                              color: ZalonoTheme.accentGreen,
                             ),
                           ),
                         ),
@@ -217,9 +217,9 @@ class BookingConfirmationScreen extends StatelessWidget {
                     ),
                     elevation: 0,
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       Icon(Icons.radar_rounded, size: 20),
                       SizedBox(width: 8),
                       Text(

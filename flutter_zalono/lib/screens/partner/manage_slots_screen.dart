@@ -66,7 +66,7 @@ class ManageSlotsScreen extends StatelessWidget {
                 ),
                 Switch.adaptive(
                   value: !isBooked,
-                  activeColor: ZalonoTheme.accentGreen,
+                  activeTrackColor: ZalonoTheme.accentGreen,
                   onChanged: (val) {
                     zalono.toggleSlotStatus(salon.id, slot.id);
                   },

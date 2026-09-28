@@ -45,7 +45,7 @@ export const SalonDetail: React.FC = () => {
           alt={selectedSalon.name}
           className="w-full h-full object-cover opacity-90"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+        <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent"></div>
         
         {/* Floating Top Controls */}
         <div className="absolute top-3 left-4 right-4 flex items-center justify-between">
@@ -232,7 +232,7 @@ export const SalonDetail: React.FC = () => {
               <p><strong>Address:</strong> {selectedSalon.address}</p>
               <p><strong>Area:</strong> {selectedSalon.area}</p>
               <p><strong>Hours:</strong> {selectedSalon.openingHours}</p>
-              <p><strong>Reception Phone:</strong> {selectedSalon.phone || '+91 98765 43210'}</p>
+              <p><strong>Reception Phone:</strong> {selectedSalon.phone || '+91 00000 00000'}</p>
               <p><strong>UPI ID:</strong> {selectedSalon.upiId || 'zalono.pilot@icici'}</p>
             </div>
           </div>
@@ -357,7 +357,7 @@ export const SalonDetail: React.FC = () => {
       </div>
 
       {/* Sticky Bottom Dual CTA Bar */}
-      <div className="fixed bottom-0 left-0 right-0 max-w-[390px] mx-auto bg-white/95 backdrop-blur-md p-3.5 border-t border-slate-200 shadow-xl z-30">
+      <div className="fixed bottom-0 left-0 right-0 max-w-97.5 mx-auto bg-white/95 backdrop-blur-md p-3.5 border-t border-slate-200 shadow-xl z-30">
         <div className="grid grid-cols-2 gap-2.5">
           <button
             onClick={() => handleBook('sl-4')}

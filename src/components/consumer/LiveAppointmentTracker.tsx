@@ -121,7 +121,7 @@ export const LiveAppointmentTracker: React.FC = () => {
                 <div key={st.key} className="relative flex items-start justify-between">
                   {/* Indicator Dot */}
                   <div
-                    className={`absolute -left-[29px] top-0.5 w-6 h-6 rounded-full flex items-center justify-center ring-4 ring-white transition-all ${
+                    className={`absolute -left-7.25 top-0.5 w-6 h-6 rounded-full flex items-center justify-center ring-4 ring-white transition-all ${
                       isPast
                         ? 'bg-emerald-600 text-white'
                         : isCurrent
@@ -130,7 +130,7 @@ export const LiveAppointmentTracker: React.FC = () => {
                     }`}
                   >
                     {isPast ? (
-                      <Check className="w-3.5 h-3.5 stroke-[3]" />
+                      <Check className="w-3.5 h-3.5 stroke-3" />
                     ) : isCurrent ? (
                       <Scissors className="w-3 h-3 stroke-[2.5]" />
                     ) : (
@@ -204,7 +204,7 @@ export const LiveAppointmentTracker: React.FC = () => {
           </a>
 
           <button
-            onClick={() => showNotification('Calling Looks Salon', 'Calling +91 98765 43210 (Saheed Nagar reception)...')}
+            onClick={() => showNotification('Calling Looks Salon', 'Calling +91 00000 00000 (Saheed Nagar reception)...')}
             className="w-full py-2.5 px-4 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 flex items-center justify-center gap-2 shadow-xs transition-colors"
           >
             <Phone className="w-4 h-4 text-[#80142B]" />
