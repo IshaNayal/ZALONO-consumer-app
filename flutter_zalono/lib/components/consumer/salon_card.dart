@@ -275,13 +275,16 @@ class _Meta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
+    return Wrap(
+      // Wrap, not Row: at 1.5x text scale on a 320px phone the label needs more
+      // width than the card gives this item, and a Row overflowed by 40px.
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 3,
       children: [
         Icon(icon, size: 12, color: ZalonoTheme.textMuted),
-        const SizedBox(width: 3),
         Text(
           text,
+          maxLines: 1,
           style: const TextStyle(fontSize: 11.5, color: ZalonoTheme.textMuted),
         ),
       ],

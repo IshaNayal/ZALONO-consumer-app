@@ -10,6 +10,7 @@ import 'package:zalono/components/consumer/location_header.dart';
 import 'package:zalono/components/consumer/salon_search_bar.dart';
 import 'package:zalono/components/consumer/category_section.dart';
 import 'package:zalono/components/consumer/salon_gender_tag.dart';
+import 'package:zalono/components/consumer/salon_card.dart';
 import 'package:zalono/components/consumer/salon_filter_panel.dart';
 import 'package:zalono/screens/consumer/service_time_screen.dart';
 import 'package:zalono/screens/consumer/salon_list_screen.dart';
@@ -463,6 +464,96 @@ testWidgets('still shows salon details after the layout fix',
         isTrue,
         reason: 'review count is clipped',
       );
+    });
+
+    testWidgets('salon page shows the gender tag and rating in full',
+        (WidgetTester tester) async {
+      final zalono = ZalonoProvider();
+
+      bool showsInFull(Finder finder) {
+        final paragraph = tester.renderObject<RenderParagraph>(finder);
+        final needed = (TextPainter(
+          text: paragraph.text,
+          textDirection: TextDirection.ltr,
+        )..layout()).width;
+        return paragraph.size.width >= needed - 0.5;
+      }
+
+      // The page bundled area, distance and rating into one two-line Text,
+      // which needed three lines on a 320px phone and cut the count off.
+      tester.view.physicalSize = const Size(320, 568);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider(
+          create: (_) => zalono,
+          child: MaterialApp(
+            theme: ZalonoTheme.lightTheme,
+            home: Scaffold(
+              body: SalonDetailScreen(salon: zalono.salons.first),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      Finder textMatching(Pattern pattern) => find.byWidgetPredicate(
+            (widget) =>
+                widget is Text && pattern.allMatches(widget.data ?? '').isNotEmpty,
+          );
+
+      expect(
+        showsInFull(
+          find.descendant(
+            of: find.byType(SalonGenderTag).first,
+            matching: find.byType(Text),
+          ),
+        ),
+        isTrue,
+        reason: 'page: gender clipped',
+      );
+      expect(
+        showsInFull(textMatching(RegExp(r'^\d+\.\d+$')).first),
+        isTrue,
+        reason: 'page: rating clipped',
+      );
+      expect(
+        showsInFull(textMatching(RegExp(r'^\(\d+\)$')).first),
+        isTrue,
+        reason: 'page: review count clipped',
+      );
+    });
+
+    testWidgets('Home card meta row fits at 1.5x text scale',
+        (WidgetTester tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = 1.5;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      tester.view.physicalSize = const Size(320, 568);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      // The card on its own: the category strip above it has its own fixed
+      // height and is not what this test is about.
+      final zalono = ZalonoProvider();
+      await tester.pumpWidget(
+        ChangeNotifierProvider(
+          create: (_) => zalono,
+          child: MaterialApp(
+            theme: ZalonoTheme.lightTheme,
+            home: Scaffold(
+              body: ListView(
+                children: [SalonCard(salon: zalono.salons.first)],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull, reason: 'Home card overflows');
     });
   });
 

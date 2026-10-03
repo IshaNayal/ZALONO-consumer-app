@@ -121,15 +121,56 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
                     ],
                   ),
                   const SizedBox(height: 6),
-                  Text(
-                    '${salon.area} · ${salon.distanceKm} km · '
-                    '⭐ ${salon.rating} (${salon.reviewsCount})',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: ZalonoTheme.textMuted,
-                    ),
+                  // Rating and location are separate items in a Wrap.
+                  //
+                  // Bundled into one Text with maxLines: 2 they needed three
+                  // lines on a 320px phone, which cut the review count off the
+                  // end. As separate items the rating is never truncated and
+                  // the location simply drops below it when space runs out.
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 4,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Wrap(
+                        spacing: 3,
+                        runSpacing: 0,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.star_rounded,
+                            size: 14,
+                            color: Colors.amber,
+                          ),
+                          Text(
+                            '${salon.rating}',
+                            maxLines: 1,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.amber.shade900,
+                            ),
+                          ),
+                          Text(
+                            '(${salon.reviewsCount})',
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: ZalonoTheme.textMuted,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        '${salon.area} · ${salon.distanceKm} km',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: ZalonoTheme.textMuted,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
