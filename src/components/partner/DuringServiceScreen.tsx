@@ -56,7 +56,7 @@ export const DuringServiceScreen: React.FC = () => {
             J
           </div>
           <div>
-            <h2 className="text-sm font-bold text-slate-900">Jay Sharma</h2>
+            <h2 className="text-sm font-bold text-slate-900">Isha </h2>
             <p className="text-xs text-slate-500">Haircut · 45 min · Stylist Rahul</p>
           </div>
         </div>

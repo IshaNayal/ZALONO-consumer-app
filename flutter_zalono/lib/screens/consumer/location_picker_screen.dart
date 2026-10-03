@@ -61,8 +61,24 @@ class LocationPickerScreen extends StatelessWidget {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(16),
                   onTap: () {
-                    zalono.setLocation(loc['name']!);
+                    final area = loc['name']!;
+                    zalono.setLocation(area);
                     Navigator.pop(context);
+
+                    // Coverage is checked against the provider rather than the
+                    // hardcoded salon counts in this list, so the warning
+                    // always matches what Home will actually show.
+                    if (zalono.salonsForCurrentLocation.isEmpty) {
+                      ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(
+                          SnackBar(
+                            content: Text('Coming soon in $area'),
+                            behavior: SnackBarBehavior.floating,
+                            backgroundColor: ZalonoTheme.textDark,
+                          ),
+                        );
+                    }
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(16),

@@ -3,9 +3,15 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../models/models.dart';
 import '../../providers/zalono_provider.dart';
-//import 'live_appointment_screen.dart';
-import 'booking_confirmation_screen.dart';
+import '../../components/consumer/salon_gender_tag.dart';
+import 'payment_verification_screen.dart';
 
+/// Salon services page — the step right after the user picks a salon.
+///
+/// Reached directly from the salon results, so it leads with the service
+/// catalogue rather than another summary screen. Keeps the original Zalono
+/// service card design, adds a "More Services" way into the full list, and
+/// ends in a single sticky **Book Now** action.
 class SalonDetailScreen extends StatefulWidget {
   final Salon salon;
 
@@ -16,52 +22,46 @@ class SalonDetailScreen extends StatefulWidget {
 }
 
 class _SalonDetailScreenState extends State<SalonDetailScreen> {
-  int _selectedHourIndex = 1; // 11 AM
-  int _selectedSlotIndex = 2; // 11:40 AM (Recommended)
-  int _selectedServiceIndex = 0; // Haircut
-  int _activeTab = 1; // Services
+  /// Selection is a set: the user may pick none, one, or several services.
+  final Set<String> _selectedServiceIds = {};
 
-  final List<String> _hourTabs = ['10 AM', '11 AM', '12 PM', '1 PM', '2 PM'];
+  List<ServiceItem> get _selectedServices {
+    return widget.salon.services
+        .where((s) => _selectedServiceIds.contains(s.id))
+        .toList(growable: false);
+  }
+
+  double get _totalPrice =>
+      _selectedServices.fold<double>(0, (sum, s) => sum + s.price);
+
+  int get _totalDuration =>
+      _selectedServices.fold<int>(0, (sum, s) => sum + s.durationMinutes);
+
+  void _toggleService(String id) {
+    setState(() {
+      if (!_selectedServiceIds.remove(id)) _selectedServiceIds.add(id);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final zalono = Provider.of<ZalonoProvider>(context);
     final salon = widget.salon;
-    final selectedService = salon.services[_selectedServiceIndex];
+    final services = salon.services;
+    final selectedCount = _selectedServices.length;
 
     return Scaffold(
       backgroundColor: ZalonoTheme.backgroundLight,
       body: CustomScrollView(
         slivers: [
-          // Hero Image Header
           SliverAppBar(
-            expandedHeight: 220,
+            expandedHeight: 180,
             pinned: true,
-            leading: CircleAvatar(
-              backgroundColor: Colors.white.withValues(),
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black87),
-                onPressed: () => Navigator.pop(context),
-              ),
+            backgroundColor: ZalonoTheme.backgroundLight,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+              onPressed: () => Navigator.pop(context),
             ),
-            actions: [
-              CircleAvatar(
-                backgroundColor: Colors.white.withValues(),
-                child: IconButton(
-                  icon: const Icon(Icons.favorite_border, color: Colors.black87),
-                  onPressed: () {},
-                ),
-              ),
-              const SizedBox(width: 8),
-              CircleAvatar(
-                backgroundColor: Colors.white.withValues(),
-                child: IconButton(
-                  icon: const Icon(Icons.share_outlined, color: Colors.black87),
-                  onPressed: () {},
-                ),
-              ),
-              const SizedBox(width: 12),
-            ],
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
                 fit: StackFit.expand,
@@ -69,17 +69,17 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
                   Image.network(
                     salon.imageUrl,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(color: Colors.grey.shade300),
+                    errorBuilder: (_, __, ___) =>
+                        Container(color: Colors.grey.shade200),
                   ),
-                  Container(
+                  DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          Colors.black.withValues(),
+                          Colors.black.withValues(alpha: 0.25),
                           Colors.transparent,
-                          Colors.black.withValues(),
                         ],
                       ),
                     ),
@@ -89,279 +89,218 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
             ),
           ),
 
-          // Salon Title & Verified badges
+          // Salon identity
           SliverToBoxAdapter(
             child: Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(16),
+              color: ZalonoTheme.backgroundLight,
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(salon.name, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: ZalonoTheme.accentGreenLight,
-                          borderRadius: BorderRadius.circular(6),
+                      Expanded(
+                        child: Text(
+                          salon.name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: ZalonoTheme.textDark,
+                          ),
                         ),
-                        child: const Row(
-                          children: [
-                            Icon(Icons.circle, size: 8, color: ZalonoTheme.accentGreen),
-                            SizedBox(width: 4),
-                            Text('Open · Closes 9:00 PM', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: ZalonoTheme.accentGreen)),
-                          ],
-                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Who this salon serves for.
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: SalonGenderTag(gender: salon.gender),
                       ),
                     ],
                   ),
                   const SizedBox(height: 6),
-                  Text('⭐ ${salon.rating} (${salon.reviewsCount} reviews) · ${salon.distanceKm} km · ${salon.travelTimeMin} min away', style: TextStyle(fontSize: 13, color: Colors.grey.shade700)),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(color: Colors.blue.shade50, borderRadius: BorderRadius.circular(4)),
-                        child: const Text('✓ Verified salon', style: TextStyle(fontSize: 11, color: Colors.blue, fontWeight: FontWeight.w600)),
-                      ),
-                      const SizedBox(width: 8),
-                      Text('• ${salon.happyCustomersCount} happy customers', style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Navigation Tabs (Overview, Services, Stylists, Reviews)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildTabButton('Overview', 0),
-                      _buildTabButton('Services', 1),
-                      _buildTabButton('Stylists', 2),
-                      _buildTabButton('Reviews', 3),
-                    ],
+                  Text(
+                    '${salon.area} · ${salon.distanceKm} km · '
+                    '⭐ ${salon.rating} (${salon.reviewsCount})',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: ZalonoTheme.textMuted,
+                    ),
                   ),
                 ],
               ),
             ),
           ),
 
-          // Services Selection List
+          // Services
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Select Service', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 10),
-                  ...List.generate(salon.services.length, (idx) {
-                    final s = salon.services[idx];
-                    final isSelected = _selectedServiceIndex == idx;
-                    return GestureDetector(
-                      onTap: () => setState(() => _selectedServiceIndex = idx),
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 8),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: isSelected ? ZalonoTheme.primaryLight : Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: isSelected ? ZalonoTheme.primaryBurgundy : Colors.grey.shade200,
-                            width: isSelected ? 1.5 : 1,
+                  Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'Select services',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: ZalonoTheme.textDark,
                           ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(s.name, style: TextStyle(fontSize: 14, fontWeight: isSelected ? FontWeight.bold : FontWeight.w600)),
-                                Text('${s.durationMinutes} min · ${s.description}', style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
-                              ],
-                            ),
-                            Text('₹${s.price.toInt()}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                          ],
                         ),
                       ),
-                    );
-                  }),
-                ],
-              ),
-            ),
-          ),
-
-          // Live Availability Timeline
-          SliverToBoxAdapter(
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey.shade200),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Live Availability - Today', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                      Text('Real-time sync', style: TextStyle(fontSize: 11, color: ZalonoTheme.accentGreen, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Hour Tabs
-                  SizedBox(
-                    height: 36,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: _hourTabs.length,
-                      separatorBuilder: (_, __) => const SizedBox(width: 8),
-                      itemBuilder: (context, idx) {
-                        final isSel = _selectedHourIndex == idx;
-                        return GestureDetector(
-                          onTap: () => setState(() => _selectedHourIndex = idx),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: isSel ? ZalonoTheme.textDark : Colors.grey.shade100,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              _hourTabs[idx],
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: isSel ? Colors.white : Colors.grey.shade800,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Slot chips grid (Available, Limited, Booked)
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      _buildSlotChip('11:00 AM', 'Booked', isBooked: true),
-                      _buildSlotChip('11:15 AM', 'Available', isEarliest: true, isSelected: _selectedSlotIndex == 0, onTap: () => setState(() => _selectedSlotIndex = 0)),
-                      _buildSlotChip('11:30 AM', 'Available', isEarliest: true, isSelected: _selectedSlotIndex == 1, onTap: () => setState(() => _selectedSlotIndex = 1)),
-                      _buildSlotChip('11:40 AM', 'Recommended', isRecommended: true, isSelected: _selectedSlotIndex == 2, onTap: () => setState(() => _selectedSlotIndex = 2)),
-                      _buildSlotChip('12:00 PM', 'Available', isSelected: _selectedSlotIndex == 3, onTap: () => setState(() => _selectedSlotIndex = 3)),
-                      _buildSlotChip('12:30 PM', 'Limited', isLimited: true),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Smart Slot recommendation badge
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: ZalonoTheme.accentGreenLight,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: ZalonoTheme.accentGreen.withValues()),
-                    ),
-                    child: const Row(
-                      children: [
-                        Icon(Icons.check_circle_rounded, color: ZalonoTheme.accentGreen, size: 20),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Recommended for you: 11:40 AM', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: ZalonoTheme.accentGreen)),
-                              Text('8 min travel time + 5 min arrival buffer', style: TextStyle(fontSize: 11, color: Colors.black87)),
-                            ],
-                          ),
+                      Text(
+                        selectedCount == 0
+                            ? 'Optional'
+                            : '$selectedCount selected',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: ZalonoTheme.textMuted,
                         ),
-                      ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Pick one, several, or none.',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: ZalonoTheme.textMuted,
                     ),
                   ),
+                  const SizedBox(height: 10),
+                  // Every service is listed. A collapsed "+N" tile used to sit
+                  // below this, but salons with three or fewer services never
+                  // showed it, leaving a dead gap and no way to discover the
+                  // rest of the list.
+                  for (final service in services) ...[
+                    _ServiceTile(
+                      service: service,
+                      isSelected: _selectedServiceIds.contains(service.id),
+                      onTap: () => _toggleService(service.id),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
                 ],
               ),
             ),
           ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 120)),
+          const SliverToBoxAdapter(child: SizedBox(height: 20)),
         ],
       ),
 
-      // Bottom Sticky Booking CTA Bar
-      bottomSheet: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(color: Colors.black.withValues(), blurRadius: 10, offset: const Offset(0, -4)),
-          ],
-        ),
-        child: SafeArea(
+      // Sticky Book Now CTA
+      bottomNavigationBar: _BookNowBar(
+        selectedServices: _selectedServices,
+        totalPrice: _totalPrice,
+        totalDuration: _totalDuration,
+        slot: _targetSlot(salon),
+        onBook: selectedCount == 0
+            ? null
+            : () {
+                zalono.setSelectedSalon(salon);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PaymentVerificationScreen(
+                      salon: salon,
+                      services: _selectedServices,
+                      slot: _targetSlot(salon),
+                    ),
+                  ),
+                );
+              },
+      ),
+    );
+  }
+
+  /// Uses the salon's recommended time, falling back to the earliest opening.
+  LiveSlot _targetSlot(Salon salon) {
+    return salon.slots.firstWhere(
+      (s) => s.isRecommended && s.status == SlotStatus.available,
+      orElse: () => salon.slots.firstWhere(
+        (s) => s.status == SlotStatus.available,
+        orElse: () => salon.slots.first,
+      ),
+    );
+  }
+}
+
+class _ServiceTile extends StatelessWidget {
+  const _ServiceTile({
+    required this.service,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final ServiceItem service;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: isSelected ? ZalonoTheme.primaryLight : Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isSelected
+                  ? ZalonoTheme.primaryBurgundy
+                  : ZalonoTheme.borderLight,
+              width: isSelected ? 1.5 : 1,
+            ),
+          ),
           child: Row(
             children: [
               Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    final targetSlot = salon.slots.firstWhere((s) => s.isEarliest, orElse: () => salon.slots.first);
-                    zalono.bookSlot(salon: salon, slot: targetSlot, service: selectedService);
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => BookingConfirmationScreen(booking: zalono.activeBooking!),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      service.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.w600,
+                        color: ZalonoTheme.textDark,
                       ),
-                    );
-                  },
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    side: const BorderSide(color: ZalonoTheme.primaryBurgundy),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
-                  child: const Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('Book 11:15 AM', style: TextStyle(fontWeight: FontWeight.bold, color: ZalonoTheme.primaryBurgundy, fontSize: 13)),
-                      Text('(Earliest slot)', style: TextStyle(fontSize: 10, color: ZalonoTheme.primaryBurgundy)),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${service.durationMinutes} min · ${service.description}',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: ZalonoTheme.textMuted,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    final targetSlot = salon.slots.firstWhere((s) => s.isRecommended, orElse: () => salon.slots.first);
-                    zalono.bookSlot(salon: salon, slot: targetSlot, service: selectedService);
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => BookingConfirmationScreen(booking: zalono.activeBooking!),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ZalonoTheme.primaryBurgundy,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
-                  child: const Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('Book 11:40 AM', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                      Text('(Recommended)', style: TextStyle(fontSize: 10, color: Colors.white70)),
-                    ],
-                  ),
+              const SizedBox(width: 10),
+              Text(
+                '₹${service.price.toInt()}',
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: ZalonoTheme.textDark,
                 ),
               ),
             ],
@@ -370,64 +309,93 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
       ),
     );
   }
+}
 
-  Widget _buildTabButton(String title, int index) {
-    final isSel = _activeTab == index;
-    return GestureDetector(
-      onTap: () => setState(() => _activeTab = index),
-      child: Column(
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: isSel ? FontWeight.bold : FontWeight.w500,
-              color: isSel ? ZalonoTheme.primaryBurgundy : Colors.grey.shade600,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Container(
-            height: 2,
-            width: 36,
-            color: isSel ? ZalonoTheme.primaryBurgundy : Colors.transparent,
-          ),
-        ],
+class _BookNowBar extends StatelessWidget {
+  const _BookNowBar({
+    required this.selectedServices,
+    required this.totalPrice,
+    required this.totalDuration,
+    required this.slot,
+    required this.onBook,
+  });
+
+  final List<ServiceItem> selectedServices;
+  final double totalPrice;
+  final int totalDuration;
+  final LiveSlot slot;
+
+  /// Null when nothing is selected, which disables the CTA.
+  final VoidCallback? onBook;
+
+  @override
+  Widget build(BuildContext context) {
+    final count = selectedServices.length;
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: ZalonoTheme.borderLight)),
       ),
-    );
-  }
-
-  Widget _buildSlotChip(String time, String label, {bool isBooked = false, bool isLimited = false, bool isEarliest = false, bool isRecommended = false, bool isSelected = false, VoidCallback? onTap}) {
-    Color bg = Colors.white;
-    Color border = Colors.grey.shade300;
-    Color textColor = Colors.black87;
-
-    if (isBooked) {
-      bg = Colors.grey.shade100;
-      border = Colors.grey.shade300;
-      textColor = Colors.grey.shade400;
-    } else if (isSelected) {
-      bg = ZalonoTheme.primaryBurgundy;
-      border = ZalonoTheme.primaryBurgundy;
-      textColor = Colors.white;
-    } else if (isRecommended) {
-      bg = ZalonoTheme.accentGreenLight;
-      border = ZalonoTheme.accentGreen;
-      textColor = ZalonoTheme.accentGreen;
-    }
-
-    return GestureDetector(
-      onTap: isBooked ? null : onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: border),
-        ),
-        child: Column(
+      child: SafeArea(
+        top: false,
+        child: Row(
           children: [
-            Text(time, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: textColor)),
-            Text(label, style: TextStyle(fontSize: 10, color: isSelected ? Colors.white70 : textColor)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    count == 0
+                        ? 'No services selected'
+                        : '$count service${count == 1 ? '' : 's'} · ₹${totalPrice.toInt()}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: count == 0
+                          ? ZalonoTheme.textMuted
+                          : ZalonoTheme.textDark,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    count == 0
+                        ? 'Pick one or more to continue'
+                        : '${slot.time} · $totalDuration min',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: ZalonoTheme.textMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            ElevatedButton(
+              onPressed: onBook,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ZalonoTheme.primaryBurgundy,
+                foregroundColor: Colors.white,
+                disabledBackgroundColor:
+                    ZalonoTheme.primaryBurgundy.withValues(alpha: 0.35),
+                disabledForegroundColor: Colors.white70,
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text(
+                'Book Now',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+            ),
           ],
         ),
       ),

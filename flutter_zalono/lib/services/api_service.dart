@@ -160,6 +160,8 @@ class ApiService {
       busyLevel: _parseBusyLevel(json['busyLevel']),
       isVerified: json['isVerified'] ?? true,
       happyCustomersCount: json['happyCustomersCount'] ?? '500+',
+      gender: _parseSalonGender(json['gender']),
+      phone: (json['phone'] ?? '').toString(),
       services: (json['services'] as List<dynamic>?)?.map((s) => ServiceItem(
         id: s['id'] ?? '',
         name: s['name'] ?? '',
@@ -204,13 +206,26 @@ class ApiService {
       distanceKm: (json['distanceKm'] as num?)?.toDouble() ?? 1.0,
       travelTimeMin: json['travelTimeMin'] ?? 10,
       stylistName: json['stylistName'] ?? 'Rahul',
-      customerName: json['customerName'] ?? 'Jay Sharma',
+      customerName: json['customerName'] ?? 'Isha ',
       customerPhone: json['customerPhone'] ?? '',
       status: _parseAppointmentStatus(json['status']),
       expectedWaitMin: json['expectedWaitMin'] ?? '0-5 min',
       queuePosition: json['queuePosition'] ?? 1,
       estimatedStartTime: json['estimatedStartTime'] ?? '',
     );
+  }
+
+  static SalonGender _parseSalonGender(String? str) {
+    switch (str?.toLowerCase()) {
+      case 'male':
+      case 'men':
+        return SalonGender.male;
+      case 'female':
+      case 'women':
+        return SalonGender.female;
+      default:
+        return SalonGender.unisex;
+    }
   }
 
   static BusyLevel _parseBusyLevel(String? str) {

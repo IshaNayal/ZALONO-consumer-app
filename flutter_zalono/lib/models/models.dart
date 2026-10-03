@@ -7,6 +7,69 @@ enum AppointmentStatus { booked, checkedIn, youAreNext, inService, completed, ca
 enum PaymentStatus { paidSalon, paidUpi, pending }
 enum StylistStatus { available, withCustomer, onBreak, off }
 
+/// Who a salon serves. Used by the gender filter on the consumer side.
+enum SalonGender {
+  male('Men'),
+  female('Women'),
+  unisex('Unisex');
+
+  const SalonGender(this.label);
+
+  /// Display label, kept on the enum so the UI never hardcodes it.
+  final String label;
+}
+
+/// A top-level service category surfaced on the Home page.
+///
+/// `iconKey` is a semantic identifier rather than an IconData so this model
+/// stays free of Flutter UI imports and can be populated from the API later
+/// without the UI hardcoding labels or icons.
+class ServiceCategory {
+  final String id;
+  final String name;
+  final String iconKey;
+
+  const ServiceCategory({
+    required this.id,
+    required this.name,
+    required this.iconKey,
+  });
+}
+
+/// A user-saved address the customer can book around.
+class SavedLocation {
+  final String id;
+  final String label;
+  final String address;
+
+  /// Mutable so [ZalonoProvider.useSavedLocation] can move the default flag.
+  bool isDefault;
+
+  SavedLocation({
+    required this.id,
+    required this.label,
+    required this.address,
+    this.isDefault = false,
+  });
+}
+
+/// A saved payment instrument, shown on the Payment Methods screen.
+class SavedPaymentMethod {
+  final String id;
+  final String type;
+  final String label;
+
+  /// Mutable so [ZalonoProvider.useDefaultPaymentMethod] can move the flag.
+  bool isDefault;
+
+  SavedPaymentMethod({
+    required this.id,
+    required this.type,
+    required this.label,
+    this.isDefault = false,
+  });
+}
+
 class ServiceItem {
   final String id;
   final String name;
@@ -98,6 +161,12 @@ class Salon {
   final bool isVerified;
   final String happyCustomersCount;
 
+  /// Who this salon serves; drives the gender filter.
+  final SalonGender gender;
+
+  /// Contact number for call/message actions, digits only (no country code).
+  final String phone;
+
   Salon({
     required this.id,
     required this.name,
@@ -122,6 +191,8 @@ class Salon {
     required this.slots,
     required this.isVerified,
     required this.happyCustomersCount,
+    this.gender = SalonGender.unisex,
+    this.phone = '',
   });
 }
 
@@ -145,6 +216,11 @@ class Booking {
   final String estimatedStartTime;
   PaymentStatus paymentStatus;
 
+  /// Concrete appointment start, used to time the single pre-appointment
+  /// reminder. Null for bookings that come from the API without a parseable
+  /// time, in which case no reminder is scheduled.
+  DateTime? startsAt;
+
   Booking({
     required this.id,
     required this.salonId,
@@ -164,5 +240,6 @@ class Booking {
     required this.queuePosition,
     required this.estimatedStartTime,
     this.paymentStatus = PaymentStatus.pending,
+    this.startsAt,
   });
 }

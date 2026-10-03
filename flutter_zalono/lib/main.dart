@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'config/app_config.dart';
 import 'theme/app_theme.dart';
 import 'providers/zalono_provider.dart';
 import 'screens/consumer/home_screen.dart';
 import 'screens/consumer/salon_list_screen.dart';
 import 'screens/consumer/my_bookings_screen.dart';
 import 'screens/consumer/consumer_profile_screen.dart';
+import 'components/common/consumer_notification_host.dart';
 import 'screens/consumer/location_picker_screen.dart';
 import 'screens/consumer/last_minute_slots_screen.dart';
 import 'screens/consumer/book_by_time_screen.dart';
@@ -56,7 +58,6 @@ class MainNavigationShell extends StatefulWidget {
 
 class _MainNavigationShellState extends State<MainNavigationShell> {
   int _currentIndex = 0;
-  bool _isPartnerMode = false;
   int _showcaseIndex = -1;
 
   @override
@@ -98,7 +99,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     switch (screenParam) {
       case 'home':
       case '0':
-        return ConsumerHomeScreen(onSwitchToPartner: () => setState(() => _isPartnerMode = true));
+        return const ConsumerHomeScreen();
       case 'explore':
       case 'salon_list':
       case '1':
@@ -133,7 +134,14 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
         return const LocationPickerScreen();
       case 'partner_dashboard':
       case '11':
-        return PartnerDashboardScreen(onSwitchToConsumer: () => setState(() => _isPartnerMode = false));
+        // Reachable only through the dev showcase router. There is no
+        // customer-facing entry point into the partner app.
+        return PartnerDashboardScreen(
+          onSwitchToConsumer: () => Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const ConsumerHomeScreen()),
+            (route) => false,
+          ),
+        );
       case 'manage_slots':
       case '12':
         return const ManageSlotsScreen();
@@ -176,51 +184,87 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       return explicitScreen;
     }
 
-    if (_isPartnerMode) {
-      return PartnerDashboardScreen(
-        onSwitchToConsumer: () => setState(() => _isPartnerMode = false),
-      );
-    }
+    final navItems = _buildNavItems();
 
-    final screens = [
-      ConsumerHomeScreen(
-        onSwitchToPartner: () => setState(() => _isPartnerMode = true),
-      ),
-      const SalonListScreen(categoryName: 'All Salons', timeOption: 'now'),
-      const MyBookingsScreen(),
-      const ConsumerProfileScreen(),
-    ];
+    // Guard against a stale index if the Search tab is toggled off at runtime.
+    final safeIndex = _currentIndex.clamp(0, navItems.length - 1);
 
     return Scaffold(
-      body: screens[_currentIndex],
+      body: Column(
+        children: [
+          // Consumer prompts: one departure reminder and one rating request
+          // per booking, never repeated.
+          const ConsumerNotificationHost(),
+          Expanded(
+            child: IndexedStack(
+              index: safeIndex,
+              children: [for (final item in navItems) item.screen],
+            ),
+          ),
+        ],
+      ),
+      // Floating pill navigation, matching the reference layout.
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border(top: BorderSide(color: Colors.grey.shade200, width: 1)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            )
+              color: Colors.black.withValues(alpha: 0.07),
+              blurRadius: 18,
+              offset: const Offset(0, -3),
+            ),
           ],
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: SafeArea(
+          top: false,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildNavItem(0, Icons.home_rounded, 'Home'),
-                _buildNavItem(1, Icons.explore_outlined, 'Explore'),
-                _buildNavItem(2, Icons.calendar_today_outlined, 'Bookings'),
-                _buildNavItem(3, Icons.person_outline_rounded, 'Profile'),
+                for (var i = 0; i < navItems.length; i++)
+                  _buildNavItem(i, navItems[i].icon, navItems[i].label),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  /// Single source of truth for the consumer bottom navigation.
+  ///
+  /// Returns Home / Bookings / Profile, plus Search when
+  /// [AppConfig.searchEnabled] is on. Flipping that flag is all that is needed
+  /// to switch between the 3-tab and 4-tab layouts — no navigation code below
+  /// this method changes.
+  List<_NavItem> _buildNavItems() {
+    return [
+      const _NavItem(
+        label: 'Home',
+        icon: Icons.home_rounded,
+        screen: ConsumerHomeScreen(),
+      ),
+      if (AppConfig.searchEnabled)
+        const _NavItem(
+          label: 'Search',
+          icon: Icons.search_rounded,
+          // No text-search backend exists yet. This reuses the existing salon
+          // browse/filter screen rather than faking a search experience.
+          screen: SalonListScreen(categoryName: 'All Salons', timeOption: 'now'),
+        ),
+      const _NavItem(
+        label: 'Bookings',
+        icon: Icons.calendar_today_outlined,
+        screen: MyBookingsScreen(),
+      ),
+      const _NavItem(
+        label: 'Profile',
+        icon: Icons.person_outline_rounded,
+        screen: ConsumerProfileScreen(),
+      ),
+    ];
   }
 
   Widget _buildNavItem(int index, IconData icon, String label) {
@@ -231,22 +275,48 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 24,
-            color: isSelected ? ZalonoTheme.primaryBurgundy : Colors.grey.shade500,
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+            decoration: BoxDecoration(
+              // Pill behind the active tab, as in the reference nav.
+              color: isSelected ? ZalonoTheme.primaryLight : Colors.transparent,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Icon(
+              icon,
+              size: 21,
+              color: isSelected
+                  ? ZalonoTheme.primaryBurgundy
+                  : ZalonoTheme.textMuted,
+            ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 3),
           Text(
             label,
             style: TextStyle(
               fontSize: 11,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-              color: isSelected ? ZalonoTheme.primaryBurgundy : Colors.grey.shade500,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              color: isSelected
+                  ? ZalonoTheme.primaryBurgundy
+                  : ZalonoTheme.textMuted,
             ),
           ),
         ],
       ),
     );
   }
+}
+
+/// One entry in the consumer bottom navigation.
+class _NavItem {
+  const _NavItem({
+    required this.label,
+    required this.icon,
+    required this.screen,
+  });
+
+  final String label;
+  final IconData icon;
+  final Widget screen;
 }

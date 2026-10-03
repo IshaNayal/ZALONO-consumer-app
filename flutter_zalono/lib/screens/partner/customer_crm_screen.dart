@@ -120,7 +120,7 @@ class _CustomerCRMScreenState extends State<CustomerCRMScreen> {
   Widget _buildCustomerList() {
     final customers = [
       {
-        'name': 'Jay Sharma',
+        'name': 'Isha ',
         'phone': '+91 00000 00000',
         'visits': 12,
         'spent': 15600,

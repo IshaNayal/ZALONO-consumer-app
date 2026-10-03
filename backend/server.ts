@@ -126,7 +126,7 @@ let bookings = [
     distanceKm: 0.8,
     travelTimeMin: 8,
     stylistName: 'Rahul',
-    customerName: 'Jay Sharma',
+    customerName: 'Isha ',
     customerPhone: '+91 98765 43210',
     status: 'youAreNext', // booked, checkedIn, youAreNext, inService, completed, cancelled
     expectedWaitMin: '0-5 minutes',
@@ -264,7 +264,7 @@ app.post('/api/bookings', (req: Request, res: Response) => {
     distanceKm: salon.distanceKm,
     travelTimeMin: salon.travelTimeMin,
     stylistName: stylistName || (slot?.stylistName ?? salon.stylists[0].name),
-    customerName: customerName || 'Jay Sharma',
+    customerName: customerName || 'Isha ',
     customerPhone: customerPhone || '+91 98765 43210',
     status: 'booked',
     expectedWaitMin: '0-5 minutes',
@@ -347,7 +347,7 @@ app.get('/api/crm', (req: Request, res: Response) => {
       { name: 'Priya', clientRating: 4.8, completedAppointments: 118 }
     ],
     recentClients: [
-      { name: 'Jay Sharma', phone: '+91 98765 43210', visits: 8, lastVisit: 'Today', preferredStylist: 'Rahul', vip: true },
+      { name: 'Isha ', phone: '+91 98765 43210', visits: 8, lastVisit: 'Today', preferredStylist: 'Rahul', vip: true },
       { name: 'Ananya Dash', phone: '+91 98111 22334', visits: 5, lastVisit: 'Yesterday', preferredStylist: 'Priya', vip: false }
     ]
   });

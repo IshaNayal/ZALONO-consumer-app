@@ -207,7 +207,7 @@ export const INITIAL_BOOKINGS: Booking[] = [
     travelTimeMin: 8,
     stylistId: 'sty-1',
     stylistName: 'Rahul',
-    customerName: 'Jay Sharma',
+    customerName: 'Isha ',
     customerPhone: '+91 00000 00000',
     status: 'you_are_next',
     expectedWaitMin: '0-5 minutes',
@@ -233,7 +233,7 @@ export const INITIAL_BOOKINGS: Booking[] = [
     travelTimeMin: 12,
     stylistId: 'sty-21',
     stylistName: 'Karan',
-    customerName: 'Jay Sharma',
+    customerName: 'Isha ',
     customerPhone: '+91 00000 00000',
     status: 'completed',
     expectedWaitMin: '0 min',
@@ -255,7 +255,7 @@ export const INITIAL_BOOKINGS: Booking[] = [
 
 export const INITIAL_CUSTOMER_CRM: CustomerCRM = {
   id: 'cust-1',
-  name: 'Jay Sharma',
+  name: 'Isha ',
   phone: '+91 00000 00000',
   customerSince: 'Aug 2025',
   totalVisits: 5,

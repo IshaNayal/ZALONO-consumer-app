@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../providers/zalono_provider.dart';
 import 'salon_list_screen.dart';
 
+/// Second step of the booking flow.
+///
+/// Its only job is to capture *when* the user wants to visit. It deliberately
+/// carries no salon, service, price or availability detail — that belongs on
+/// the results page. Choosing an option continues straight to the salon list.
 class ServiceTimeScreen extends StatefulWidget {
   final String categoryName;
 
@@ -16,182 +22,95 @@ class ServiceTimeScreen extends StatefulWidget {
   State<ServiceTimeScreen> createState() => _ServiceTimeScreenState();
 }
 
+class _TimeOption {
+  const _TimeOption({
+    required this.id,
+    required this.label,
+    required this.icon,
+  });
+
+  final String id;
+  final String label;
+  final IconData icon;
+}
+
 class _ServiceTimeScreenState extends State<ServiceTimeScreen> {
+  static const List<_TimeOption> _options = [
+    _TimeOption(
+      id: 'now',
+      label: 'Now (Fastest)',
+      icon: Icons.bolt_rounded,
+    ),
+    _TimeOption(
+      id: 'within_30_min',
+      label: 'Within 30 min',
+      icon: Icons.timelapse_rounded,
+    ),
+    _TimeOption(
+      id: 'later_today',
+      label: 'Later Today',
+      icon: Icons.wb_twilight_rounded,
+    ),
+    _TimeOption(
+      id: 'tomorrow',
+      label: 'Tomorrow',
+      icon: Icons.calendar_today_rounded,
+    ),
+    _TimeOption(
+      id: 'custom',
+      label: 'Pick a specific time',
+      icon: Icons.schedule_rounded,
+    ),
+  ];
+
   String _selectedOption = 'now';
   TimeOfDay _selectedCustomTime = const TimeOfDay(hour: 12, minute: 0);
   DateTime _selectedDate = DateTime.now();
 
+  bool get _hasCustomTime => _selectedDate != DateTime.now() || _selectedCustomTime != const TimeOfDay(hour: 12, minute: 0);
+
   @override
   Widget build(BuildContext context) {
-    final zalono = Provider.of<ZalonoProvider>(context);
-
     return Scaffold(
       backgroundColor: ZalonoTheme.backgroundLight,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: ZalonoTheme.backgroundLight,
         elevation: 0,
+        scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: ZalonoTheme.textDark),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          widget.categoryName,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 20,
             color: ZalonoTheme.textDark,
           ),
+          onPressed: () => Navigator.pop(context),
         ),
-        centerTitle: true,
       ),
       body: SafeArea(
-        child: Column(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
           children: [
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(20),
-                children: [
-                  const Text(
-                    'When would you like to go?',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: ZalonoTheme.textDark,
-                      letterSpacing: -0.3,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'We will only show salons with instant confirmed slots matching your schedule.',
-                    style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Option 1: Now (Recommended)
-                  _buildTimeCard(
-                    id: 'now',
-                    title: 'Now',
-                    badge: '⚡ Fastest Slot',
-                    subtitle: 'Find nearest available within 5-15 min',
-                    waitEstimate: 'Wait: 0-5 min',
-                    icon: Icons.bolt_rounded,
-                    isRecommended: true,
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Option 2: In 30 mins
-                  _buildTimeCard(
-                    id: '30min',
-                    title: 'In 30 minutes',
-                    subtitle: 'Allow travel & transit time before your slot',
-                    waitEstimate: 'Slots around 11:45 AM - 12:00 PM',
-                    icon: Icons.directions_walk_rounded,
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Option 3: Later today
-                  _buildTimeCard(
-                    id: 'later_today',
-                    title: 'Later today (Afternoon / Evening)',
-                    subtitle: 'Slots from 2:00 PM - 8:00 PM',
-                    waitEstimate: '18 confirmed slots open',
-                    icon: Icons.wb_twilight_rounded,
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Option 4: Tomorrow
-                  _buildTimeCard(
-                    id: 'tomorrow',
-                    title: 'Tomorrow',
-                    subtitle: 'Book ahead with top stylists',
-                    waitEstimate: 'All salon rosters open',
-                    icon: Icons.calendar_today_rounded,
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Option 5: Custom Date & Time
-                  _buildTimeCard(
-                    id: 'custom',
-                    title: 'Select specific date & time',
-                    subtitle: 'Pick exact slot on calendar',
-                    waitEstimate: '${_selectedDate.day}/${_selectedDate.month} at ${_selectedCustomTime.format(context)}',
-                    icon: Icons.schedule_rounded,
-                    onTapCustom: () async {
-                      final pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: _selectedDate,
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime.now().add(const Duration(days: 14)),
-                      );
-                      if (pickedDate != null) {
-                        if (!context.mounted) return;
-                        final pickedTime = await showTimePicker(
-                          context: context,
-                          initialTime: _selectedCustomTime,
-                        );
-                        if (pickedTime != null && context.mounted) {
-                          setState(() {
-                            _selectedDate = pickedDate;
-                            _selectedCustomTime = pickedTime;
-                            _selectedOption = 'custom';
-                          });
-                        }
-                      }
-                    },
-                  ),
-                ],
+            const Text(
+              'When would you like to go or visit?',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: ZalonoTheme.textDark,
+                height: 1.25,
               ),
             ),
-
-            // Bottom CTA Button
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(),
-                    blurRadius: 10,
-                    offset: const Offset(0, -3),
-                  ),
-                ],
-              ),
-              child: SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: () {
-                    zalono.setTimePreference(_selectedOption);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => SalonListScreen(
-                          categoryName: widget.categoryName,
-                          timeOption: _selectedOption,
-                        ),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ZalonoTheme.primaryBurgundy,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Show Available Salons',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(width: 8),
-                      Icon(Icons.arrow_forward_rounded, size: 18),
-                    ],
-                  ),
-                ),
+            const SizedBox(height: 20),
+            for (final option in _options) ...[
+              _buildOption(context, option),
+              const SizedBox(height: 10),
+            ],
+            const SizedBox(height: 10),
+            const Text(
+              "We'll show you salons that are available around your chosen time and convenient for you to reach based on your location and traffic.",
+              style: TextStyle(
+                fontSize: 12,
+                height: 1.5,
+                color: ZalonoTheme.textMuted,
               ),
             ),
           ],
@@ -200,134 +119,130 @@ class _ServiceTimeScreenState extends State<ServiceTimeScreen> {
     );
   }
 
-  Widget _buildTimeCard({
-    required String id,
-    required String title,
-    required String subtitle,
-    required String waitEstimate,
-    required IconData icon,
-    String? badge,
-    bool isRecommended = false,
-    VoidCallback? onTapCustom,
-  }) {
-    final isSelected = _selectedOption == id;
+  Widget _buildOption(BuildContext context, _TimeOption option) {
+    final isSelected = _selectedOption == option.id;
 
-    return GestureDetector(
-      onTap: () {
-        setState(() => _selectedOption = id);
-        if (onTapCustom != null) {
-          onTapCustom();
-        }
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected ? ZalonoTheme.primaryBurgundy : Colors.grey.shade200,
-            width: isSelected ? 2 : 1,
-          ),
-          boxShadow: [
-            BoxShadow(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: () => _onOptionTap(context, option),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: isSelected ? ZalonoTheme.primaryLight : Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              // Unselected borders are deliberately faint so the boxes stay
+              // low-visibility; the selected one carries the contrast.
               color: isSelected
-                  ? ZalonoTheme.primaryBurgundy.withValues()
-                  : Colors.black.withValues(),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+                  ? ZalonoTheme.primaryBurgundy
+                  : ZalonoTheme.borderLight.withValues(alpha: 0.5),
+              width: isSelected ? 1.5 : 1,
             ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: isSelected ? ZalonoTheme.primaryBurgundy : Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                option.icon,
+                size: 18,
+                color: isSelected
+                    ? const Color.fromARGB(188, 176, 32, 63)
+                    : ZalonoTheme.textMuted,
               ),
-              child: Icon(
-                icon,
-                color: isSelected ? Colors.white : ZalonoTheme.primaryBurgundy,
-                size: 22,
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        title,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: isSelected ? ZalonoTheme.primaryBurgundy : ZalonoTheme.textDark,
-                        ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      option.label,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: isSelected
+                            ? const Color.fromARGB(255, 176, 60, 85)
+                            : ZalonoTheme.textDark,
                       ),
-                      if (badge != null) ...[
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: Colors.amber.shade100,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            badge,
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.amber.shade900,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    subtitle,
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Icon(Icons.schedule, size: 12, color: ZalonoTheme.accentGreen),
-                      const SizedBox(width: 4),
+                    ),
+                    if (_captionFor(option) != null) ...[
+                      const SizedBox(height: 2),
                       Text(
-                        waitEstimate,
+                        _captionFor(option)!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: ZalonoTheme.accentGreen,
+                          fontSize: 11.5,
+                          color: ZalonoTheme.textMuted,
                         ),
                       ),
                     ],
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              width: 22,
-              height: 22,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: isSelected ? ZalonoTheme.primaryBurgundy : Colors.grey.shade300,
-                  width: 2,
+                  ],
                 ),
-                color: isSelected ? ZalonoTheme.primaryBurgundy : Colors.transparent,
               ),
-              child: isSelected
-                  ? const Icon(Icons.check, size: 14, color: Colors.white)
-                  : null,
-            ),
-          ],
+              if (isSelected)
+                const Icon(
+                  Icons.check_circle_rounded,
+                  size: 16,
+                  color: ZalonoTheme.primaryBurgundy,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// The chosen date/time for the custom option; null for the fixed ones,
+  /// which have no second line.
+  String? _captionFor(_TimeOption option) {
+    if (option.id != 'custom' || !_hasCustomTime) return null;
+    return '${_selectedCustomTime.format(context)} · ${DateFormat('d MMM').format(_selectedDate)}';
+  }
+
+  Future<void> _onOptionTap(BuildContext context, _TimeOption option) async {
+    if (option.id == 'custom') {
+      final picked = await _pickDateAndTime();
+      if (picked == null || !mounted) return;
+      setState(() {
+        _selectedDate = picked.$1;
+        _selectedCustomTime = picked.$2;
+        _selectedOption = 'custom';
+      });
+    } else {
+      setState(() => _selectedOption = option.id);
+    }
+    _continueToSalons();
+  }
+
+  Future<(DateTime, TimeOfDay)?> _pickDateAndTime() async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 14)),
+    );
+    if (date == null || !mounted) return null;
+
+    final time = await showTimePicker(
+      context: context,
+      initialTime: _selectedCustomTime,
+    );
+    if (time == null) return null;
+    return (date, time);
+  }
+
+  void _continueToSalons() {
+    final zalono = Provider.of<ZalonoProvider>(context, listen: false);
+    zalono.setTimePreference(_selectedOption);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SalonListScreen(
+          categoryName: widget.categoryName,
+          timeOption: _selectedOption,
         ),
       ),
     );

@@ -14,7 +14,7 @@ export const IncomingBookingModal: React.FC = () => {
     dismissIncomingNotification();
     showNotification(
       'Booking Accepted',
-      'Jay Sharma has been notified that his 11:30 AM appointment is confirmed.'
+      'Isha  has been notified that his 11:30 AM appointment is confirmed.'
     );
     setPartnerScreen('dashboard');
   };
@@ -58,7 +58,7 @@ export const IncomingBookingModal: React.FC = () => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-sm font-bold text-slate-900">Jay Sharma</h2>
+                <h2 className="text-sm font-bold text-slate-900">Isha </h2>
                 <span className="text-[10px] bg-blue-100 text-blue-800 px-1.5 py-0.2 rounded font-semibold">New Client</span>
               </div>
               <p className="text-xs text-slate-500 mt-0.5">+91 00000 00000</p>

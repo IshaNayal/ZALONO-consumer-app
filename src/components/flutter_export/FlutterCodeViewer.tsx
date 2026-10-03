@@ -421,7 +421,7 @@ class ZalonoProvider extends ChangeNotifier {
       distanceKm: salon.distanceKm,
       travelTimeMin: salon.travelTimeMin,
       stylistName: chosenStylist,
-      customerName: 'Jay Sharma',
+      customerName: 'Isha ',
       customerPhone: '+91 00000 00000',
       status: AppointmentStatus.booked,
       expectedWaitMin: '0-5 minutes',

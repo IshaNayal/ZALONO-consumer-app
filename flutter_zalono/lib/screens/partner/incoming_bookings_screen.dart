@@ -45,7 +45,7 @@ class _IncomingBookingsScreenState extends State<IncomingBookingsScreen> {
   final List<Map<String, dynamic>> _todaysSchedule = [
     {
       'id': 'bk_1',
-      'customerName': 'Jay Sharma',
+      'customerName': 'Isha ',
       'phone': '+91 00000 00000',
       'service': 'Haircut',
       'price': 399,
