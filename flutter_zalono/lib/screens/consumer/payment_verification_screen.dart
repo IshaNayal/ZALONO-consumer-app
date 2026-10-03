@@ -106,8 +106,13 @@ class _PaymentVerificationScreenState extends State<PaymentVerificationScreen> {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
             children: [
-              _buildSummary(),
-              const SizedBox(height: 24),
+              // Services stay hidden until the number is verified: showing the
+              // basket before the user is identified is a spoiler for anyone
+              // picking up the phone.
+              if (_stage == _Stage.payment) ...[
+                _buildSummary(),
+                const SizedBox(height: 24),
+              ],
               _buildStage(),
             ],
           ),
@@ -116,7 +121,8 @@ class _PaymentVerificationScreenState extends State<PaymentVerificationScreen> {
     );
   }
 
-  /// What is being booked: salon, every selected service and the combined total.
+  /// What is being booked: salon, every selected service and the combined
+  /// total. Only rendered on the payment stage, after verification.
   Widget _buildSummary() {
     final services = widget.services;
 

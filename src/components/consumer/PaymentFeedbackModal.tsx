@@ -1,38 +1,76 @@
-import React, { useState } from 'react';
-import { 
-  ArrowLeft, 
-  CheckCircle, 
-  Star, 
-  QrCode, 
-  Smartphone, 
-  IndianRupee, 
-  Check, 
-  Heart, 
-  Receipt, 
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  ArrowLeft,
+  Calendar,
+  Check,
+  CheckCircle2,
+  Heart,
+  Info,
+  Loader2,
+  QrCode,
   Share2,
-  Calendar
+  Star,
+  Store,
+  Wallet
 } from 'lucide-react';
 import { useZalono } from '../../context/ZalonoContext';
 
+/**
+ * Mirrors the Flutter `PaymentVerificationScreen` stage machine: the mobile
+ * number and its OTP are confirmed before any service detail is shown, then
+ * payment. The website-only UPI, feedback and receipt steps follow on.
+ */
+type PayStep = 'mobile' | 'otp' | 'payment' | 'upi_qr' | 'feedback' | 'success';
+
+interface SummaryLine {
+  name: string;
+  price: number;
+}
+
+/** Same `+91 XXXXX XXXXX` shape the profile already stores. */
+const formatPhone = (digits: string) => {
+  const local = digits.length > 10 ? digits.slice(-10) : digits;
+  return `+91 ${local.slice(0, 5)} ${local.slice(5)}`.trim();
+};
+
 export const PaymentFeedbackModal: React.FC = () => {
-  const { 
-    activeBooking, 
-    setConsumerScreen, 
-    completeService, 
-    submitFeedback, 
-    showNotification,
-    getWhatsAppShareUrl 
+  const {
+    activeBooking,
+    userProfile,
+    setUserProfile,
+    setConsumerScreen,
+    completeService,
+    submitFeedback,
+    getWhatsAppShareUrl
   } = useZalono();
 
-  const [step, setStep] = useState<'payment' | 'upi_qr' | 'feedback' | 'success'>('payment');
+  const [step, setStep] = useState<PayStep>('mobile');
   const [selectedMethod, setSelectedMethod] = useState<'cash' | 'upi'>('upi');
-  
+
+  // Verification stage state, same shape as the app's screen. The number is
+  // kept as bare digits because the +91 prefix is rendered by the field.
+  const [phone, setPhone] = useState<string>(
+    (activeBooking?.customerPhone || userProfile.phone).replace(/\D/g, '')
+  );
+  const [otp, setOtp] = useState('');
+  const [expectedOtp, setExpectedOtp] = useState<string | null>(null);
+  const [errorText, setErrorText] = useState<string | null>(null);
+  const [isWorking, setIsWorking] = useState(false);
+  const workTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // Feedback states
   const [rating, setRating] = useState(5);
   const [startedOnTime, setStartedOnTime] = useState<'yes' | 'almost' | 'no'>('yes');
   const [wouldBookAgain, setWouldBookAgain] = useState<'yes' | 'maybe' | 'no'>('yes');
   const [reviewNote, setReviewNote] = useState('');
   const [isSavedUsual, setIsSavedUsual] = useState(true);
+
+  useEffect(
+    () => () => {
+      if (workTimer.current) clearTimeout(workTimer.current);
+    },
+    []
+  );
 
   if (!activeBooking) {
     return (
@@ -42,6 +80,50 @@ export const PaymentFeedbackModal: React.FC = () => {
       </div>
     );
   }
+
+  const totalPrice = activeBooking.servicePrice;
+  const summaryLines: SummaryLine[] = [
+    { name: activeBooking.serviceName, price: activeBooking.servicePrice }
+  ];
+  const isPhoneValid = phone.replace(/\D/g, '').length >= 10;
+
+  /** Stands in for the API calls the app marks as pending integration. */
+  const runBusy = (work: () => void, delay = 600) => {
+    setIsWorking(true);
+    workTimer.current = setTimeout(() => {
+      setIsWorking(false);
+      work();
+    }, delay);
+  };
+
+  const handleRequestOtp = () =>
+    runBusy(() => {
+      setExpectedOtp(String(100000 + (Date.now() % 900000)));
+      setOtp('');
+      setErrorText(null);
+      setStep('otp');
+    });
+
+  const handleVerifyOtp = () => {
+    const entered = otp.trim();
+    if (entered.length !== 6) {
+      setErrorText('Enter the 6-digit code.');
+      return;
+    }
+    if (entered !== expectedOtp) {
+      setErrorText('That code is not correct. Try again.');
+      return;
+    }
+    runBusy(() => {
+      setErrorText(null);
+      setUserProfile((prev) => ({
+        ...prev,
+        phone: formatPhone(phone),
+        isOtpVerified: true
+      }));
+      setStep('payment');
+    }, 400);
+  };
 
   const handlePayNow = () => {
     if (selectedMethod === 'upi') {
@@ -62,93 +144,160 @@ export const PaymentFeedbackModal: React.FC = () => {
     setStep('success');
   };
 
+  const handleBack = () => {
+    if (step === 'otp') {
+      setOtp('');
+      setErrorText(null);
+      setStep('mobile');
+      return;
+    }
+    if (step === 'upi_qr') {
+      setStep('payment');
+      return;
+    }
+    setConsumerScreen('live_appointment');
+  };
+
+  const title =
+    step === 'mobile' || step === 'otp'
+      ? 'Verify Your Number'
+      : step === 'payment' || step === 'upi_qr'
+        ? 'Service & Payment'
+        : step === 'feedback'
+          ? 'Feedback & Rating'
+          : 'Payment Receipt';
+
   return (
     <div className="flex-1 flex flex-col bg-[#FAF9F6] pb-10">
       {/* Top Bar */}
       <div className="px-4 py-3 bg-white border-b border-slate-100 flex items-center justify-between sticky top-0 z-20">
         <button
-          onClick={() => setConsumerScreen('live_appointment')}
+          onClick={handleBack}
           className="p-1.5 rounded-full hover:bg-slate-100 text-slate-700"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="text-base font-bold text-slate-900">
-          {step === 'payment' || step === 'upi_qr' ? 'Service & Payment' : step === 'feedback' ? 'Feedback & Rating' : 'Payment Receipt'}
-        </h1>
+        <h1 className="text-base font-bold text-slate-900">{title}</h1>
         <div className="w-7"></div>
       </div>
 
-      <div className="w-full max-w-xl mx-auto p-4 sm:px-6 space-y-4">
+      <div className="w-full max-w-xl mx-auto p-4 sm:px-6 space-y-6">
+        {/* Services stay hidden until the number is verified: showing the
+            basket before the user is identified is a spoiler for anyone
+            picking up the phone. */}
+        {step === 'payment' && (
+          <SummaryCard
+            salonName={activeBooking.salonName}
+            services={summaryLines}
+            total={totalPrice}
+          />
+        )}
+
+        {/* Stage 1 — mobile number */}
+        {step === 'mobile' && (
+          <div className="space-y-4">
+            <StageHeading
+              title="Verify your mobile number"
+              subtitle="We will send a one-time code to confirm it is you."
+            />
+            <Field
+              label="Mobile number"
+              prefix="+91  "
+              value={phone}
+              inputMode="tel"
+              maxLength={15}
+              onChange={(value) => {
+                setPhone(value);
+                setErrorText(null);
+              }}
+            />
+            <ErrorText message={errorText} />
+            <PrimaryButton
+              label="Send OTP"
+              busy={isWorking}
+              disabled={!isPhoneValid}
+              onClick={handleRequestOtp}
+            />
+          </div>
+        )}
+
+        {/* Stage 2 — OTP */}
+        {step === 'otp' && (
+          <div className="space-y-4">
+            <StageHeading
+              title="Enter the OTP"
+              subtitle="Check your messages for the 6-digit code."
+            />
+            {/* No SMS provider is wired up, so the code is shown rather than
+                pretending it was delivered. */}
+            <div className="flex items-start gap-2 px-3 py-2.5 rounded-[10px] bg-[#F9E8EC] border border-[#F3D3DC]">
+              <Info className="w-4 h-4 text-[#80142B] shrink-0 mt-px" />
+              <p className="text-xs font-semibold text-[#80142B]">
+                Demo build: your code is {expectedOtp ?? '------'}
+              </p>
+            </div>
+            <Field
+              label="6-digit OTP"
+              value={otp}
+              inputMode="numeric"
+              maxLength={6}
+              autoFocus
+              onChange={(value) => {
+                setOtp(value);
+                setErrorText(null);
+              }}
+            />
+            <ErrorText message={errorText} />
+            <PrimaryButton
+              label="Verify & Continue"
+              busy={isWorking}
+              onClick={handleVerifyOtp}
+            />
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={handleRequestOtp}
+                className="text-[13px] font-semibold text-[#80142B]"
+              >
+                Resend OTP
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Stage 3 — payment */}
         {step === 'payment' && (
           <div className="space-y-4">
-            {/* Visit Summary Card */}
-            <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Your Visit</span>
-              <div className="flex items-center justify-between text-sm">
-                <span className="font-semibold text-slate-800">{activeBooking.serviceName}</span>
-                <span className="font-mono font-bold text-slate-900">₹{activeBooking.servicePrice}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm text-slate-500 text-xs">
-                <span>Stylist Service Fee:</span>
-                <span>Included</span>
-              </div>
-              <div className="flex items-center justify-between text-sm text-slate-500 text-xs">
-                <span>Zero-Wait Guarantee Discount:</span>
-                <span className="text-emerald-700 font-semibold">Applied (₹0 wait fee)</span>
-              </div>
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-base font-bold text-slate-900">
-                <span>Total Amount</span>
-                <span className="text-[#80142B] font-mono">₹{activeBooking.servicePrice}</span>
-              </div>
-            </div>
-
-            {/* Payment Mode Selection */}
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-700">Choose Payment Method</label>
-              
-              <div
+            <StageHeading
+              title="Payment"
+              subtitle="Pay now to confirm your appointment."
+            />
+            <div className="space-y-2.5">
+              <MethodTile
+                icon={<Wallet className="w-5 h-5" />}
+                label="UPI"
+                subtitle="Pay using any UPI app"
+                selected={selectedMethod === 'upi'}
                 onClick={() => setSelectedMethod('upi')}
-                className={`p-3.5 rounded-2xl border cursor-pointer flex items-center justify-between transition-all ${
-                  selectedMethod === 'upi' ? 'bg-[#F9E8EC] border-[#80142B]' : 'bg-white border-slate-200'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-700 flex items-center justify-center font-bold text-xs">
-                    UPI
-                  </div>
-                  <div>
-                    <span className="text-sm font-bold text-slate-900">Pay with UPI (Instant)</span>
-                    <p className="text-xs text-slate-500">GPay, PhonePe, Paytm or QR</p>
-                  </div>
-                </div>
-                <input type="radio" checked={selectedMethod === 'upi'} onChange={() => setSelectedMethod('upi')} className="accent-[#80142B]" />
-              </div>
-
-              <div
+              />
+              <MethodTile
+                icon={<Store className="w-5 h-5" />}
+                label="Pay at salon"
+                subtitle="Cash, UPI or card at the counter"
+                selected={selectedMethod === 'cash'}
                 onClick={() => setSelectedMethod('cash')}
-                className={`p-3.5 rounded-2xl border cursor-pointer flex items-center justify-between transition-all ${
-                  selectedMethod === 'cash' ? 'bg-[#F9E8EC] border-[#80142B]' : 'bg-white border-slate-200'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-xs">
-                    💵
-                  </div>
-                  <div>
-                    <span className="text-sm font-bold text-slate-900">Pay at Salon (Cash / Card)</span>
-                    <p className="text-xs text-slate-500">Pay directly at front desk after cut</p>
-                  </div>
-                </div>
-                <input type="radio" checked={selectedMethod === 'cash'} onChange={() => setSelectedMethod('cash')} className="accent-[#80142B]" />
-              </div>
+              />
             </div>
-
-            <button
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-500">Amount to pay</span>
+              <span className="text-lg font-bold text-slate-900">
+                ₹{totalPrice}
+              </span>
+            </div>
+            <PrimaryButton
+              label={`Pay ₹${totalPrice} & Confirm`}
               onClick={handlePayNow}
-              className="w-full py-3 bg-[#80142B] text-white rounded-xl font-bold text-xs hover:bg-[#681023] shadow-md transition-colors mt-2"
-            >
-              {selectedMethod === 'upi' ? 'Proceed to UPI Payment →' : 'Confirm Cash Payment →'}
-            </button>
+            />
           </div>
         )}
 
@@ -166,7 +315,7 @@ export const PaymentFeedbackModal: React.FC = () => {
             </div>
 
             <div className="space-y-1">
-              <p className="text-lg font-bold text-slate-900 font-mono">₹{activeBooking.servicePrice}.00</p>
+              <p className="text-lg font-bold text-slate-900 font-mono">₹{totalPrice}.00</p>
               <p className="text-xs text-slate-500">To: Looks Salon (Saheed Nagar)</p>
             </div>
 
@@ -207,7 +356,7 @@ export const PaymentFeedbackModal: React.FC = () => {
             <div className="text-center space-y-1">
               <h2 className="text-base font-bold text-slate-900">How was your service?</h2>
               <p className="text-xs text-slate-500">{activeBooking.salonName} · Stylist {activeBooking.stylistName}</p>
-              
+
               {/* Star Rating */}
               <div className="flex items-center justify-center gap-2 pt-2">
                 {[1, 2, 3, 4, 5].map((s) => (
@@ -339,7 +488,7 @@ export const PaymentFeedbackModal: React.FC = () => {
               </div>
               <div className="flex justify-between border-t pt-1.5 font-bold text-slate-900">
                 <span>Total Paid:</span>
-                <span className="text-[#80142B] font-mono">₹{activeBooking.servicePrice}</span>
+                <span className="text-[#80142B] font-mono">₹{totalPrice}</span>
               </div>
             </div>
 
@@ -358,7 +507,7 @@ export const PaymentFeedbackModal: React.FC = () => {
               <a
                 href={getWhatsAppShareUrl(
                   activeBooking.customerPhone,
-                  `Zalono Receipt #${activeBooking.invoiceId}: Paid ₹${activeBooking.servicePrice} at ${activeBooking.salonName}. Zero-wait guarantee fulfilled!`
+                  `Zalono Receipt #${activeBooking.invoiceId}: Paid ₹${totalPrice} at ${activeBooking.salonName}. Zero-wait guarantee fulfilled!`
                 )}
                 target="_blank"
                 rel="noreferrer"
@@ -381,3 +530,121 @@ export const PaymentFeedbackModal: React.FC = () => {
     </div>
   );
 };
+
+/** Salon, selected services and the combined total, as on the app's screen. */
+const SummaryCard: React.FC<{
+  salonName: string;
+  services: SummaryLine[];
+  total: number;
+}> = ({ salonName, services, total }) => (
+  <div className="bg-white p-3.5 rounded-[14px] border border-slate-200 shadow-xs">
+    <div className="flex items-center justify-between gap-2.5">
+      <span className="text-sm font-bold text-slate-900 truncate">{salonName}</span>
+      <span className="text-base font-bold text-[#80142B] shrink-0">₹{total}</span>
+    </div>
+
+    <div className="mt-2 space-y-0.5">
+      {services.map((service) => (
+        <div key={service.name} className="flex items-center gap-1.5">
+          <Check className="w-[13px] h-[13px] text-emerald-600 shrink-0" />
+          <span className="flex-1 min-w-0 text-[12.5px] text-slate-500 truncate">
+            {service.name}
+          </span>
+          <span className="text-[12.5px] text-slate-500">₹{service.price}</span>
+        </div>
+      ))}
+    </div>
+
+    <div className="mt-2.5 pt-2.5 border-t border-slate-100 space-y-1">
+      <div className="flex items-center justify-between text-xs text-slate-500">
+        <span>Stylist Service Fee:</span>
+        <span>Included</span>
+      </div>
+      <div className="flex items-center justify-between text-xs text-slate-500">
+        <span>Zero-Wait Guarantee Discount:</span>
+        <span className="text-emerald-700 font-semibold">Applied (₹0 wait fee)</span>
+      </div>
+    </div>
+  </div>
+);
+
+const StageHeading: React.FC<{ title: string; subtitle: string }> = ({
+  title,
+  subtitle
+}) => (
+  <div className="space-y-1">
+    <h2 className="text-[19px] font-bold text-slate-900">{title}</h2>
+    <p className="text-[13px] leading-[1.4] text-slate-500">{subtitle}</p>
+  </div>
+);
+
+const Field: React.FC<{
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  prefix?: string;
+  inputMode?: 'text' | 'tel' | 'numeric';
+  maxLength?: number;
+  autoFocus?: boolean;
+}> = ({ label, value, onChange, prefix, inputMode = 'text', maxLength, autoFocus }) => (
+  <div className="space-y-1.5">
+    <label className="block text-[13px] font-semibold text-slate-700">{label}</label>
+    <div className="flex items-center gap-1 px-3 rounded-xl border border-slate-300 bg-white focus-within:border-[#80142B]">
+      {prefix && <span className="text-sm text-slate-500 select-none">{prefix}</span>}
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        inputMode={inputMode}
+        maxLength={maxLength}
+        autoFocus={autoFocus}
+        className="w-full bg-transparent py-3 text-sm text-slate-900 tracking-wide outline-none"
+      />
+    </div>
+  </div>
+);
+
+const ErrorText: React.FC<{ message: string | null }> = ({ message }) =>
+  message ? <p className="text-xs text-red-600">{message}</p> : null;
+
+const PrimaryButton: React.FC<{
+  label: string;
+  onClick: () => void;
+  busy?: boolean;
+  disabled?: boolean;
+}> = ({ label, onClick, busy, disabled }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    disabled={busy || disabled}
+    className="w-full h-[52px] bg-[#80142B] text-white rounded-[14px] text-[15px] font-bold shadow-md transition-colors hover:bg-[#681023] disabled:bg-[#80142B]/40 disabled:shadow-none flex items-center justify-center"
+  >
+    {busy ? <Loader2 className="w-5 h-5 animate-spin" /> : label}
+  </button>
+);
+
+const MethodTile: React.FC<{
+  icon: React.ReactNode;
+  label: string;
+  subtitle: string;
+  selected: boolean;
+  onClick: () => void;
+}> = ({ icon, label, subtitle, selected, onClick }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={`w-full text-left p-3.5 rounded-xl border transition-colors ${
+      selected ? 'bg-[#F9E8EC] border-[#80142B]' : 'bg-white border-slate-200'
+    }`}
+  >
+    <div className="flex items-center gap-3">
+      <span className="text-[#80142B] shrink-0">{icon}</span>
+      <span className="flex-1 min-w-0">
+        <span className="block text-sm font-semibold text-slate-900 truncate">
+          {label}
+        </span>
+        <span className="block text-xs text-slate-500 truncate">{subtitle}</span>
+      </span>
+      {selected && <CheckCircle2 className="w-[18px] h-[18px] text-[#80142B] shrink-0" />}
+    </div>
+  </button>
+);
