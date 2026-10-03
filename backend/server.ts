@@ -34,84 +34,49 @@ function broadcastLiveEvent(eventType: string, data: any) {
 }
 
 // In-Memory Data Store (Seeded for Zalono Pilot in Bhubaneswar)
-let salons = [
-  {
-    id: 'salon-1',
-    name: 'Looks Salon',
-    rating: 4.7,
-    reviewsCount: 328,
-    distanceKm: 0.8,
-    travelTimeMin: 8,
-    address: 'Plot 42, Saheed Nagar, Janpath Road',
-    area: 'Saheed Nagar',
-    imageUrl: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=800',
-    priceStart: 399,
-    isOpen: true,
-    openingHours: 'Open · Closes 9:00 PM',
-    expectedWaitMin: '0-5 min',
-    nextSlotTime: '11:30 AM',
-    queueCount: 3,
-    stylistsCount: 4,
-    availableStylistsCount: 2,
-    busyLevel: 'quiet',
-    isVerified: true,
-    happyCustomersCount: '1000+',
-    services: [
-      { id: 's1', name: 'Haircut', price: 399, durationMinutes: 45, category: 'Haircut', description: 'Consultation, precision cut, wash & styling' },
-      { id: 's2', name: 'Haircut + Beard', price: 599, durationMinutes: 60, category: 'Haircut', description: 'Cut with hot towel shape' },
-      { id: 's3', name: 'Premium Haircut', price: 799, durationMinutes: 60, category: 'Haircut', description: 'Director styling & wash' },
-      { id: 's4', name: 'Beard Trim & Shape', price: 299, durationMinutes: 25, category: 'Beard', description: 'Sharp lines & contouring' },
-      { id: 's5', name: 'De-Tan Facial', price: 799, durationMinutes: 45, category: 'Facial', description: 'Instant radiance facial' }
-    ],
-    stylists: [
-      { id: 'sty-1', name: 'Rahul', role: 'Senior Stylist', rating: 4.9, status: 'available', shiftHours: '10:00 AM – 7:00 PM' },
-      { id: 'sty-2', name: 'Priya', role: 'Hair Specialist', rating: 4.8, status: 'withCustomer', shiftHours: '10:00 AM – 7:00 PM' },
-      { id: 'sty-3', name: 'Amit', role: 'Stylist', rating: 4.7, status: 'available', shiftHours: '11:00 AM – 8:00 PM' },
-      { id: 'sty-4', name: 'Neha', role: 'Color Expert', rating: 4.6, status: 'onBreak', shiftHours: '10:00 AM – 7:00 PM' }
-    ],
-    slots: [
-      { id: 'sl1', time: '11:15 AM', hourGroup: '11 AM', status: 'available', price: 399, isEarliest: true, stylistName: 'Rahul' },
-      { id: 'sl2', time: '11:30 AM', hourGroup: '11 AM', status: 'available', price: 399, isEarliest: true, stylistName: 'Rahul' },
-      { id: 'sl3', time: '11:40 AM', hourGroup: '11 AM', status: 'available', price: 399, isRecommended: true, travelBufferMinutes: 13, stylistName: 'Rahul' },
-      { id: 'sl4', time: '12:00 PM', hourGroup: '12 PM', status: 'available', price: 399, stylistName: 'Amit' },
-      { id: 'sl5', time: '12:30 PM', hourGroup: '12 PM', status: 'limited', price: 399, stylistName: 'Neha' }
-    ]
-  },
-  {
-    id: 'salon-2',
-    name: 'Style Studio Unisex',
-    rating: 4.5,
-    reviewsCount: 194,
-    distanceKm: 1.4,
-    travelTimeMin: 12,
-    address: 'Near BMC Bhawani Mall, Saheed Nagar',
-    area: 'Saheed Nagar',
-    imageUrl: 'https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&q=80&w=800',
-    priceStart: 299,
-    isOpen: true,
-    openingHours: 'Open · Closes 9:30 PM',
-    expectedWaitMin: '5-10 min',
-    nextSlotTime: '11:45 AM',
-    queueCount: 5,
-    stylistsCount: 3,
-    availableStylistsCount: 1,
-    busyLevel: 'moderate',
-    isVerified: true,
-    happyCustomersCount: '850+',
-    services: [
-      { id: 'ss1', name: 'Standard Haircut', price: 299, durationMinutes: 35, category: 'Haircut', description: 'Clean haircut & spray styling' },
-      { id: 'ss2', name: 'Beard Grooming', price: 199, durationMinutes: 20, category: 'Beard', description: 'Trimming & neck line razor shave' }
-    ],
-    stylists: [
-      { id: 'ss-sty-1', name: 'Rohan', role: 'Hair Stylist', rating: 4.6, status: 'available', shiftHours: '10:00 AM – 8:00 PM' },
-      { id: 'ss-sty-2', name: 'Sneha', role: 'Senior Stylist', rating: 4.7, status: 'withCustomer', shiftHours: '10:00 AM – 8:00 PM' }
-    ],
-    slots: [
-      { id: 'ss-sl1', time: '11:45 AM', hourGroup: '11 AM', status: 'available', price: 299, isEarliest: true, stylistName: 'Rohan' },
-      { id: 'ss-sl2', time: '12:15 PM', hourGroup: '12 PM', status: 'available', price: 299, stylistName: 'Sneha' }
-    ]
+const salonsDataPath = path.resolve(__dirname, 'salons_data.json');
+let salons: any[] = [];
+
+try {
+  if (fs.existsSync(salonsDataPath)) {
+    salons = JSON.parse(fs.readFileSync(salonsDataPath, 'utf8'));
   }
-];
+} catch (err) {
+  console.error('[server] Error reading salons_data.json:', err);
+}
+
+// Fallback if file load fails
+if (salons.length === 0) {
+  salons = [
+    {
+      id: 'salon_1',
+      name: 'Looks Salon',
+      rating: 4.7,
+      reviewsCount: 328,
+      distanceKm: 0.8,
+      travelTimeMin: 8,
+      address: 'Plot 42, Saheed Nagar, Janpath Road',
+      area: 'Saheed Nagar, Bhubaneswar',
+      imageUrl: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=800',
+      priceStart: 399,
+      isOpen: true,
+      openingHours: 'Open · Closes 9:00 PM',
+      expectedWaitMin: '0-5 min',
+      nextSlotTime: '11:30 AM',
+      queueCount: 3,
+      stylistsCount: 4,
+      availableStylistsCount: 2,
+      busyLevel: 'quiet',
+      isVerified: true,
+      happyCustomersCount: '1000+',
+      services: [
+        { id: 's1', name: 'Haircut', price: 399, durationMinutes: 45, category: 'Haircut', description: 'Consultation & Precision cut' },
+      ],
+      stylists: [],
+      slots: []
+    }
+  ];
+}
 
 let bookings = [
   {
@@ -190,8 +155,13 @@ app.get('/api/salons', (req: Request, res: Response) => {
   res.json(salons);
 });
 
+const findSalon = (id?: string) => {
+  if (!id) return undefined;
+  return salons.find((s) => s.id === id || s.id.replace('_', '-') === id || s.id.replace('-', '_') === id);
+};
+
 app.get('/api/salons/:id', (req: Request, res: Response) => {
-  const salon = salons.find((s) => s.id === req.params.id);
+  const salon = findSalon(req.params.id);
   if (!salon) return res.status(404).json({ error: 'Salon not found' });
   res.json(salon);
 });
@@ -199,10 +169,10 @@ app.get('/api/salons/:id', (req: Request, res: Response) => {
 // 5. Toggle Slot Availability
 app.patch('/api/salons/:salonId/slots/:slotId/toggle', (req: Request, res: Response) => {
   const { salonId, slotId } = req.params;
-  const salon = salons.find((s) => s.id === salonId);
+  const salon = findSalon(salonId);
   if (!salon) return res.status(404).json({ error: 'Salon not found' });
 
-  const slot = salon.slots.find((s) => s.id === slotId);
+  const slot = salon.slots.find((s: any) => s.id === slotId);
   if (!slot) return res.status(404).json({ error: 'Slot not found' });
 
   slot.status = slot.status === 'available' ? 'booked' : 'available';
@@ -215,10 +185,10 @@ app.patch('/api/salons/:salonId/slots/:slotId/toggle', (req: Request, res: Respo
 app.patch('/api/salons/:salonId/stylists/:stylistId/status', (req: Request, res: Response) => {
   const { salonId, stylistId } = req.params;
   const { status } = req.body;
-  const salon = salons.find((s) => s.id === salonId);
+  const salon = findSalon(salonId);
   if (!salon) return res.status(404).json({ error: 'Salon not found' });
 
-  const stylist = salon.stylists.find((st) => st.id === stylistId);
+  const stylist = salon.stylists.find((st: any) => st.id === stylistId);
   if (!stylist) return res.status(404).json({ error: 'Stylist not found' });
 
   stylist.status = status;
@@ -242,11 +212,11 @@ app.get('/api/bookings', (req: Request, res: Response) => {
 app.post('/api/bookings', (req: Request, res: Response) => {
   const { salonId, serviceId, slotId, stylistName, customerName, customerPhone } = req.body;
 
-  const salon = salons.find((s) => s.id === salonId);
+  const salon = findSalon(salonId);
   if (!salon) return res.status(404).json({ error: 'Salon not found' });
 
-  const service = salon.services.find((s) => s.id === serviceId) || salon.services[0];
-  const slot = salon.slots.find((s) => s.id === slotId);
+  const service = salon.services.find((s: any) => s.id === serviceId) || salon.services[0];
+  const slot = salon.slots.find((s: any) => s.id === slotId);
 
   if (slot) {
     slot.status = 'booked';
@@ -263,7 +233,7 @@ app.post('/api/bookings', (req: Request, res: Response) => {
     date: 'Today, 28 Sep',
     distanceKm: salon.distanceKm,
     travelTimeMin: salon.travelTimeMin,
-    stylistName: stylistName || (slot?.stylistName ?? salon.stylists[0].name),
+    stylistName: stylistName || (slot?.stylistName ?? salon.stylists[0]?.name ?? 'Stylist'),
     customerName: customerName || 'Isha ',
     customerPhone: customerPhone || '+91 98765 43210',
     status: 'booked',
@@ -304,7 +274,7 @@ app.patch('/api/bookings/:id/advance', (req: Request, res: Response) => {
 // 9. Add Walk-In Customer
 app.post('/api/walk-ins', (req: Request, res: Response) => {
   const { salonId, customerName, serviceName, stylistName, durationMin } = req.body;
-  const salon = salons.find((s) => s.id === (salonId || 'salon-1'));
+  const salon = findSalon(salonId) || salons[0];
   if (salon) {
     salon.queueCount += 1;
   }

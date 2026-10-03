@@ -14,14 +14,30 @@ export const AvailableSalonsList: React.FC = () => {
 
   const [activeFilter, setActiveFilter] = useState<'available_now' | 'top_rated'>('available_now');
 
-  const filteredSalons = [...salons].sort((a, b) => {
+  const normalizedCategory = selectedCategory?.toLowerCase().replace(/[\s_]+/g, '');
+  const categoryMatched = salons.filter(s => {
+    if (!normalizedCategory || normalizedCategory === 'all' || normalizedCategory === 'more') return true;
+    return s.services.some(srv => srv.category.toLowerCase().replace(/[\s_]+/g, '') === normalizedCategory);
+  });
+
+  const filteredSalons = [...categoryMatched].sort((a, b) => {
     if (activeFilter === 'top_rated') return b.rating - a.rating;
     return a.travelTimeMin - b.travelTimeMin;
   });
 
+  const getCategoryStartingPrice = (salon: Salon) => {
+    if (!normalizedCategory || normalizedCategory === 'all' || normalizedCategory === 'more') return salon.priceStart;
+    const matching = salon.services.filter(srv => srv.category.toLowerCase().replace(/[\s_]+/g, '') === normalizedCategory);
+    if (matching.length === 0) return salon.priceStart;
+    return Math.min(...matching.map(srv => srv.price));
+  };
+
   const handleBook = (salon: Salon, slotId: string, _slotTime: string) => {
     setSelectedSalon(salon);
-    bookSlot(salon.id, slotId, salon.services[0].id);
+    const serviceToBook = salon.services.find(srv => 
+      normalizedCategory && srv.category.toLowerCase().replace(/[\s_]+/g, '') === normalizedCategory
+    ) || salon.services[0];
+    bookSlot(salon.id, slotId, serviceToBook.id);
     setConsumerScreen('confirmation');
   };
 
@@ -130,8 +146,13 @@ export const AvailableSalonsList: React.FC = () => {
                     {salon.travelTimeMin} min away
                   </span>
                 </div>
-                <div className="text-xs font-semibold text-slate-800 mt-1">
-                  ₹{salon.priceStart} · 45 min
+                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                  <span className="text-[10.5px] font-bold px-2 py-0.5 rounded-md bg-[#F9E8EC] text-[#80142B] border border-[#80142B]/20">
+                    {selectedCategory || salon.services[0]?.category || 'Haircut'}
+                  </span>
+                  <span className="text-xs font-semibold text-slate-800">
+                    {selectedCategory ? `${selectedCategory} from ` : ''}₹{getCategoryStartingPrice(salon)}
+                  </span>
                 </div>
               </div>
             </div>

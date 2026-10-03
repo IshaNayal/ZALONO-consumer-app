@@ -1,6 +1,17 @@
-import React, { useState } from 'react';
-import { ArrowLeft, UserPlus, Clock, Scissors, UserCheck } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { ArrowLeft, UserPlus, Clock, Scissors, UserCheck, Sparkles, ChevronDown } from 'lucide-react';
 import { useZalono } from '../../context/ZalonoContext';
+import { ServiceItem } from '../../types';
+
+const DUMMY_SERVICES: ServiceItem[] = [
+  { id: 'd_beard', name: 'Beard Sculpt & Hot Towel Shape', price: 349, durationMinutes: 30, category: 'Beard', description: 'Razor edge detailing' },
+  { id: 'd_massage', name: 'Head & Shoulder Stress-Relief Massage', price: 449, durationMinutes: 35, category: 'Head Massage', description: 'Warm herbal oil relaxation' },
+  { id: 'd_color', name: 'Hair Color & Highlights', price: 1299, durationMinutes: 90, category: 'Hair Color', description: 'Ammonia-free global color' },
+  { id: 'd_pedicure', name: 'Deluxe Pedicure & Foot Reflexology', price: 799, durationMinutes: 50, category: 'Pedicure', description: 'Soak & foot massage' },
+  { id: 'd_manicure', name: 'Classic Hand Spa & Manicure', price: 549, durationMinutes: 40, category: 'Manicure', description: 'Nail shaping & massage' },
+  { id: 'd_cleanse', name: 'Deep Cleanse Charcoal Facial', price: 799, durationMinutes: 50, category: 'Facial', description: 'Charcoal mask & skin revival' },
+  { id: 'd_keratin', name: 'Keratin Express Smoothening', price: 1899, durationMinutes: 90, category: 'Hair Spa', description: 'Frizz-free smoothness' },
+];
 
 export const AddWalkInModal: React.FC = () => {
   const { setPartnerScreen, addWalkIn, salons } = useZalono();
@@ -10,6 +21,15 @@ export const AddWalkInModal: React.FC = () => {
   const [service, setService] = useState('Haircut');
   const [stylist, setStylist] = useState('Rahul');
   const [duration, setDuration] = useState(45);
+  const [showAllServices, setShowAllServices] = useState(false);
+
+  const allAvailableServices = useMemo(() => {
+    const base = salon?.services || [];
+    if (!showAllServices) return base;
+    const baseNames = new Set(base.map(s => s.name.toLowerCase().trim()));
+    const extra = DUMMY_SERVICES.filter(d => !baseNames.has(d.name.toLowerCase().trim()));
+    return [...base, ...extra];
+  }, [salon, showAllServices]);
 
   const handleAdd = () => {
     addWalkIn(customerName, service, stylist, duration);
@@ -49,10 +69,33 @@ export const AddWalkInModal: React.FC = () => {
             onChange={(e) => setService(e.target.value)}
             className="w-full text-xs p-3 bg-white border border-slate-200 rounded-xl focus:outline-none"
           >
-            {salon.services.map(s => (
-              <option key={s.id} value={s.name}>{s.name} (₹{s.price} · {s.durationMinutes}m)</option>
+            {allAvailableServices.map(s => (
+              <option key={s.id} value={s.name}>{s.name} ({s.category} · ₹{s.price} · {s.durationMinutes}m)</option>
             ))}
           </select>
+
+          {/* Explore More Services Bar */}
+          <button
+            type="button"
+            onClick={() => setShowAllServices(!showAllServices)}
+            className="w-full mt-2 p-2.5 bg-white border border-rose-200 hover:border-[#80142B] rounded-xl flex items-center justify-between text-left transition-all shadow-xs cursor-pointer"
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-lg bg-[#F9E8EC] flex items-center justify-center text-[#80142B]">
+                <Sparkles className="w-3.5 h-3.5" />
+              </div>
+              <div>
+                <span className="text-[11px] font-bold text-slate-900 block">Explore More Services</span>
+                <span className="text-[10px] text-slate-500">
+                  {showAllServices ? 'All treatments visible' : '+5 more dummy & specialty services'}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 text-[11px] font-bold text-[#80142B]">
+              <span>{showAllServices ? 'Less' : 'More'}</span>
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${showAllServices ? 'rotate-180' : ''}`} />
+            </div>
+          </button>
         </div>
 
         <div className="space-y-1">

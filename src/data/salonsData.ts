@@ -1,0 +1,1859 @@
+import { Salon } from '../types';
+
+export const ALL_SALONS: Salon[] = [
+  {
+    "id": "salon_1",
+    "name": "Looks Salon",
+    "rating": 4.7,
+    "reviewsCount": 328,
+    "distanceKm": 0.8,
+    "travelTimeMin": 8,
+    "address": "Plot 42, Saheed Nagar, Janpath Road",
+    "area": "Saheed Nagar, Bhubaneswar",
+    "image": "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=800",
+    "imageUrl": "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=800",
+    "priceStart": 399,
+    "isOpen": true,
+    "openingHours": "Open · Closes 9:00 PM",
+    "expectedWaitMin": "0-5 min",
+    "nextSlotTime": "11:30 AM",
+    "queueCount": 3,
+    "stylistsCount": 4,
+    "availableStylistsCount": 2,
+    "busyLevel": "quiet",
+    "isVerified": true,
+    "happyCustomersCount": "1000+",
+    "phone": "9876543210",
+    "gender": "unisex",
+    "services": [
+      {
+        "id": "s1",
+        "name": "Haircut",
+        "price": 399,
+        "durationMinutes": 45,
+        "description": "Consultation & Precision cut",
+        "category": "Haircut"
+      },
+      {
+        "id": "s2",
+        "name": "Haircut + Beard",
+        "price": 599,
+        "durationMinutes": 60,
+        "description": "Cut with hot towel shape",
+        "category": "Haircut"
+      },
+      {
+        "id": "s3",
+        "name": "Premium Haircut",
+        "price": 799,
+        "durationMinutes": 60,
+        "description": "Director styling & wash",
+        "category": "Haircut"
+      },
+      {
+        "id": "s4",
+        "name": "Hair Spa",
+        "price": 899,
+        "durationMinutes": 75,
+        "description": "Wash, massage & shine treatment",
+        "category": "Hair Spa"
+      },
+      {
+        "id": "s5",
+        "name": "Facial",
+        "price": 749,
+        "durationMinutes": 50,
+        "description": "Cleanse, exfoliate & hydrate",
+        "category": "Facial"
+      },
+      {
+        "id": "s6",
+        "name": "Global Hair Color",
+        "price": 1349,
+        "durationMinutes": 90,
+        "description": "Ammonia-free colour with gloss",
+        "category": "Hair Color"
+      },
+      {
+        "id": "s7",
+        "name": "Beard Sculpt & Shape",
+        "price": 299,
+        "durationMinutes": 30,
+        "description": "Hot towel shape & line-up",
+        "category": "Beard"
+      },
+      {
+        "id": "s8",
+        "name": "Classic Manicure",
+        "price": 599,
+        "durationMinutes": 40,
+        "description": "Shape, cuticle care & polish",
+        "category": "Manicure"
+      },
+      {
+        "id": "s9",
+        "name": "Deluxe Pedicure",
+        "price": 799,
+        "durationMinutes": 50,
+        "description": "Soak, exfoliation & foot massage",
+        "category": "Pedicure"
+      },
+      {
+        "id": "s10",
+        "name": "Stress-Relief Head Massage",
+        "price": 649,
+        "durationMinutes": 35,
+        "description": "Warm herbal oil relaxation",
+        "category": "Head Massage"
+      }
+    ],
+    "stylists": [
+      {
+        "id": "st1",
+        "name": "Rahul",
+        "role": "Senior Stylist",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.9,
+        "status": "available",
+        "shiftHours": "10:00 AM - 7:00 PM"
+      },
+      {
+        "id": "st2",
+        "name": "Priya",
+        "role": "Hair Specialist",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.8,
+        "status": "with_customer",
+        "shiftHours": "10:00 AM - 7:00 PM"
+      },
+      {
+        "id": "st3",
+        "name": "Amit",
+        "role": "Stylist",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.7,
+        "status": "available",
+        "shiftHours": "11:00 AM - 8:00 PM"
+      },
+      {
+        "id": "st4",
+        "name": "Neha",
+        "role": "Color Expert",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.6,
+        "status": "break",
+        "shiftHours": "10:00 AM - 7:00 PM"
+      }
+    ],
+    "slots": [
+      {
+        "id": "sl1",
+        "time": "11:15 AM",
+        "hourGroup": "11 AM",
+        "status": "available",
+        "stylistName": "Rahul",
+        "customerName": null,
+        "serviceName": null,
+        "price": 399,
+        "isEarliest": true,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      },
+      {
+        "id": "sl2",
+        "time": "11:30 AM",
+        "hourGroup": "11 AM",
+        "status": "available",
+        "stylistName": "Rahul",
+        "customerName": null,
+        "serviceName": null,
+        "price": 399,
+        "isEarliest": true,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      },
+      {
+        "id": "sl3",
+        "time": "11:40 AM",
+        "hourGroup": "11 AM",
+        "status": "available",
+        "stylistName": "Rahul",
+        "customerName": null,
+        "serviceName": null,
+        "price": 399,
+        "isEarliest": false,
+        "isRecommended": true,
+        "travelBufferMinutes": 13
+      },
+      {
+        "id": "sl4",
+        "time": "12:00 PM",
+        "hourGroup": "12 PM",
+        "status": "available",
+        "stylistName": "Amit",
+        "customerName": null,
+        "serviceName": null,
+        "price": 399,
+        "isEarliest": false,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      },
+      {
+        "id": "sl5",
+        "time": "12:30 PM",
+        "hourGroup": "12 PM",
+        "status": "limited",
+        "stylistName": "Neha",
+        "customerName": null,
+        "serviceName": null,
+        "price": 399,
+        "isEarliest": false,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      }
+    ]
+  },
+  {
+    "id": "salon_2",
+    "name": "The Men’s Studio",
+    "rating": 4.5,
+    "reviewsCount": 189,
+    "distanceKm": 1.2,
+    "travelTimeMin": 12,
+    "address": "Plot 18, Saheed Nagar, Janpath Road",
+    "area": "Saheed Nagar, Bhubaneswar",
+    "image": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=800",
+    "imageUrl": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=800",
+    "priceStart": 349,
+    "isOpen": true,
+    "openingHours": "Open · Closes 9:00 PM",
+    "expectedWaitMin": "5-10 min",
+    "nextSlotTime": "12:15 PM",
+    "queueCount": 1,
+    "stylistsCount": 2,
+    "availableStylistsCount": 2,
+    "busyLevel": "quiet",
+    "isVerified": true,
+    "happyCustomersCount": "600+",
+    "phone": "9876501111",
+    "gender": "male",
+    "services": [
+      {
+        "id": "m1",
+        "name": "Men’s Haircut",
+        "price": 349,
+        "durationMinutes": 40,
+        "description": "Precision cut & wash",
+        "category": "Haircut"
+      },
+      {
+        "id": "m2",
+        "name": "Beard Trim",
+        "price": 249,
+        "durationMinutes": 25,
+        "description": "Shape & finish",
+        "category": "Beard"
+      }
+    ],
+    "stylists": [
+      {
+        "id": "mst1",
+        "name": "Arjun",
+        "role": "Senior Stylist",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.6,
+        "status": "available",
+        "shiftHours": "10:00 AM - 8:00 PM"
+      }
+    ],
+    "slots": [
+      {
+        "id": "msl1",
+        "time": "12:15 PM",
+        "hourGroup": "12 PM",
+        "status": "available",
+        "stylistName": "Arjun",
+        "customerName": null,
+        "serviceName": null,
+        "price": 349,
+        "isEarliest": false,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      },
+      {
+        "id": "msl2",
+        "time": "1:00 PM",
+        "hourGroup": "1 PM",
+        "status": "available",
+        "stylistName": "Arjun",
+        "customerName": null,
+        "serviceName": null,
+        "price": 349,
+        "isEarliest": false,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      }
+    ]
+  },
+  {
+    "id": "salon_3",
+    "name": "Belle Beauty Parlour",
+    "rating": 4.8,
+    "reviewsCount": 412,
+    "distanceKm": 0.6,
+    "travelTimeMin": 7,
+    "address": "Plot 7, Saheed Nagar, Janpath Road",
+    "area": "Saheed Nagar, Bhubaneswar",
+    "image": "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&q=80&w=800",
+    "imageUrl": "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&q=80&w=800",
+    "priceStart": 549,
+    "isOpen": true,
+    "openingHours": "Open · Closes 8:00 PM",
+    "expectedWaitMin": "10-15 min",
+    "nextSlotTime": "11:50 AM",
+    "queueCount": 2,
+    "stylistsCount": 3,
+    "availableStylistsCount": 1,
+    "busyLevel": "moderate",
+    "isVerified": true,
+    "happyCustomersCount": "900+",
+    "phone": "9876502222",
+    "gender": "female",
+    "services": [
+      {
+        "id": "w1",
+        "name": "Facial",
+        "price": 749,
+        "durationMinutes": 50,
+        "description": "Cleanse, exfoliate & hydrate",
+        "category": "Facial"
+      },
+      {
+        "id": "w2",
+        "name": "Hair Spa",
+        "price": 899,
+        "durationMinutes": 75,
+        "description": "Wash, massage & shine",
+        "category": "Hair Spa"
+      },
+      {
+        "id": "w3",
+        "name": "Manicure",
+        "price": 649,
+        "durationMinutes": 45,
+        "description": "Shape, cuticle care & polish",
+        "category": "Manicure"
+      },
+      {
+        "id": "w4",
+        "name": "Spa Pedicure",
+        "price": 749,
+        "durationMinutes": 45,
+        "description": "Soak, scrub & foot massage",
+        "category": "Pedicure"
+      },
+      {
+        "id": "w5",
+        "name": "Aromatherapy Head Massage",
+        "price": 699,
+        "durationMinutes": 40,
+        "description": "Deep relaxation therapy",
+        "category": "Head Massage"
+      }
+    ],
+    "stylists": [
+      {
+        "id": "wst1",
+        "name": "Meera",
+        "role": "Beauty Expert",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.9,
+        "status": "available",
+        "shiftHours": "10:00 AM - 8:00 PM"
+      },
+      {
+        "id": "wst2",
+        "name": "Kavya",
+        "role": "Hair Stylist",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.7,
+        "status": "with_customer",
+        "shiftHours": "11:00 AM - 8:00 PM"
+      }
+    ],
+    "slots": [
+      {
+        "id": "wsl1",
+        "time": "11:50 AM",
+        "hourGroup": "11 AM",
+        "status": "available",
+        "stylistName": "Meera",
+        "customerName": null,
+        "serviceName": null,
+        "price": 749,
+        "isEarliest": false,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      },
+      {
+        "id": "wsl2",
+        "time": "2:30 PM",
+        "hourGroup": "2 PM",
+        "status": "limited",
+        "stylistName": "Kavya",
+        "customerName": null,
+        "serviceName": null,
+        "price": 649,
+        "isEarliest": false,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      }
+    ]
+  },
+  {
+    "id": "salon_4",
+    "name": "Style Studio Unisex",
+    "rating": 4.3,
+    "reviewsCount": 96,
+    "distanceKm": 1.9,
+    "travelTimeMin": 18,
+    "address": "Plot 55, Saheed Nagar, Near Flyover",
+    "area": "Saheed Nagar, Bhubaneswar",
+    "image": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&q=80&w=800",
+    "imageUrl": "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&q=80&w=800",
+    "priceStart": 299,
+    "isOpen": true,
+    "openingHours": "Open · Closes 9:00 PM",
+    "expectedWaitMin": "5-10 min",
+    "nextSlotTime": "1:45 PM",
+    "queueCount": 0,
+    "stylistsCount": 2,
+    "availableStylistsCount": 1,
+    "busyLevel": "quiet",
+    "isVerified": false,
+    "happyCustomersCount": "300+",
+    "phone": "9876503333",
+    "gender": "unisex",
+    "services": [
+      {
+        "id": "u1",
+        "name": "Haircut",
+        "price": 299,
+        "durationMinutes": 40,
+        "description": "Classic cut for everyone",
+        "category": "Haircut"
+      },
+      {
+        "id": "u2",
+        "name": "Head Massage",
+        "price": 399,
+        "durationMinutes": 30,
+        "description": "Relaxing oil massage",
+        "category": "Head Massage"
+      },
+      {
+        "id": "u3",
+        "name": "Global Hair Color",
+        "price": 1099,
+        "durationMinutes": 80,
+        "description": "Ammonia-free colour & gloss",
+        "category": "Hair Color"
+      },
+      {
+        "id": "u4",
+        "name": "Beard Trim & Shape",
+        "price": 249,
+        "durationMinutes": 25,
+        "description": "Even it out",
+        "category": "Beard"
+      },
+      {
+        "id": "u5",
+        "name": "Hair Spa",
+        "price": 849,
+        "durationMinutes": 60,
+        "description": "Wash, massage & shine",
+        "category": "Hair Spa"
+      }
+    ],
+    "stylists": [
+      {
+        "id": "ust1",
+        "name": "Riya",
+        "role": "Stylist",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.4,
+        "status": "available",
+        "shiftHours": "11:00 AM - 9:00 PM"
+      }
+    ],
+    "slots": [
+      {
+        "id": "usl1",
+        "time": "1:45 PM",
+        "hourGroup": "1 PM",
+        "status": "available",
+        "stylistName": "Riya",
+        "customerName": null,
+        "serviceName": null,
+        "price": 299,
+        "isEarliest": false,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      }
+    ]
+  },
+  {
+    "id": "salon_5",
+    "name": "Glow Spa & Salon",
+    "rating": 4.6,
+    "reviewsCount": 143,
+    "distanceKm": 3.4,
+    "travelTimeMin": 26,
+    "address": "Plot 12, Nayapalli, Bhubaneswar",
+    "area": "Saheed Nagar, Bhubaneswar",
+    "image": "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&q=80&w=800",
+    "imageUrl": "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&q=80&w=800",
+    "priceStart": 649,
+    "isOpen": true,
+    "openingHours": "Open · Closes 9:00 PM",
+    "expectedWaitMin": "10-15 min",
+    "nextSlotTime": "2:00 PM",
+    "queueCount": 2,
+    "stylistsCount": 3,
+    "availableStylistsCount": 2,
+    "busyLevel": "moderate",
+    "isVerified": true,
+    "happyCustomersCount": "700+",
+    "phone": "9876504444",
+    "gender": "female",
+    "services": [
+      {
+        "id": "g1",
+        "name": "Deep Tissue Massage",
+        "price": 999,
+        "durationMinutes": 60,
+        "description": "Relaxing full-body massage",
+        "category": "Head Massage"
+      },
+      {
+        "id": "g2",
+        "name": "Clean-up Facial",
+        "price": 599,
+        "durationMinutes": 45,
+        "description": "Gentle cleanse and hydrate",
+        "category": "Facial"
+      },
+      {
+        "id": "g3",
+        "name": "Classic Manicure",
+        "price": 549,
+        "durationMinutes": 40,
+        "description": "Shape & polish",
+        "category": "Manicure"
+      },
+      {
+        "id": "g4",
+        "name": "Deluxe Pedicure",
+        "price": 749,
+        "durationMinutes": 50,
+        "description": "Soak & foot massage",
+        "category": "Pedicure"
+      },
+      {
+        "id": "g5",
+        "name": "Hair Spa Ritual",
+        "price": 999,
+        "durationMinutes": 70,
+        "description": "Repair & shine treatment",
+        "category": "Hair Spa"
+      }
+    ],
+    "stylists": [
+      {
+        "id": "gst1",
+        "name": "Ananya",
+        "role": "Spa Therapist",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.8,
+        "status": "available",
+        "shiftHours": "10:00 AM - 8:00 PM"
+      }
+    ],
+    "slots": [
+      {
+        "id": "gsl1",
+        "time": "2:00 PM",
+        "hourGroup": "2 PM",
+        "status": "available",
+        "stylistName": "Ananya",
+        "customerName": null,
+        "serviceName": null,
+        "price": 999,
+        "isEarliest": false,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      }
+    ]
+  },
+  {
+    "id": "salon_6",
+    "name": "Crown Unisex Salon",
+    "rating": 4.4,
+    "reviewsCount": 154,
+    "distanceKm": 2.2,
+    "travelTimeMin": 17,
+    "address": "Plot 88, Saheed Nagar, Near IOC Office",
+    "area": "Saheed Nagar, Bhubaneswar",
+    "image": "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&q=80&w=800",
+    "imageUrl": "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&q=80&w=800",
+    "priceStart": 379,
+    "isOpen": true,
+    "openingHours": "Open · Closes 9:00 PM",
+    "expectedWaitMin": "5-10 min",
+    "nextSlotTime": "1:20 PM",
+    "queueCount": 2,
+    "stylistsCount": 3,
+    "availableStylistsCount": 2,
+    "busyLevel": "quiet",
+    "isVerified": true,
+    "happyCustomersCount": "500+",
+    "phone": "9876505555",
+    "gender": "unisex",
+    "services": [
+      {
+        "id": "c1",
+        "name": "Classic Haircut",
+        "price": 379,
+        "durationMinutes": 40,
+        "description": "Consultation, cut & wash",
+        "category": "Haircut"
+      },
+      {
+        "id": "c2",
+        "name": "Global Hair Color",
+        "price": 1249,
+        "durationMinutes": 85,
+        "description": "Ammonia-free global colour",
+        "category": "Hair Color"
+      },
+      {
+        "id": "c3",
+        "name": "Beard Sculpt",
+        "price": 299,
+        "durationMinutes": 30,
+        "description": "Shape, line-up & hot towel",
+        "category": "Beard"
+      },
+      {
+        "id": "c4",
+        "name": "Clean-up Facial",
+        "price": 649,
+        "durationMinutes": 45,
+        "description": "Gentle cleanse & hydrate",
+        "category": "Facial"
+      },
+      {
+        "id": "c5",
+        "name": "Spa Pedicure",
+        "price": 749,
+        "durationMinutes": 45,
+        "description": "Soak, scrub & massage",
+        "category": "Pedicure"
+      },
+      {
+        "id": "c6",
+        "name": "Hair Spa",
+        "price": 949,
+        "durationMinutes": 60,
+        "description": "Wash, massage & shine",
+        "category": "Hair Spa"
+      }
+    ],
+    "stylists": [
+      {
+        "id": "cst1",
+        "name": "Sandeep",
+        "role": "Senior Stylist",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.5,
+        "status": "available",
+        "shiftHours": "10:00 AM - 8:00 PM"
+      },
+      {
+        "id": "cst2",
+        "name": "Ritika",
+        "role": "Color Expert",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.6,
+        "status": "available",
+        "shiftHours": "11:00 AM - 8:00 PM"
+      }
+    ],
+    "slots": [
+      {
+        "id": "csl1",
+        "time": "1:20 PM",
+        "hourGroup": "1 PM",
+        "status": "available",
+        "stylistName": "Sandeep",
+        "customerName": null,
+        "serviceName": null,
+        "price": 379,
+        "isEarliest": false,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      },
+      {
+        "id": "csl2",
+        "time": "1:40 PM",
+        "hourGroup": "1 PM",
+        "status": "available",
+        "stylistName": "Ritika",
+        "customerName": null,
+        "serviceName": null,
+        "price": 1249,
+        "isEarliest": false,
+        "isRecommended": true,
+        "travelBufferMinutes": 12
+      }
+    ]
+  },
+  {
+    "id": "salon_7",
+    "name": "Aroma Beauty Lounge",
+    "rating": 4.7,
+    "reviewsCount": 268,
+    "distanceKm": 1.4,
+    "travelTimeMin": 14,
+    "address": "Plot 23, Saheed Nagar, Near Flyover",
+    "area": "Saheed Nagar, Bhubaneswar",
+    "image": "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?auto=format&fit=crop&q=80&w=800",
+    "imageUrl": "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?auto=format&fit=crop&q=80&w=800",
+    "priceStart": 599,
+    "isOpen": true,
+    "openingHours": "Open · Closes 8:00 PM",
+    "expectedWaitMin": "10-15 min",
+    "nextSlotTime": "12:30 PM",
+    "queueCount": 3,
+    "stylistsCount": 4,
+    "availableStylistsCount": 1,
+    "busyLevel": "moderate",
+    "isVerified": true,
+    "happyCustomersCount": "800+",
+    "phone": "9876506666",
+    "gender": "female",
+    "services": [
+      {
+        "id": "a1",
+        "name": "Brightening Facial",
+        "price": 799,
+        "durationMinutes": 55,
+        "description": "Vitamin-C glow & hydration",
+        "category": "Facial"
+      },
+      {
+        "id": "a2",
+        "name": "Nourishing Hair Spa",
+        "price": 899,
+        "durationMinutes": 60,
+        "description": "Scalp massage & shine treatment",
+        "category": "Hair Spa"
+      },
+      {
+        "id": "a3",
+        "name": "Gel Manicure",
+        "price": 599,
+        "durationMinutes": 40,
+        "description": "Shape, cuticle care & polish",
+        "category": "Manicure"
+      },
+      {
+        "id": "a4",
+        "name": "Deluxe Pedicure",
+        "price": 799,
+        "durationMinutes": 50,
+        "description": "Soak, exfoliation & foot massage",
+        "category": "Pedicure"
+      },
+      {
+        "id": "a5",
+        "name": "Aromatherapy Head Massage",
+        "price": 799,
+        "durationMinutes": 40,
+        "description": "Deep relaxation therapy",
+        "category": "Head Massage"
+      }
+    ],
+    "stylists": [
+      {
+        "id": "ast1",
+        "name": "Sneha",
+        "role": "Beauty Expert",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.8,
+        "status": "available",
+        "shiftHours": "10:00 AM - 8:00 PM"
+      },
+      {
+        "id": "ast2",
+        "name": "Pooja",
+        "role": "Nail Artist",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.7,
+        "status": "with_customer",
+        "shiftHours": "11:00 AM - 8:00 PM"
+      }
+    ],
+    "slots": [
+      {
+        "id": "asl1",
+        "time": "12:30 PM",
+        "hourGroup": "12 PM",
+        "status": "available",
+        "stylistName": "Sneha",
+        "customerName": null,
+        "serviceName": null,
+        "price": 799,
+        "isEarliest": false,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      },
+      {
+        "id": "asl2",
+        "time": "3:15 PM",
+        "hourGroup": "3 PM",
+        "status": "available",
+        "stylistName": "Sneha",
+        "customerName": null,
+        "serviceName": null,
+        "price": 899,
+        "isEarliest": false,
+        "isRecommended": true,
+        "travelBufferMinutes": 15
+      }
+    ]
+  },
+  {
+    "id": "salon_8",
+    "name": "Royal Touch Salon",
+    "rating": 4.2,
+    "reviewsCount": 87,
+    "distanceKm": 2.6,
+    "travelTimeMin": 21,
+    "address": "Unit 9, Patia, Near KIIT Gate 2",
+    "area": "Patia, Bhubaneswar",
+    "image": "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=800",
+    "imageUrl": "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&q=80&w=800",
+    "priceStart": 449,
+    "isOpen": true,
+    "openingHours": "Open · Closes 9:00 PM",
+    "expectedWaitMin": "15-20 min",
+    "nextSlotTime": "2:45 PM",
+    "queueCount": 4,
+    "stylistsCount": 3,
+    "availableStylistsCount": 1,
+    "busyLevel": "busy",
+    "isVerified": false,
+    "happyCustomersCount": "250+",
+    "phone": "9876507777",
+    "gender": "unisex",
+    "services": [
+      {
+        "id": "r1",
+        "name": "Signature Haircut",
+        "price": 449,
+        "durationMinutes": 45,
+        "description": "Precision cut & styling",
+        "category": "Haircut"
+      },
+      {
+        "id": "r2",
+        "name": "Root Touch-Up",
+        "price": 949,
+        "durationMinutes": 60,
+        "description": "Seamless root coverage",
+        "category": "Hair Color"
+      },
+      {
+        "id": "r3",
+        "name": "Facial",
+        "price": 699,
+        "durationMinutes": 50,
+        "description": "Cleanse, exfoliate & hydrate",
+        "category": "Facial"
+      },
+      {
+        "id": "r4",
+        "name": "Beard Trim",
+        "price": 299,
+        "durationMinutes": 25,
+        "description": "Shape & finish",
+        "category": "Beard"
+      },
+      {
+        "id": "r5",
+        "name": "Classic Manicure",
+        "price": 549,
+        "durationMinutes": 40,
+        "description": "Shape, cuticle care & polish",
+        "category": "Manicure"
+      },
+      {
+        "id": "r6",
+        "name": "Hair Spa",
+        "price": 899,
+        "durationMinutes": 60,
+        "description": "Wash, massage & shine",
+        "category": "Hair Spa"
+      }
+    ],
+    "stylists": [
+      {
+        "id": "rst1",
+        "name": "Manoj",
+        "role": "Stylist",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.2,
+        "status": "available",
+        "shiftHours": "11:00 AM - 9:00 PM"
+      }
+    ],
+    "slots": [
+      {
+        "id": "rsl1",
+        "time": "2:45 PM",
+        "hourGroup": "2 PM",
+        "status": "limited",
+        "stylistName": "Manoj",
+        "customerName": null,
+        "serviceName": null,
+        "price": 449,
+        "isEarliest": false,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      }
+    ]
+  },
+  {
+    "id": "salon_9",
+    "name": "Men’s Kraft Barbershop",
+    "rating": 4.6,
+    "reviewsCount": 231,
+    "distanceKm": 0.9,
+    "travelTimeMin": 9,
+    "address": "Plot 61, Saheed Nagar, Janpath Road",
+    "area": "Saheed Nagar, Bhubaneswar",
+    "image": "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=800",
+    "imageUrl": "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&q=80&w=800",
+    "priceStart": 299,
+    "isOpen": true,
+    "openingHours": "Open · Closes 9:00 PM",
+    "expectedWaitMin": "0-5 min",
+    "nextSlotTime": "12:00 PM",
+    "queueCount": 1,
+    "stylistsCount": 3,
+    "availableStylistsCount": 3,
+    "busyLevel": "quiet",
+    "isVerified": true,
+    "happyCustomersCount": "650+",
+    "phone": "9876508888",
+    "gender": "male",
+    "services": [
+      {
+        "id": "k1",
+        "name": "Skin Fade",
+        "price": 299,
+        "durationMinutes": 40,
+        "description": "Sharp fade & beard line",
+        "category": "Haircut"
+      },
+      {
+        "id": "k2",
+        "name": "Beard Trim & Shape",
+        "price": 249,
+        "durationMinutes": 25,
+        "description": "Razor edge detailing",
+        "category": "Beard"
+      },
+      {
+        "id": "k3",
+        "name": "Head Massage",
+        "price": 349,
+        "durationMinutes": 30,
+        "description": "Warm oil pressure-point relief",
+        "category": "Head Massage"
+      }
+    ],
+    "stylists": [
+      {
+        "id": "kst1",
+        "name": "Vikram",
+        "role": "Senior Barber",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.7,
+        "status": "available",
+        "shiftHours": "10:00 AM - 9:00 PM"
+      },
+      {
+        "id": "kst2",
+        "name": "Rakesh",
+        "role": "Barber",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.5,
+        "status": "available",
+        "shiftHours": "11:00 AM - 9:00 PM"
+      }
+    ],
+    "slots": [
+      {
+        "id": "ksl1",
+        "time": "12:00 PM",
+        "hourGroup": "12 PM",
+        "status": "available",
+        "stylistName": "Vikram",
+        "customerName": null,
+        "serviceName": null,
+        "price": 299,
+        "isEarliest": true,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      },
+      {
+        "id": "ksl2",
+        "time": "12:30 PM",
+        "hourGroup": "12 PM",
+        "status": "available",
+        "stylistName": "Rakesh",
+        "customerName": null,
+        "serviceName": null,
+        "price": 299,
+        "isEarliest": false,
+        "isRecommended": true,
+        "travelBufferMinutes": 10
+      }
+    ]
+  },
+  {
+    "id": "salon_10",
+    "name": "Colour Splash Salon",
+    "rating": 4.5,
+    "reviewsCount": 176,
+    "distanceKm": 1.7,
+    "travelTimeMin": 16,
+    "address": "Plot 9, Nayapalli, Near CRPF Road",
+    "area": "Nayapalli, Bhubaneswar",
+    "image": "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&q=80&w=800",
+    "imageUrl": "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&q=80&w=800",
+    "priceStart": 899,
+    "isOpen": true,
+    "openingHours": "Open · Closes 8:00 PM",
+    "expectedWaitMin": "10-15 min",
+    "nextSlotTime": "1:00 PM",
+    "queueCount": 2,
+    "stylistsCount": 3,
+    "availableStylistsCount": 2,
+    "busyLevel": "moderate",
+    "isVerified": true,
+    "happyCustomersCount": "700+",
+    "phone": "9876509999",
+    "gender": "female",
+    "services": [
+      {
+        "id": "cs1",
+        "name": "Fashion Hair Color",
+        "price": 1399,
+        "durationMinutes": 90,
+        "description": "Trend-led global colour",
+        "category": "Hair Color"
+      },
+      {
+        "id": "cs2",
+        "name": "Hair Spa Ritual",
+        "price": 949,
+        "durationMinutes": 60,
+        "description": "Repair & shine treatment",
+        "category": "Hair Spa"
+      },
+      {
+        "id": "cs3",
+        "name": "Brightening Facial",
+        "price": 899,
+        "durationMinutes": 55,
+        "description": "Glow & hydration pack",
+        "category": "Facial"
+      }
+    ],
+    "stylists": [
+      {
+        "id": "csst1",
+        "name": "Nisha",
+        "role": "Color Expert",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.8,
+        "status": "available",
+        "shiftHours": "10:00 AM - 8:00 PM"
+      }
+    ],
+    "slots": [
+      {
+        "id": "cssl1",
+        "time": "1:00 PM",
+        "hourGroup": "1 PM",
+        "status": "available",
+        "stylistName": "Nisha",
+        "customerName": null,
+        "serviceName": null,
+        "price": 1399,
+        "isEarliest": false,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      },
+      {
+        "id": "cssl2",
+        "time": "2:00 PM",
+        "hourGroup": "2 PM",
+        "status": "available",
+        "stylistName": "Nisha",
+        "customerName": null,
+        "serviceName": null,
+        "price": 949,
+        "isEarliest": false,
+        "isRecommended": true,
+        "travelBufferMinutes": 14
+      }
+    ]
+  },
+  {
+    "id": "salon_11",
+    "name": "Serenity Spa & Wellness",
+    "rating": 4.8,
+    "reviewsCount": 356,
+    "distanceKm": 1.1,
+    "travelTimeMin": 12,
+    "address": "Plot 30, Saheed Nagar, Near SBI Square",
+    "area": "Saheed Nagar, Bhubaneswar",
+    "image": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=800",
+    "imageUrl": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=800",
+    "priceStart": 1099,
+    "isOpen": true,
+    "openingHours": "Open · Closes 9:00 PM",
+    "expectedWaitMin": "10-15 min",
+    "nextSlotTime": "12:20 PM",
+    "queueCount": 3,
+    "stylistsCount": 5,
+    "availableStylistsCount": 2,
+    "busyLevel": "moderate",
+    "isVerified": true,
+    "happyCustomersCount": "1200+",
+    "phone": "9876510000",
+    "gender": "unisex",
+    "services": [
+      {
+        "id": "p1",
+        "name": "Luxury Spa Ritual",
+        "price": 1099,
+        "durationMinutes": 75,
+        "description": "Full-head therapy & steam",
+        "category": "Hair Spa"
+      },
+      {
+        "id": "p2",
+        "name": "Gold Facial",
+        "price": 1199,
+        "durationMinutes": 60,
+        "description": "Luxury glow & lifting",
+        "category": "Facial"
+      },
+      {
+        "id": "p3",
+        "name": "Classic Manicure",
+        "price": 599,
+        "durationMinutes": 40,
+        "description": "Nourish, shape & polish",
+        "category": "Manicure"
+      },
+      {
+        "id": "p4",
+        "name": "Deluxe Pedicure",
+        "price": 899,
+        "durationMinutes": 55,
+        "description": "Soak, scrub & reflexology",
+        "category": "Pedicure"
+      },
+      {
+        "id": "p5",
+        "name": "Aromatherapy Head Massage",
+        "price": 749,
+        "durationMinutes": 45,
+        "description": "Deep relaxation therapy",
+        "category": "Head Massage"
+      },
+      {
+        "id": "p6",
+        "name": "Beard Grooming",
+        "price": 399,
+        "durationMinutes": 30,
+        "description": "Hot towel shape & conditioning",
+        "category": "Beard"
+      }
+    ],
+    "stylists": [
+      {
+        "id": "pst1",
+        "name": "Aditi",
+        "role": "Spa Therapist",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.9,
+        "status": "available",
+        "shiftHours": "10:00 AM - 9:00 PM"
+      },
+      {
+        "id": "pst2",
+        "name": "Tara",
+        "role": "Skin Specialist",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.8,
+        "status": "with_customer",
+        "shiftHours": "10:00 AM - 9:00 PM"
+      }
+    ],
+    "slots": [
+      {
+        "id": "psl1",
+        "time": "12:20 PM",
+        "hourGroup": "12 PM",
+        "status": "available",
+        "stylistName": "Aditi",
+        "customerName": null,
+        "serviceName": null,
+        "price": 1099,
+        "isEarliest": false,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      },
+      {
+        "id": "psl2",
+        "time": "1:30 PM",
+        "hourGroup": "1 PM",
+        "status": "available",
+        "stylistName": "Tara",
+        "customerName": null,
+        "serviceName": null,
+        "price": 1199,
+        "isEarliest": false,
+        "isRecommended": true,
+        "travelBufferMinutes": 13
+      }
+    ]
+  },
+  {
+    "id": "salon_12",
+    "name": "Trim & Shine Studio",
+    "rating": 4.1,
+    "reviewsCount": 74,
+    "distanceKm": 3.1,
+    "travelTimeMin": 24,
+    "address": "Plot 44, Patia, Near Infocity Road",
+    "area": "Patia, Bhubaneswar",
+    "image": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=800",
+    "imageUrl": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&q=80&w=800",
+    "priceStart": 329,
+    "isOpen": true,
+    "openingHours": "Open · Closes 8:00 PM",
+    "expectedWaitMin": "20-25 min",
+    "nextSlotTime": "4:00 PM",
+    "queueCount": 5,
+    "stylistsCount": 2,
+    "availableStylistsCount": 1,
+    "busyLevel": "busy",
+    "isVerified": false,
+    "happyCustomersCount": "180+",
+    "phone": "9876511111",
+    "gender": "unisex",
+    "services": [
+      {
+        "id": "t1",
+        "name": "Regular Haircut",
+        "price": 329,
+        "durationMinutes": 35,
+        "description": "Trim, wash & tidy",
+        "category": "Haircut"
+      },
+      {
+        "id": "t2",
+        "name": "Beard Trim",
+        "price": 199,
+        "durationMinutes": 20,
+        "description": "Even it out",
+        "category": "Beard"
+      },
+      {
+        "id": "t3",
+        "name": "Global Hair Color",
+        "price": 1149,
+        "durationMinutes": 80,
+        "description": "Ammonia-free colour",
+        "category": "Hair Color"
+      },
+      {
+        "id": "t4",
+        "name": "Hair Spa",
+        "price": 799,
+        "durationMinutes": 55,
+        "description": "Wash, massage & shine",
+        "category": "Hair Spa"
+      },
+      {
+        "id": "t5",
+        "name": "Classic Manicure",
+        "price": 499,
+        "durationMinutes": 35,
+        "description": "Shape & polish",
+        "category": "Manicure"
+      },
+      {
+        "id": "t6",
+        "name": "Head Massage",
+        "price": 349,
+        "durationMinutes": 30,
+        "description": "Relaxing oil massage",
+        "category": "Head Massage"
+      }
+    ],
+    "stylists": [
+      {
+        "id": "tst1",
+        "name": "Deepak",
+        "role": "Stylist",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.1,
+        "status": "available",
+        "shiftHours": "11:00 AM - 8:00 PM"
+      }
+    ],
+    "slots": [
+      {
+        "id": "tsl1",
+        "time": "4:00 PM",
+        "hourGroup": "4 PM",
+        "status": "limited",
+        "stylistName": "Deepak",
+        "customerName": null,
+        "serviceName": null,
+        "price": 329,
+        "isEarliest": false,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      }
+    ]
+  },
+  {
+    "id": "salon_13",
+    "name": "Glow & Grace Parlour",
+    "rating": 4.3,
+    "reviewsCount": 128,
+    "distanceKm": 1.5,
+    "travelTimeMin": 15,
+    "address": "Plot 71, Nayapalli, Near Nayapalli Square",
+    "area": "Nayapalli, Bhubaneswar",
+    "image": "https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&q=80&w=800",
+    "imageUrl": "https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&q=80&w=800",
+    "priceStart": 649,
+    "isOpen": true,
+    "openingHours": "Open · Closes 8:00 PM",
+    "expectedWaitMin": "10-15 min",
+    "nextSlotTime": "2:10 PM",
+    "queueCount": 2,
+    "stylistsCount": 3,
+    "availableStylistsCount": 2,
+    "busyLevel": "quiet",
+    "isVerified": true,
+    "happyCustomersCount": "400+",
+    "phone": "9876512222",
+    "gender": "female",
+    "services": [
+      {
+        "id": "gg1",
+        "name": "Facial",
+        "price": 649,
+        "durationMinutes": 50,
+        "description": "Cleanse, exfoliate & hydrate",
+        "category": "Facial"
+      },
+      {
+        "id": "gg2",
+        "name": "Classic Manicure",
+        "price": 599,
+        "durationMinutes": 40,
+        "description": "Shape, cuticle care & polish",
+        "category": "Manicure"
+      },
+      {
+        "id": "gg3",
+        "name": "Hair Color & Highlights",
+        "price": 1199,
+        "durationMinutes": 85,
+        "description": "Global colour & gloss",
+        "category": "Hair Color"
+      },
+      {
+        "id": "gg4",
+        "name": "Spa Pedicure",
+        "price": 699,
+        "durationMinutes": 45,
+        "description": "Soak, scrub & massage",
+        "category": "Pedicure"
+      }
+    ],
+    "stylists": [
+      {
+        "id": "ggst1",
+        "name": "Lakshmi",
+        "role": "Beauty Expert",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.4,
+        "status": "available",
+        "shiftHours": "10:00 AM - 8:00 PM"
+      }
+    ],
+    "slots": [
+      {
+        "id": "ggsl1",
+        "time": "2:10 PM",
+        "hourGroup": "2 PM",
+        "status": "available",
+        "stylistName": "Lakshmi",
+        "customerName": null,
+        "serviceName": null,
+        "price": 649,
+        "isEarliest": false,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      }
+    ]
+  },
+  {
+    "id": "salon_14",
+    "name": "The Barber Collective",
+    "rating": 4.7,
+    "reviewsCount": 302,
+    "distanceKm": 2,
+    "travelTimeMin": 19,
+    "address": "Plot 12, Saheed Nagar, Near Market",
+    "area": "Saheed Nagar, Bhubaneswar",
+    "image": "https://images.unsplash.com/photo-1622286342621-4bd858c1933b?auto=format&fit=crop&q=80&w=800",
+    "imageUrl": "https://images.unsplash.com/photo-1622286342621-4bd858c1933b?auto=format&fit=crop&q=80&w=800",
+    "priceStart": 399,
+    "isOpen": true,
+    "openingHours": "Open · Closes 9:00 PM",
+    "expectedWaitMin": "5-10 min",
+    "nextSlotTime": "12:50 PM",
+    "queueCount": 2,
+    "stylistsCount": 4,
+    "availableStylistsCount": 2,
+    "busyLevel": "quiet",
+    "isVerified": true,
+    "happyCustomersCount": "950+",
+    "phone": "9876513333",
+    "gender": "male",
+    "services": [
+      {
+        "id": "b1",
+        "name": "Textured Crop",
+        "price": 399,
+        "durationMinutes": 40,
+        "description": "Modern crop & finish",
+        "category": "Haircut"
+      },
+      {
+        "id": "b2",
+        "name": "Full Beard Sculpt",
+        "price": 349,
+        "durationMinutes": 30,
+        "description": "Shape, line-up & oil",
+        "category": "Beard"
+      },
+      {
+        "id": "b3",
+        "name": "Scalp Massage",
+        "price": 399,
+        "durationMinutes": 30,
+        "description": "Warm herbal oil relief",
+        "category": "Head Massage"
+      },
+      {
+        "id": "b4",
+        "name": "Grey Blending",
+        "price": 899,
+        "durationMinutes": 60,
+        "description": "Natural-looking coverage",
+        "category": "Hair Color"
+      },
+      {
+        "id": "b5",
+        "name": "Hair Spa",
+        "price": 899,
+        "durationMinutes": 60,
+        "description": "Wash, massage & shine",
+        "category": "Hair Spa"
+      }
+    ],
+    "stylists": [
+      {
+        "id": "bst1",
+        "name": "Imran",
+        "role": "Senior Barber",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.8,
+        "status": "available",
+        "shiftHours": "10:00 AM - 9:00 PM"
+      },
+      {
+        "id": "bst2",
+        "name": "Suresh",
+        "role": "Barber",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.6,
+        "status": "break",
+        "shiftHours": "11:00 AM - 9:00 PM"
+      }
+    ],
+    "slots": [
+      {
+        "id": "bsl1",
+        "time": "12:50 PM",
+        "hourGroup": "12 PM",
+        "status": "available",
+        "stylistName": "Imran",
+        "customerName": null,
+        "serviceName": null,
+        "price": 399,
+        "isEarliest": false,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      },
+      {
+        "id": "bsl2",
+        "time": "1:10 PM",
+        "hourGroup": "1 PM",
+        "status": "available",
+        "stylistName": "Suresh",
+        "customerName": null,
+        "serviceName": null,
+        "price": 349,
+        "isEarliest": false,
+        "isRecommended": true,
+        "travelBufferMinutes": 15
+      }
+    ]
+  },
+  {
+    "id": "salon_15",
+    "name": "Velvet Touch Salon",
+    "rating": 4,
+    "reviewsCount": 63,
+    "distanceKm": 4.2,
+    "travelTimeMin": 31,
+    "address": "Plot 5, Chandrasekharpur, Near NH-16",
+    "area": "Chandrasekharpur, Bhubaneswar",
+    "image": "https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?auto=format&fit=crop&q=80&w=800",
+    "imageUrl": "https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?auto=format&fit=crop&q=80&w=800",
+    "priceStart": 499,
+    "isOpen": true,
+    "openingHours": "Open · Closes 9:00 PM",
+    "expectedWaitMin": "15-20 min",
+    "nextSlotTime": "3:30 PM",
+    "queueCount": 3,
+    "stylistsCount": 2,
+    "availableStylistsCount": 1,
+    "busyLevel": "moderate",
+    "isVerified": false,
+    "happyCustomersCount": "150+",
+    "phone": "9876514444",
+    "gender": "unisex",
+    "services": [
+      {
+        "id": "v1",
+        "name": "Haircut",
+        "price": 499,
+        "durationMinutes": 45,
+        "description": "Consultation & cut",
+        "category": "Haircut"
+      },
+      {
+        "id": "v2",
+        "name": "Highlights",
+        "price": 1499,
+        "durationMinutes": 90,
+        "description": "Partial highlights & gloss",
+        "category": "Hair Color"
+      },
+      {
+        "id": "v3",
+        "name": "Facial",
+        "price": 699,
+        "durationMinutes": 50,
+        "description": "Cleanse & hydrate",
+        "category": "Facial"
+      },
+      {
+        "id": "v4",
+        "name": "Manicure",
+        "price": 549,
+        "durationMinutes": 40,
+        "description": "Shape & polish",
+        "category": "Manicure"
+      },
+      {
+        "id": "v5",
+        "name": "Beard Trim",
+        "price": 299,
+        "durationMinutes": 25,
+        "description": "Shape & finish",
+        "category": "Beard"
+      },
+      {
+        "id": "v6",
+        "name": "Spa Pedicure",
+        "price": 749,
+        "durationMinutes": 45,
+        "description": "Soak & foot massage",
+        "category": "Pedicure"
+      },
+      {
+        "id": "v7",
+        "name": "Hair Spa",
+        "price": 849,
+        "durationMinutes": 60,
+        "description": "Wash, massage & shine",
+        "category": "Hair Spa"
+      }
+    ],
+    "stylists": [
+      {
+        "id": "vst1",
+        "name": "Rajat",
+        "role": "Stylist",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4,
+        "status": "available",
+        "shiftHours": "11:00 AM - 9:00 PM"
+      }
+    ],
+    "slots": [
+      {
+        "id": "vsl1",
+        "time": "3:30 PM",
+        "hourGroup": "3 PM",
+        "status": "available",
+        "stylistName": "Rajat",
+        "customerName": null,
+        "serviceName": null,
+        "price": 499,
+        "isEarliest": false,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      }
+    ]
+  },
+  {
+    "id": "salon_16",
+    "name": "Nitty Gritty Nails",
+    "rating": 4.6,
+    "reviewsCount": 197,
+    "distanceKm": 2.8,
+    "travelTimeMin": 22,
+    "address": "Shop 4, Patia, Near Infocity Square",
+    "area": "Patia, Bhubaneswar",
+    "image": "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&q=80&w=800",
+    "imageUrl": "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&q=80&w=800",
+    "priceStart": 549,
+    "isOpen": true,
+    "openingHours": "Open · Closes 8:00 PM",
+    "expectedWaitMin": "10-15 min",
+    "nextSlotTime": "2:00 PM",
+    "queueCount": 2,
+    "stylistsCount": 3,
+    "availableStylistsCount": 2,
+    "busyLevel": "quiet",
+    "isVerified": true,
+    "happyCustomersCount": "600+",
+    "phone": "9876515555",
+    "gender": "female",
+    "services": [
+      {
+        "id": "n1",
+        "name": "Classic Manicure",
+        "price": 549,
+        "durationMinutes": 40,
+        "description": "Shape, cuticle care & polish",
+        "category": "Manicure"
+      },
+      {
+        "id": "n2",
+        "name": "Spa Pedicure",
+        "price": 749,
+        "durationMinutes": 45,
+        "description": "Soak, exfoliation & massage",
+        "category": "Pedicure"
+      },
+      {
+        "id": "n3",
+        "name": "Express Facial",
+        "price": 549,
+        "durationMinutes": 35,
+        "description": "Quick cleanse & glow",
+        "category": "Facial"
+      }
+    ],
+    "stylists": [
+      {
+        "id": "nst1",
+        "name": "Divya",
+        "role": "Nail Artist",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.7,
+        "status": "available",
+        "shiftHours": "10:00 AM - 8:00 PM"
+      }
+    ],
+    "slots": [
+      {
+        "id": "nsl1",
+        "time": "2:00 PM",
+        "hourGroup": "2 PM",
+        "status": "available",
+        "stylistName": "Divya",
+        "customerName": null,
+        "serviceName": null,
+        "price": 549,
+        "isEarliest": false,
+        "isRecommended": true,
+        "travelBufferMinutes": null
+      }
+    ]
+  },
+  {
+    "id": "salon_17",
+    "name": "Scalp Science Clinic",
+    "rating": 4.9,
+    "reviewsCount": 421,
+    "distanceKm": 0.5,
+    "travelTimeMin": 6,
+    "address": "Plot 3, Saheed Nagar, Near College Square",
+    "area": "Saheed Nagar, Bhubaneswar",
+    "image": "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&q=80&w=800",
+    "imageUrl": "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&q=80&w=800",
+    "priceStart": 1299,
+    "isOpen": true,
+    "openingHours": "Open · Closes 8:00 PM",
+    "expectedWaitMin": "10-15 min",
+    "nextSlotTime": "12:15 PM",
+    "queueCount": 3,
+    "stylistsCount": 4,
+    "availableStylistsCount": 2,
+    "busyLevel": "moderate",
+    "isVerified": true,
+    "happyCustomersCount": "1500+",
+    "phone": "9876516666",
+    "gender": "unisex",
+    "services": [
+      {
+        "id": "sc1",
+        "name": "Scalp Diagnostic Haircut",
+        "price": 1299,
+        "durationMinutes": 75,
+        "description": "Scalp analysis & precision cut",
+        "category": "Haircut"
+      },
+      {
+        "id": "sc2",
+        "name": "Advanced Hair Color",
+        "price": 1699,
+        "durationMinutes": 95,
+        "description": "Ammonia-free colour correction",
+        "category": "Hair Color"
+      },
+      {
+        "id": "sc3",
+        "name": "Therapeutic Hair Spa",
+        "price": 1299,
+        "durationMinutes": 70,
+        "description": "Clinical scalp therapy",
+        "category": "Hair Spa"
+      },
+      {
+        "id": "sc4",
+        "name": "Stress-Relief Head Massage",
+        "price": 899,
+        "durationMinutes": 45,
+        "description": "Pressure-point therapy",
+        "category": "Head Massage"
+      },
+      {
+        "id": "sc5",
+        "name": "Beard Sculpt",
+        "price": 449,
+        "durationMinutes": 35,
+        "description": "Precision shape & line-up",
+        "category": "Beard"
+      },
+      {
+        "id": "sc6",
+        "name": "Classic Manicure",
+        "price": 699,
+        "durationMinutes": 45,
+        "description": "Shape, cuticle care & polish",
+        "category": "Manicure"
+      },
+      {
+        "id": "sc7",
+        "name": "Spa Pedicure",
+        "price": 899,
+        "durationMinutes": 50,
+        "description": "Soak, exfoliation & massage",
+        "category": "Pedicure"
+      }
+    ],
+    "stylists": [
+      {
+        "id": "scst1",
+        "name": "Dr. Ishaan",
+        "role": "Scalp Specialist",
+        "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200",
+        "rating": 4.9,
+        "status": "available",
+        "shiftHours": "10:00 AM - 8:00 PM"
+      }
+    ],
+    "slots": [
+      {
+        "id": "scsl1",
+        "time": "12:15 PM",
+        "hourGroup": "12 PM",
+        "status": "available",
+        "stylistName": "Dr. Ishaan",
+        "customerName": null,
+        "serviceName": null,
+        "price": 1299,
+        "isEarliest": true,
+        "isRecommended": false,
+        "travelBufferMinutes": null
+      },
+      {
+        "id": "scsl2",
+        "time": "12:45 PM",
+        "hourGroup": "12 PM",
+        "status": "available",
+        "stylistName": "Dr. Ishaan",
+        "customerName": null,
+        "serviceName": null,
+        "price": 1299,
+        "isEarliest": false,
+        "isRecommended": true,
+        "travelBufferMinutes": 9
+      }
+    ]
+  }
+] as unknown as Salon[];

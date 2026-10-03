@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   ArrowLeft, 
   Heart, 
@@ -9,10 +9,22 @@ import {
   Navigation, 
   ShieldCheck, 
   Phone,
-  MessageSquare
+  MessageSquare,
+  Sparkles,
+  ChevronDown
 } from 'lucide-react';
 import { useZalono } from '../../context/ZalonoContext';
 import { ServiceItem } from '../../types';
+
+const DUMMY_SERVICES: ServiceItem[] = [
+  { id: 'd_beard', name: 'Beard Sculpt & Hot Towel Shape', price: 349, durationMinutes: 30, category: 'Beard', description: 'Razor edge detailing, hot towel & beard oil' },
+  { id: 'd_massage', name: 'Head & Shoulder Stress-Relief Massage', price: 449, durationMinutes: 35, category: 'Head Massage', description: 'Warm herbal oil pressure-point relaxation' },
+  { id: 'd_color', name: 'Hair Color & Highlights', price: 1299, durationMinutes: 90, category: 'Hair Color', description: 'Ammonia-free global color & radiance gloss' },
+  { id: 'd_pedicure', name: 'Deluxe Pedicure & Foot Reflexology', price: 799, durationMinutes: 50, category: 'Pedicure', description: 'Soak, exfoliation, cuticle care & mint foot massage' },
+  { id: 'd_manicure', name: 'Classic Hand Spa & Manicure', price: 549, durationMinutes: 40, category: 'Manicure', description: 'Dead skin removal, nail shaping & hand massage' },
+  { id: 'd_cleanse', name: 'Deep Cleanse Charcoal Facial', price: 799, durationMinutes: 50, category: 'Facial', description: 'Blackhead extraction, charcoal mask & skin revival' },
+  { id: 'd_keratin', name: 'Keratin Express Smoothening', price: 1899, durationMinutes: 90, category: 'Hair Spa', description: 'Frizz-free smoothness & mirror shine therapy' },
+];
 
 export const SalonDetail: React.FC = () => {
   const { 
@@ -28,6 +40,37 @@ export const SalonDetail: React.FC = () => {
   const [selectedService, setSelectedService] = useState<ServiceItem>(selectedSalon.services[0]);
   const [selectedHour, setSelectedHour] = useState<string>('11 AM');
   const [selectedSlotId, setSelectedSlotId] = useState<string>('sl-6'); // 11:40 AM recommended
+  const [showAllServices, setShowAllServices] = useState<boolean>(false);
+
+  const initialServices = useMemo(() => selectedSalon.services.slice(0, 3), [selectedSalon]);
+
+  const moreServices = useMemo(() => {
+    const existingIds = new Set(initialServices.map(s => s.id));
+    const existingNames = new Set(initialServices.map(s => s.name.toLowerCase().trim()));
+
+    const remainingBase = selectedSalon.services.filter(s => !existingIds.has(s.id) && !existingNames.has(s.name.toLowerCase().trim()));
+    const existingCombinedIds = new Set([...existingIds, ...remainingBase.map(s => s.id)]);
+    const existingCombinedNames = new Set([...existingNames, ...remainingBase.map(s => s.name.toLowerCase().trim())]);
+
+    const dummyToAdd = DUMMY_SERVICES.filter(d => !existingCombinedIds.has(d.id) && !existingCombinedNames.has(d.name.toLowerCase().trim()));
+    const combined = [...remainingBase, ...dummyToAdd];
+
+    let index = 1;
+    while (combined.length < 5) {
+      combined.push({
+        id: `d_extra_${index}`,
+        name: `Specialty Salon Treatment ${index}`,
+        price: 599 + index * 100,
+        durationMinutes: 45,
+        category: 'Hair Spa',
+        description: 'Custom revitalizing salon treatment'
+      });
+      index++;
+    }
+    return combined;
+  }, [selectedSalon, initialServices]);
+
+  const displayedServices = showAllServices ? [...initialServices, ...moreServices] : initialServices;
 
   const hourTabs = ['10 AM', '11 AM', '12 PM', '1 PM', '2 PM'];
 
@@ -153,7 +196,7 @@ export const SalonDetail: React.FC = () => {
           <div>
             <h2 className="text-sm font-bold text-slate-900 mb-2.5">Select Service</h2>
             <div className="grid gap-2 md:grid-cols-2">
-              {selectedSalon.services.map((srv) => {
+              {displayedServices.map((srv) => {
                 const isSelected = selectedService.id === srv.id;
                 return (
                   <div
@@ -166,6 +209,9 @@ export const SalonDetail: React.FC = () => {
                     }`}
                   >
                     <div>
+                      <span className="inline-block text-[10px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 mb-1 border border-slate-200">
+                        {srv.category}
+                      </span>
                       <div className="flex items-center gap-2">
                         <span className={`text-sm font-bold ${isSelected ? 'text-[#80142B]' : 'text-slate-900'}`}>
                           {srv.name}
@@ -191,6 +237,29 @@ export const SalonDetail: React.FC = () => {
                 );
               })}
             </div>
+
+            {/* Explore More Services Bar */}
+            <button
+              type="button"
+              onClick={() => setShowAllServices(!showAllServices)}
+              className="w-full mt-3 p-3.5 bg-white border border-rose-200 hover:border-[#80142B] rounded-2xl flex items-center justify-between text-left transition-all shadow-xs cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-[#F9E8EC] flex items-center justify-center text-[#80142B]">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-slate-900 block">Explore More Services</span>
+                  <span className="text-[10.5px] text-slate-500">
+                    {showAllServices ? 'Showing all services' : `+${moreServices.length} more services available in this salon`}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 text-xs font-bold text-[#80142B]">
+                <span>{showAllServices ? 'Show less' : 'View more'}</span>
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${showAllServices ? 'rotate-180' : ''}`} />
+              </div>
+            </button>
           </div>
         )}
 

@@ -6,6 +6,7 @@ export type ServiceCategory =
   | 'Hair Spa'
   | 'Manicure'
   | 'Pedicure'
+  | 'Head Massage'
   | 'Body Spa'
   | 'More';
 
