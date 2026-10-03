@@ -11,12 +11,12 @@ class LocationPickerScreen extends StatelessWidget {
     final zalono = Provider.of<ZalonoProvider>(context);
 
     final locations = <Map<String, String>>[
-      {'name': 'Saheed Nagar', 'sub': 'Janpath, Unit-9 Area', 'distance': '0.8 km', 'salons': '8'},
-      {'name': 'Patia', 'sub': 'KIIT, Infocity Road', 'distance': '3.2 km', 'salons': '6'},
-      {'name': 'Jaydev Vihar', 'sub': 'Near Hotel Hindustan', 'distance': '2.1 km', 'salons': '5'},
-      {'name': 'Nayapalli', 'sub': 'CRPF Road, IRC Village', 'distance': '1.5 km', 'salons': '7'},
-      {'name': 'Chandrasekharpur', 'sub': 'NH-16, Sailashree Vihar', 'distance': '4.0 km', 'salons': '4'},
-      {'name': 'Khandagiri', 'sub': 'Near Baramunda Bus Stand', 'distance': '5.5 km', 'salons': '3'},
+      {'name': 'Saheed Nagar', 'sub': 'Janpath, Unit-9 Area', 'distance': '0.8 km'},
+      {'name': 'Patia', 'sub': 'KIIT, Infocity Road', 'distance': '3.2 km'},
+      {'name': 'Jaydev Vihar', 'sub': 'Near Hotel Hindustan', 'distance': '2.1 km'},
+      {'name': 'Nayapalli', 'sub': 'CRPF Road, IRC Village', 'distance': '1.5 km'},
+      {'name': 'Chandrasekharpur', 'sub': 'NH-16, Sailashree Vihar', 'distance': '4.0 km'},
+      {'name': 'Khandagiri', 'sub': 'Near Baramunda Bus Stand', 'distance': '5.5 km'},
     ];
 
     return Scaffold(
@@ -114,17 +114,6 @@ class LocationPickerScreen extends StatelessWidget {
                               Text(
                                 loc['sub']!,
                                 style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  Icon(Icons.storefront_rounded, size: 12, color: Colors.grey.shade500),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '${loc['salons']} live salons',
-                                    style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
-                                  ),
-                                ],
                               ),
                             ],
                           ),

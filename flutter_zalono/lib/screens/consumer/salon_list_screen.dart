@@ -48,26 +48,14 @@ class _SalonListScreenState extends State<SalonListScreen> {
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Column(
-          children: [
-            Text(
-              '${widget.categoryName} · '
-              '${widget.timeOption == 'now' ? 'Now' : 'Upcoming'}',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: ZalonoTheme.textDark,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              'Bhubaneswar · ${salons.length} live salons',
-              style: TextStyle(
-                fontSize: 11,
-                color: Colors.grey.shade600,
-              ),
-            ),
-          ],
+        title: Text(
+          '${widget.categoryName} · '
+          '${widget.timeOption == 'now' ? 'Now' : 'Upcoming'}',
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: ZalonoTheme.textDark,
+          ),
         ),
         centerTitle: true,
       ),
