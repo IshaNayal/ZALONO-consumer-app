@@ -353,13 +353,51 @@ app.get('/api/crm', (req: Request, res: Response) => {
   });
 });
 
-// Serve frontend if built (for full-stack deployment on Render)
-const distPath = path.resolve(process.cwd(), 'dist');
-if (fs.existsSync(distPath) && fs.existsSync(path.join(distPath, 'index.html'))) {
-  app.use(express.static(distPath));
+// Serve the built frontends.
+//
+// The Flutter app is the primary site and is served at the root. The older
+// React demo, when built, stays available under /react for comparison.
+const flutterWebPath = path.resolve(process.cwd(), 'flutter_zalono', 'build', 'web');
+const reactDistPath = path.resolve(process.cwd(), 'dist');
+
+if (fs.existsSync(reactDistPath) && fs.existsSync(path.join(reactDistPath, 'index.html'))) {
+  app.use('/react', express.static(reactDistPath));
+  app.get('/react/*', (req: Request, res: Response, next) => {
+    res.sendFile(path.join(reactDistPath, 'index.html'));
+  });
+  console.log(`[server] React demo available at /react`);
+}
+
+if (
+  fs.existsSync(flutterWebPath) &&
+  fs.existsSync(path.join(flutterWebPath, 'index.html'))
+) {
+  // Flutter ships its own bootstrap and service worker; long-cache the
+  // fingerprinted assets and keep index.html fresh so deploys take effect.
+  app.use(
+    express.static(flutterWebPath, {
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith('index.html') || filePath.endsWith('flutter_bootstrap.js')) {
+          res.setHeader('Cache-Control', 'no-cache');
+        } else if (filePath.endsWith('.wasm') || filePath.endsWith('.js')) {
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        }
+      },
+    }),
+  );
   app.get('*', (req: Request, res: Response, next) => {
     if (req.path.startsWith('/api')) return next();
-    res.sendFile(path.join(distPath, 'index.html'));
+    res.sendFile(path.join(flutterWebPath, 'index.html'));
+  });
+} else if (
+  fs.existsSync(reactDistPath) &&
+  fs.existsSync(path.join(reactDistPath, 'index.html'))
+) {
+  // Flutter not built — fall back to serving the React app at the root.
+  app.use(express.static(reactDistPath));
+  app.get('*', (req: Request, res: Response, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(reactDistPath, 'index.html'));
   });
 } else {
   // Graceful fallback root route if frontend was not built
@@ -397,9 +435,10 @@ if (fs.existsSync(distPath) && fs.existsSync(path.join(distPath, 'index.html')))
             <li><a href="/api/events" target="_blank">GET /api/events</a> - Server-Sent Events (SSE) stream</li>
           </ul>
           <div class="tip">
-            💡 <strong>Want to see the web app UI here?</strong><br/>
-            In Render Dashboard, change your <strong>Build Command</strong> to:
-            <code>npm install && npm run build</code> and redeploy.
+            💡 <strong>Want to see the app UI here?</strong><br/>
+            Build with <code>npm install &amp;&amp; npm run build</code> and reload.
+            The Flutter web build is served at <code>/</code>; the older React
+            demo, if built, is served at <code>/react</code>.
           </div>
         </div>
       </body>

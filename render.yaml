@@ -1,0 +1,23 @@
+# Render blueprint for Zalono.
+#
+# The site is the Flutter app compiled to web; the Node server hosts both the
+# Flutter build (at /) and the JSON API (at /api).
+#
+# After changing this file, either create a new Blueprint service from the
+# repository, or apply the same values in the Render dashboard and redeploy.
+services:
+  - type: web
+    name: zalono
+    runtime: node
+    plan: free
+    # Flutter is not present on Render's Node image, so it is installed first.
+    buildCommand: >-
+      git clone https://github.com/flutter/flutter.git -b stable --depth 1 /tmp/flutter &&
+      export PATH="/tmp/flutter/bin:$PATH" &&
+      npm install &&
+      npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"

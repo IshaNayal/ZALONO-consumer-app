@@ -4,12 +4,33 @@ import 'package:http/http.dart' as http;
 import '../models/models.dart';
 
 class ApiService {
-  // Configurable base URL. Default localhost for web and desktop, 10.0.2.2 for Android emulator
-  static String baseUrl = kIsWeb
-      ? 'http://127.0.0.1:5000/api'
-      : (defaultTargetPlatform == TargetPlatform.android
-          ? 'http://10.0.2.2:5000/api'
-          : 'http://127.0.0.1:5000/api');
+  /// Base URL of the Node API.
+  ///
+  /// On the web build the app and the API are served from the same origin
+  /// (Express serves both), so the current host is used. This keeps the
+  /// deployed site working on any Render domain without a rebuild, and avoids
+  /// a hardcoded localhost that would break once deployed.
+  ///
+  /// Override with `--dart-define=API_BASE_URL=https://api.example.com/api`
+  /// when the API lives on a different host.
+  static String baseUrl = _defaultBaseUrl();
+
+  static const String _override = String.fromEnvironment('API_BASE_URL');
+
+  static String _defaultBaseUrl() {
+    if (_override.isNotEmpty) return _override;
+    if (kIsWeb) {
+      final host = Uri.base.host;
+      if (host.isNotEmpty && host != 'localhost' && host != '127.0.0.1') {
+        return '${Uri.base.scheme}://$host/api';
+      }
+      return 'http://127.0.0.1:5000/api';
+    }
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      return 'http://10.0.2.2:5000/api';
+    }
+    return 'http://127.0.0.1:5000/api';
+  }
 
   static final http.Client _client = http.Client();
 
