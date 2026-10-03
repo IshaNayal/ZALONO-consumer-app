@@ -7,10 +7,11 @@
     "dev": "vite --port=3000 --host=0.0.0.0",
     "backend": "tsx backend/server.ts",
     "start": "tsx backend/server.ts",
-    "build": "flutter build web --release --no-wasm-dry-run",
+    "build": "node scripts/build-flutter-web.mjs",
+    "build:flutter": "node scripts/build-flutter-web.mjs",
     "build:react": "vite build",
     "preview": "vite preview",
-    "clean": "rm -rf dist server.js flutter_zalono/build/web",
+    "clean": "rm -rf dist server.js flutter_zalono/build/web .flutter-sdk",
     "lint": "tsc --noEmit"
   },
   "dependencies": {

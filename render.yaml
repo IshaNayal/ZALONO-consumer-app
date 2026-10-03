@@ -10,12 +10,10 @@ services:
     name: zalono
     runtime: node
     plan: free
-    # Flutter is not present on Render's Node image, so it is installed first.
-    buildCommand: >-
-      git clone https://github.com/flutter/flutter.git -b stable --depth 1 /tmp/flutter &&
-      export PATH="/tmp/flutter/bin:$PATH" &&
-      npm install &&
-      npm run build
+    # The Flutter SDK is not on this image, so scripts/build-flutter-web.mjs
+    # downloads it before building. That keeps the build working no matter how
+    # this command is invoked or what PATH the build environment exports.
+    buildCommand: npm install && npm run build
     startCommand: npm start
     healthCheckPath: /api/health
     envVars:

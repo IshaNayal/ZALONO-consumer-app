@@ -1,6 +1,7 @@
 node_modules/
 build/
 dist/
+.flutter-sdk/
 coverage/
 .DS_Store
 *.log

@@ -361,9 +361,16 @@ const flutterWebPath = path.resolve(process.cwd(), 'flutter_zalono', 'build', 'w
 const reactDistPath = path.resolve(process.cwd(), 'dist');
 
 if (fs.existsSync(reactDistPath) && fs.existsSync(path.join(reactDistPath, 'index.html'))) {
-  app.use('/react', express.static(reactDistPath));
+  // `index: false` so directory requests fall through to the rewriting
+  // handler below instead of being served straight from disk.
+  app.use('/react', express.static(reactDistPath, { index: false }));
   app.get('/react/*', (req: Request, res: Response, next) => {
-    res.sendFile(path.join(reactDistPath, 'index.html'));
+    // Vite emits root-absolute asset URLs, which would resolve against the
+    // Flutter app instead of the React mount. Repoint them at /react.
+    const html = fs
+      .readFileSync(path.join(reactDistPath, 'index.html'), 'utf8')
+      .replace(/(["'(])(\/assets\/)/g, '$1/react$2');
+    res.type('html').send(html);
   });
   console.log(`[server] React demo available at /react`);
 }
