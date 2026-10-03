@@ -63,7 +63,11 @@ class CategorySection extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: 92,
+            // Sized from the tile rather than a magic constant: the strip
+            // hands its tiles a tight height, so the label growing with the
+            // system text scale used to run past the bottom by a pixel or two
+            // from 1.5x up.
+            height: CategoryItem.stripHeightFor(context),
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -200,6 +204,21 @@ class CategoryItem extends StatelessWidget {
   final ServiceCategory category;
   final VoidCallback onTap;
   final bool isSelected;
+
+  /// Height of the strip at an unscaled label: 85.5px of tile plus the
+  /// breathing room the layout has always had.
+  static const double _restHeight = 92.0;
+
+  /// The tile's label is the only part that scales, and it gains 15.5px for
+  /// every 1x of system text scale. 16 leaves a little headroom so nonlinear
+  /// scalers cannot push the label back out of the box.
+  static const double _heightPerScaleStep = 16;
+
+  /// Height the horizontal strip needs so no tile label is ever clipped.
+  static double stripHeightFor(BuildContext context) {
+    final scale = MediaQuery.textScalerOf(context).scale(1);
+    return (_restHeight + (scale - 1) * _heightPerScaleStep).ceilToDouble();
+  }
 
   @override
   Widget build(BuildContext context) {

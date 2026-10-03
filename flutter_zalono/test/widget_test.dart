@@ -10,7 +10,6 @@ import 'package:zalono/components/consumer/location_header.dart';
 import 'package:zalono/components/consumer/salon_search_bar.dart';
 import 'package:zalono/components/consumer/category_section.dart';
 import 'package:zalono/components/consumer/salon_gender_tag.dart';
-import 'package:zalono/components/consumer/salon_card.dart';
 import 'package:zalono/components/consumer/salon_filter_panel.dart';
 import 'package:zalono/screens/consumer/service_time_screen.dart';
 import 'package:zalono/screens/consumer/salon_list_screen.dart';
@@ -171,7 +170,7 @@ void main() {
       (WidgetTester tester) async {
     await pumpHome(tester, const Size(390, 844));
 
-    expect(find.text('Good morning, Jay ðŸ‘‹'), findsNothing);
+    expect(find.text('Good morning, Isha ðŸ‘‹'), findsNothing);
     expect(find.text('What do you need today?'), findsNothing);
     expect(find.text('When do you want to go?'), findsNothing);
     expect(find.text('Reverse Search'), findsNothing);
@@ -197,6 +196,21 @@ void main() {
     await pumpHome(tester, const Size(430, 932));
     expect(tester.takeException(), isNull);
   });
+
+  // The category strip hands its tiles a tight height, so the tile label
+  // growing with the system text scale used to run past the bottom of the
+  // 92px strip from 1.5x up.
+  for (final scale in const [1.5, 1.8, 2.0, 3.0]) {
+    testWidgets('category strip fits at ${scale}x text scale',
+        (WidgetTester tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = scale;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+      await pumpHome(tester, const Size(320, 568));
+
+      expect(tester.takeException(), isNull);
+    });
+  }
 
   testWidgets('Salons are filtered to the selected location',
       (WidgetTester tester) async {
@@ -526,34 +540,57 @@ testWidgets('still shows salon details after the layout fix',
       );
     });
 
-    testWidgets('Home card meta row fits at 1.5x text scale',
+    testWidgets('Home card does not overflow at 2x text scale',
         (WidgetTester tester) async {
-      tester.platformDispatcher.textScaleFactorTestValue = 1.5;
+      // The tag sat beside the salon name, and once the system text scale grew
+      // it the pair no longer fitted a 320px page.
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
       addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-      tester.view.physicalSize = const Size(320, 568);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
 
-      // The card on its own: the category strip above it has its own fixed
-      // height and is not what this test is about.
-      final zalono = ZalonoProvider();
-      await tester.pumpWidget(
-        ChangeNotifierProvider(
-          create: (_) => zalono,
-          child: MaterialApp(
-            theme: ZalonoTheme.lightTheme,
-            home: Scaffold(
-              body: ListView(
-                children: [SalonCard(salon: zalono.salons.first)],
-              ),
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
+      // The whole Home page, not the card alone: the page's own horizontal
+      // padding is what squeezed the card's rows in the first place.
+      await pumpHome(tester, const Size(320, 568));
 
       expect(tester.takeException(), isNull, reason: 'Home card overflows');
+    });
+
+    // Width assertions only hold at 1.0x: flutter_test's font draws every glyph
+    // 1em wide, which makes a short label like "Unisex" roughly twice as wide
+    // as it is on a device and would fail for reasons no user would see.
+    testWidgets('Home card shows the gender tag and rating in full',
+        (WidgetTester tester) async {
+      await pumpHome(tester, const Size(320, 568));
+
+      bool showsInFull(Finder finder) {
+        final paragraph = tester.renderObject<RenderParagraph>(finder);
+        final needed = (TextPainter(
+          text: paragraph.text,
+          textDirection: TextDirection.ltr,
+        )..layout()).width;
+        return paragraph.size.width >= needed - 0.5;
+      }
+
+      expect(
+        showsInFull(
+          find.descendant(
+            of: find.byType(SalonGenderTag).first,
+            matching: find.byType(Text),
+          ),
+        ),
+        isTrue,
+        reason: 'Home: gender clipped',
+      );
+      expect(
+        showsInFull(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is Text &&
+                RegExp(r'^\d+\.\d+$').hasMatch(widget.data ?? ''),
+          ).first,
+        ),
+        isTrue,
+        reason: 'Home: rating clipped',
+      );
     });
   });
 

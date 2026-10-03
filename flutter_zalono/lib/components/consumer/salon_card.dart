@@ -43,33 +43,38 @@ class SalonCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 2),
-                        Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                salon.name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: ZalonoTheme.textDark,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            SalonGenderTag(gender: salon.gender),
-                          ],
-                        ),
-                        const SizedBox(height: 2),
                         Text(
-                          '${salon.area.split(',').first} · ${salon.distanceKm} km',
+                          salon.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            fontSize: 12,
-                            color: ZalonoTheme.textMuted,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: ZalonoTheme.textDark,
                           ),
+                        ),
+                        const SizedBox(height: 5),
+                        // Tag and location share this row rather than the
+                        // name's. As a sibling of the name the tag competed for
+                        // the same width and squeezed the name to nothing once
+                        // the system text scale grew it.
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            SalonGenderTag(gender: salon.gender),
+                            Text(
+                              '${salon.area.split(',').first} · '
+                              '${salon.distanceKm} km',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: ZalonoTheme.textMuted,
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 6),
                         Wrap(
