@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:zalono/main.dart';
@@ -415,6 +416,53 @@ testWidgets('still shows salon details after the layout fix',
       // Same row, and the tag is to the left of the rating.
       expect((tagY - ratingY).abs(), lessThan(14));
       expect(tester.getTopLeft(tag).dx, lessThan(tester.getTopLeft(rating).dx));
+    });
+
+    testWidgets('gender tag label and rating are laid out at full width',
+        (WidgetTester tester) async {
+      await pumpSalonList(tester, const Size(320, 568), 1.0);
+
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -600));
+      await tester.pumpAndSettle();
+
+      // A single-line Text ends up narrower than its content only when an
+      // ancestor clipped it. Comparing against the width the text needs is a
+      // direct check for the "Unis…" and "4.8 (20…" truncation this card used
+      // to show, and it does not care which row the pieces end up on.
+      bool showsInFull(Finder finder) {
+        final paragraph = tester.renderObject<RenderParagraph>(finder);
+        final needed = (TextPainter(
+          text: paragraph.text,
+          textDirection: TextDirection.ltr,
+        )..layout()).width;
+        return paragraph.size.width >= needed - 0.5;
+      }
+
+      Finder textMatching(Pattern pattern) => find.byWidgetPredicate(
+            (widget) =>
+                widget is Text && pattern.allMatches(widget.data ?? '').isNotEmpty,
+          );
+
+      expect(
+        showsInFull(
+          find.descendant(
+            of: find.byType(SalonGenderTag).first,
+            matching: find.byType(Text),
+          ),
+        ),
+        isTrue,
+        reason: 'gender tag label is clipped',
+      );
+      expect(
+        showsInFull(textMatching(RegExp(r'^\d+\.\d+$')).first),
+        isTrue,
+        reason: 'rating number is clipped',
+      );
+      expect(
+        showsInFull(textMatching(RegExp(r'^\(\d+\)$')).first),
+        isTrue,
+        reason: 'review count is clipped',
+      );
     });
   });
 

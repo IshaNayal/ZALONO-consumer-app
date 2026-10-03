@@ -257,26 +257,89 @@ class _SalonListScreenState extends State<SalonListScreen> {
                         // gender tag row too narrow and overflowing.
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Row(
+                          Text(
+                            salon.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: ZalonoTheme.textDark,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          // Gender tag and rating get a row of their own.
+                          //
+                          // They used to share the name's row as flex siblings,
+                          // which left each of them roughly 40px and clipped
+                          // "Unisex" and "4.8 (204)" mid-word. Neither is a flex
+                          // child here and the pair sits in a Wrap, so both are
+                          // measured at full size and simply reflow to a second
+                          // line when the column is narrow or the text scale is
+                          // large — never truncated.
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 4,
+                            crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
-                              Flexible(
-                                child: Text(
-                                  salon.name,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                    color: ZalonoTheme.textDark,
+                              SalonGenderTag(gender: salon.gender),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.amber.shade50,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: Colors.amber.shade200,
                                   ),
+                                ),
+                                // Wrap, not Row: at 2x text scale on a 320px
+                                // phone the pill needs more width than the
+                                // column has, and a Row would either clip the
+                                // count or overflow. This drops the count to
+                                // its own line instead.
+                                child: Wrap(
+                                  spacing: 3,
+                                  runSpacing: 0,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          Icons.star_rounded,
+                                          size: 15,
+                                          color: Colors.amber,
+                                        ),
+                                        const SizedBox(width: 3),
+                                        Text(
+                                          '${salon.rating}',
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.amber.shade900,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Text(
+                                      '(${salon.reviewsCount})',
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 5),
-                          // The name column is narrow here (the rating badge
-                          // takes the rest of the card row), so only the
-                          // service-agnostic details stay in it. The gender
-                          // tag and location line live below, full width.
+                          // Service-agnostic detail line.
                           Text(
                             salon.services.isEmpty
                                 ? 'Salon services'
@@ -291,89 +354,13 @@ class _SalonListScreenState extends State<SalonListScreen> {
                         ],
                       ),
                     ),
-
-                    const SizedBox(width: 8),
-
-                    // Gender tag and rating share this trailing row.
-                    //
-                    // Flexible + ellipsis throughout: when these were rigid they
-                    // stole the row's width from the Expanded above, collapsing
-                    // it to zero and blowing the card up to ~1300px tall on
-                    // narrow phones at large text scales.
-                    Flexible(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Flexible(
-                            child: SalonGenderTag(
-                              gender: salon.gender,
-                              // On narrow phones the trailing row cannot fit
-                              // the full label, and an ellipsized "Unis…" reads
-                              // worse than the icon alone.
-                              compact: MediaQuery.sizeOf(context).width < 380,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Flexible(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.amber.shade50,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: Colors.amber.shade200,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(
-                                    Icons.star_rounded,
-                                    size: 15,
-                                    color: Colors.amber,
-                                  ),
-                                  const SizedBox(width: 3),
-                                  Flexible(
-                                    child: Text(
-                                      '${salon.rating}',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.amber.shade900,
-                                      ),
-                                    ),
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      ' (${salon.reviewsCount})',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        color: Colors.grey.shade600,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
 
                 const SizedBox(height: 10),
 
-                // Where the salon is. The gender tag lives up in the trailing
-                // row beside the rating, so it is not repeated here.
+                // Where the salon is. The gender tag has a row of its own
+                // above the name, so it is not repeated here.
                 Text(
                   '${salon.area} · '
                   '${salon.distanceKm} km · '
