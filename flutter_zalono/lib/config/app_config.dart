@@ -25,7 +25,7 @@ class AppConfig {
   // pilot has a single number to change.
   // ---------------------------------------------------------------------------
 
-  static const String supportPhone = '+91 1800 123 4567';
+  static const String supportPhone = '+91 00000000';
   static const String supportEmail = 'support@zalono.app';
 
   /// Dialler URI for [supportPhone].

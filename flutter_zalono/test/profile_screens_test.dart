@@ -232,7 +232,7 @@ void main() {
       final zalono = ZalonoProvider();
       await pumpProfile(tester, const PaymentMethodsScreen(), zalono);
 
-      expect(find.text('jay.Nayal@upi'), findsOneWidget);
+      expect(find.text('Isha.Nayal@upi'), findsOneWidget);
       expect(find.text('Default'), findsOneWidget);
 
       await tester.tap(find.text('Add method'));

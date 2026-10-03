@@ -112,12 +112,7 @@ export const ConsumerHome: React.FC = () => {
       <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 pt-4 pb-6 space-y-4">
         
         {/* User Greeting */}
-        <div>
-          <p className="text-xs font-medium text-slate-500">Good morning, Jay 👋</p>
-          <h1 className="text-lg font-bold text-slate-900 tracking-tight mt-0.5">
-            What do you need today?
-          </h1>
-        </div>
+        
 
         {/* AI Natural Language Slot Finder */}
         <form onSubmit={handleAiSearch} className="relative">

@@ -23,7 +23,7 @@ export const IncomingBookingModal: React.FC = () => {
     dismissIncomingNotification();
     showNotification(
       'Reschedule Prompt Sent',
-      'Alternative slot options sent to Jay.'
+      'Alternative slot options sent to Isha.'
     );
     setPartnerScreen('dashboard');
   };

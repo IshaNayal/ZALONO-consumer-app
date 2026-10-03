@@ -150,7 +150,7 @@ class _CustomerCRMScreenState extends State<CustomerCRMScreen> {
         'favoriteService': 'Premium Haircut',
         'favoriteStylist': 'Amit',
         'isVip': false,
-        'notes': 'New customer, referred by Jay',
+        'notes': 'New customer, referred by Isha',
       },
       {
         'name': 'Vikram Reddy',

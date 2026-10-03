@@ -161,7 +161,8 @@ testWidgets('opens on services with a Book Now CTA',
       );
     });
 
-    testWidgets('every service is listed with no collapsed remainder',
+    testWidgets(
+        'services list shows top services and expands on tapping explore more services',
         (WidgetTester tester) async {
       final zalono = ZalonoProvider();
       final salon = zalono.salons.first;
@@ -171,13 +172,19 @@ testWidgets('opens on services with a Book Now CTA',
         provider: zalono,
       );
 
-      // The whole catalogue is visible: nothing hidden behind a "+N" tile,
-      // which previously never appeared for salons with three or fewer
-      // services and left a dead gap on the page.
+      // Initially top services and the Explore More Services bar are shown.
+      expect(find.text('Explore More Services'), findsOneWidget);
+      expect(find.text(salon.services[0].name), findsOneWidget);
+      expect(find.text(salon.services[1].name), findsOneWidget);
+      expect(find.text(salon.services[2].name), findsOneWidget);
+
+      // Tapping Explore More Services expands the remainder of the list.
+      await tester.tap(find.text('Explore More Services'));
+      await tester.pumpAndSettle();
+
       for (final service in salon.services) {
         expect(find.text(service.name), findsOneWidget);
       }
-      expect(find.text('Explore More Services'), findsNothing);
     });
 
     testWidgets('Book Now leads to payment/verification',

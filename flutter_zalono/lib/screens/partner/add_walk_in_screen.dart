@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 //import '../../models/models.dart';
 import '../../providers/zalono_provider.dart';
+import '../../components/consumer/explore_more_services_bar.dart';
 
 class AddWalkInScreen extends StatefulWidget {
   const AddWalkInScreen({super.key});
@@ -19,7 +20,19 @@ class _AddWalkInScreenState extends State<AddWalkInScreen> {
   String _selectedStylist = 'Rahul';
   int _duration = 45;
 
-  final List<String> _services = ['Haircut', 'Haircut + Beard', 'Premium Haircut', 'Hair Color', 'Facial', 'Beard Trim'];
+  final List<String> _services = [
+    'Haircut',
+    'Haircut + Beard',
+    'Premium Haircut',
+    'Nourishing Hair Spa',
+    'Facial Glow',
+    'De-Tan Clean-Up',
+    'Beard Trim & Shape',
+    'Head Massage',
+    'Hair Color & Highlights',
+    'Deluxe Pedicure',
+    'Classic Manicure',
+  ];
   final List<String> _stylists = ['Rahul', 'Priya', 'Amit', 'Neha'];
 
   @override
@@ -93,6 +106,11 @@ class _AddWalkInScreenState extends State<AddWalkInScreen> {
                         value: _selectedService,
                         items: _services,
                         onChanged: (val) => setState(() => _selectedService = val!),
+                      ),
+                      const SizedBox(height: 10),
+                      ExploreMoreServicesBar(
+                        remainingCount: _services.length > 1 ? _services.length - 1 : 0,
+                        onTap: () => _showAllServicesSheet(context),
                       ),
 
                       const SizedBox(height: 24),
@@ -351,6 +369,78 @@ class _AddWalkInScreenState extends State<AddWalkInScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showAllServicesSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'All Available Services',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: ZalonoTheme.textDark,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.pop(ctx),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Flexible(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: _services.length,
+                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    itemBuilder: (_, index) {
+                      final s = _services[index];
+                      final isSelected = s == _selectedService;
+                      return ListTile(
+                        title: Text(
+                          s,
+                          style: TextStyle(
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            color: isSelected
+                                ? ZalonoTheme.primaryBurgundy
+                                : ZalonoTheme.textDark,
+                          ),
+                        ),
+                        trailing: isSelected
+                            ? const Icon(Icons.check,
+                                color: ZalonoTheme.primaryBurgundy)
+                            : null,
+                        onTap: () {
+                          setState(() => _selectedService = s);
+                          Navigator.pop(ctx);
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

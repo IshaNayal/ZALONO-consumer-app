@@ -21,7 +21,7 @@ class ZalonoProvider extends ChangeNotifier {
   String _userPhone = '9876543210';
 
   String _userName = 'Isha ';
-  String _userEmail = 'jay.Nayal@example.com';
+  String _userEmail = 'ishanayal16@example.com';
   bool _isSignedIn = true;
 
   final List<SavedLocation> _savedLocations = [
@@ -42,7 +42,7 @@ class ZalonoProvider extends ChangeNotifier {
     SavedPaymentMethod(
       id: 'pm_upi',
       type: 'UPI',
-      label: 'jay.Nayal@upi',
+      label: 'Isha.Nayal@upi',
       isDefault: true,
     ),
   ];

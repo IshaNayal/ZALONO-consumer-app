@@ -8,7 +8,7 @@ export const CustomerCRMModal: React.FC = () => {
   const handleSendInvite = () => {
     showNotification(
       'Smart Rebooking Reminder Sent',
-      `Sent SMS & WhatsApp invite to ${customerCRM.name}: "Hey Jay! It's been 42 days since your last haircut at Looks Salon. Rahul has slots this weekend!"`
+      `Sent SMS & WhatsApp invite to ${customerCRM.name}: "Hey Isha! It's been 42 days since your last haircut at Looks Salon. Rahul has slots this weekend!"`
     );
   };
 

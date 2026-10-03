@@ -4,6 +4,7 @@ import '../../theme/app_theme.dart';
 import '../../models/models.dart';
 import '../../providers/zalono_provider.dart';
 import '../../components/consumer/salon_gender_tag.dart';
+import '../../components/consumer/explore_more_services_bar.dart';
 import 'payment_verification_screen.dart';
 
 /// Salon services page — the step right after the user picks a salon.
@@ -24,9 +25,78 @@ class SalonDetailScreen extends StatefulWidget {
 class _SalonDetailScreenState extends State<SalonDetailScreen> {
   /// Selection is a set: the user may pick none, one, or several services.
   final Set<String> _selectedServiceIds = {};
+  bool _showAllServices = false;
+
+  static const List<ServiceItem> _dummyExploreServices = [
+    ServiceItem(
+      id: 'd_spa',
+      name: 'Nourishing Hair Spa',
+      price: 899,
+      durationMinutes: 60,
+      category: 'Hair Spa',
+      description: 'Intense hydration, scalp massage & shine treatment',
+    ),
+    ServiceItem(
+      id: 'd_detan',
+      name: 'De-Tan Facial Scrub & Glow',
+      price: 699,
+      durationMinutes: 45,
+      category: 'Facial',
+      description: 'Tan removal, steam cleanse & instant glow pack',
+    ),
+    ServiceItem(
+      id: 'd_beard',
+      name: 'Beard Sculpt & Hot Towel Shape',
+      price: 349,
+      durationMinutes: 30,
+      category: 'Beard',
+      description: 'Razor edge detailing, hot towel & beard oil',
+    ),
+    ServiceItem(
+      id: 'd_massage',
+      name: 'Head & Shoulder Stress-Relief Massage',
+      price: 449,
+      durationMinutes: 35,
+      category: 'Head Massage',
+      description: 'Warm herbal oil pressure-point relaxation',
+    ),
+    ServiceItem(
+      id: 'd_color',
+      name: 'Hair Color & Highlights',
+      price: 1299,
+      durationMinutes: 90,
+      category: 'Haircut',
+      description: 'Ammonia-free global color & radiance gloss',
+    ),
+    ServiceItem(
+      id: 'd_pedicure',
+      name: 'Deluxe Pedicure & Foot Reflexology',
+      price: 799,
+      durationMinutes: 50,
+      category: 'Pedicure',
+      description: 'Soak, exfoliation, cuticle care & mint foot massage',
+    ),
+    ServiceItem(
+      id: 'd_manicure',
+      name: 'Classic Hand Spa & Manicure',
+      price: 549,
+      durationMinutes: 40,
+      category: 'Manicure',
+      description: 'Dead skin removal, nail shaping & hand massage',
+    ),
+  ];
+
+  List<ServiceItem> get _effectiveServices {
+    final base = widget.salon.services;
+    final existingNames = base.map((s) => s.name.toLowerCase().trim()).toSet();
+    final dummyToAdd = _dummyExploreServices
+        .where((d) => !existingNames.contains(d.name.toLowerCase().trim()))
+        .toList();
+    return [...base, ...dummyToAdd];
+  }
 
   List<ServiceItem> get _selectedServices {
-    return widget.salon.services
+    return _effectiveServices
         .where((s) => _selectedServiceIds.contains(s.id))
         .toList(growable: false);
   }
@@ -47,7 +117,7 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
   Widget build(BuildContext context) {
     final zalono = Provider.of<ZalonoProvider>(context);
     final salon = widget.salon;
-    final services = salon.services;
+    final services = _effectiveServices;
     final selectedCount = _selectedServices.length;
 
     return Scaffold(
@@ -209,18 +279,16 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
                   ),
                   const SizedBox(height: 4),
                   const Text(
-                    'Pick one, several, or none.',
+                    'Pick one, several, or none and browse the full list.',
                     style: TextStyle(
                       fontSize: 12,
                       color: ZalonoTheme.textMuted,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  // Every service is listed. A collapsed "+N" tile used to sit
-                  // below this, but salons with three or fewer services never
-                  // showed it, leaving a dead gap and no way to discover the
-                  // rest of the list.
-                  for (final service in services) ...[
+                  for (final service in (_showAllServices
+                      ? services
+                      : services.take(3))) ...[
                     _ServiceTile(
                       service: service,
                       isSelected: _selectedServiceIds.contains(service.id),
@@ -228,6 +296,16 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
                     ),
                     const SizedBox(height: 8),
                   ],
+                  ExploreMoreServicesBar(
+                    remainingCount:
+                        services.length > 3 ? services.length - 3 : 0,
+                    isExpanded: _showAllServices,
+                    onTap: () {
+                      setState(() {
+                        _showAllServices = !_showAllServices;
+                      });
+                    },
+                  ),
                 ],
               ),
             ),
