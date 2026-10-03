@@ -868,10 +868,16 @@ testWidgets('still shows salon details after the layout fix',
       expect(find.text('Select services'), findsOneWidget);
 
       // Multi-select is available there: pick one, then a second.
-      await tester.tap(find.text(target.services[0].name));
+      // Targeted by row key: a service often shares its name with its
+      // sub-type tag, so find.text alone would match both.
+      await tester.tap(
+        find.byKey(ValueKey('service-tile-${target.services[0].id}')),
+      );
       await tester.pumpAndSettle();
       expect(find.text('1 selected'), findsOneWidget);
-      await tester.tap(find.text(target.services[1].name));
+      await tester.tap(
+        find.byKey(ValueKey('service-tile-${target.services[1].id}')),
+      );
       await tester.pumpAndSettle();
       expect(find.text('2 selected'), findsOneWidget);
     });

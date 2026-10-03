@@ -4,6 +4,7 @@ import '../../theme/app_theme.dart';
 import '../../models/models.dart';
 import '../../providers/zalono_provider.dart';
 import '../../components/consumer/salon_gender_tag.dart';
+import '../../components/consumer/service_category_tag.dart';
 import '../../components/consumer/explore_more_services_bar.dart';
 import 'payment_verification_screen.dart';
 
@@ -65,7 +66,10 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
       name: 'Hair Color & Highlights',
       price: 1299,
       durationMinutes: 90,
-      category: 'Haircut',
+      // Matches the "Hair Color" category name, so the row's sub-type tag
+      // agrees with the category the user reached it from. It was tagged
+      // Haircut, which mislabelled every hair-colour service.
+      category: 'Hair Color',
       description: 'Ammonia-free global color & radiance gloss',
     ),
     ServiceItem(
@@ -286,10 +290,14 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  for (final service in (_showAllServices
-                      ? services
-                      : services.take(3))) ...[
+                  for (final service
+                      in (_showAllServices ? services : services.take(3))) ...[
                     _ServiceTile(
+                      // Keyed by id: several services share a name with their
+                      // sub-type ("Facial", "Hair Spa"), so the tag text makes
+                      // a bare find.text ambiguous. Tests and callers target
+                      // the row itself.
+                      key: ValueKey('service-tile-${service.id}'),
                       service: service,
                       isSelected: _selectedServiceIds.contains(service.id),
                       onTap: () => _toggleService(service.id),
@@ -354,6 +362,7 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
 
 class _ServiceTile extends StatelessWidget {
   const _ServiceTile({
+    super.key,
     required this.service,
     required this.isSelected,
     required this.onTap,
@@ -384,11 +393,17 @@ class _ServiceTile extends StatelessWidget {
             ),
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Sub-type first, so the catalogue can be scanned by
+                    // "Hair Color" / "Beard" / "Manicure" without reading
+                    // every row.
+                    ServiceCategoryTag(category: service.category),
+                    const SizedBox(height: 5),
                     Text(
                       service.name,
                       maxLines: 1,
@@ -496,23 +511,32 @@ class _BookNowBar extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            ElevatedButton(
-              onPressed: onBook,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ZalonoTheme.primaryBurgundy,
-                foregroundColor: Colors.white,
-                disabledBackgroundColor:
-                    ZalonoTheme.primaryBurgundy.withValues(alpha: 0.35),
-                disabledForegroundColor: Colors.white70,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            // Flexible so the CTA can never be wider than the space left for
+            // it. Rigid, it overflowed the whole bar at large text scales,
+            // because a non-flex child is measured at its natural width and
+            // the row then has nothing left to give the summary.
+            Flexible(
+              child: ElevatedButton(
+                onPressed: onBook,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ZalonoTheme.primaryBurgundy,
+                  foregroundColor: Colors.white,
+                  disabledBackgroundColor:
+                      ZalonoTheme.primaryBurgundy.withValues(alpha: 0.35),
+                  disabledForegroundColor: Colors.white70,
+                  elevation: 0,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-              ),
-              child: const Text(
-                'Book Now',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                child: const Text(
+                  'Book Now',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                ),
               ),
             ),
           ],

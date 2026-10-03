@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +11,7 @@ import 'package:zalono/screens/consumer/payment_verification_screen.dart';
 import 'package:zalono/screens/consumer/salon_detail_screen.dart';
 import 'package:zalono/theme/app_theme.dart';
 import 'package:zalono/components/common/consumer_notification_host.dart';
+import 'package:zalono/components/consumer/service_category_tag.dart';
 
 Future<void> pumpScreen(
   WidgetTester tester,
@@ -39,6 +41,14 @@ List<String> visibleText(WidgetTester tester) {
       .toList();
 }
 
+/// The row for one service on the salon page.
+///
+/// Targeted by key rather than by name: a service is often named after its own
+/// sub-type ("Facial" tagged Facial), so the sub-type tag and the service name
+/// are the same string and a plain find.text would match both.
+Finder serviceRow(String serviceId) =>
+    find.byKey(ValueKey('service-tile-$serviceId'));
+
 /// Pulls the 6-digit demo OTP out of the banner the screen renders.
 String demoOtpOnScreen(WidgetTester tester) {
   final banner = visibleText(tester).firstWhere((t) => t.contains('Demo build'));
@@ -59,7 +69,7 @@ testWidgets('opens on services with a Book Now CTA',
       );
 
       expect(find.text('Select services'), findsOneWidget);
-      expect(find.text('Haircut'), findsOneWidget);
+      expect(serviceRow(zalono.salons.first.services[0].id), findsOneWidget);
       expect(find.text('Book Now'), findsOneWidget);
     });
 
@@ -85,7 +95,7 @@ testWidgets('opens on services with a Book Now CTA',
       expect(bookButton.onPressed, isNull);
 
       // One.
-      await tester.tap(find.text(salon.services[0].name));
+      await tester.tap(serviceRow(salon.services[0].id));
       await tester.pumpAndSettle();
       expect(find.text('1 selected'), findsOneWidget);
       expect(
@@ -94,11 +104,11 @@ testWidgets('opens on services with a Book Now CTA',
       );
 
       // Two and three — selection accumulates.
-      await tester.tap(find.text(salon.services[1].name));
+      await tester.tap(serviceRow(salon.services[1].id));
       await tester.pumpAndSettle();
       expect(find.text('2 selected'), findsOneWidget);
 
-      await tester.tap(find.text(salon.services[2].name));
+      await tester.tap(serviceRow(salon.services[2].id));
       await tester.pumpAndSettle();
       expect(find.text('3 selected'), findsOneWidget);
 
@@ -108,7 +118,7 @@ testWidgets('opens on services with a Book Now CTA',
       expect(find.textContaining('₹${total.toInt()}'), findsWidgets);
 
       // Tapping again removes it.
-      await tester.tap(find.text(salon.services[0].name));
+      await tester.tap(serviceRow(salon.services[0].id));
       await tester.pumpAndSettle();
       expect(find.text('2 selected'), findsOneWidget);
     });
@@ -126,7 +136,7 @@ testWidgets('opens on services with a Book Now CTA',
         provider: zalono,
       );
       for (final service in chosen) {
-        await tester.tap(find.text(service.name));
+        await tester.tap(serviceRow(service.id));
         await tester.pumpAndSettle();
       }
 
@@ -174,16 +184,99 @@ testWidgets('opens on services with a Book Now CTA',
 
       // Initially top services and the Explore More Services bar are shown.
       expect(find.text('Explore More Services'), findsOneWidget);
-      expect(find.text(salon.services[0].name), findsOneWidget);
-      expect(find.text(salon.services[1].name), findsOneWidget);
-      expect(find.text(salon.services[2].name), findsOneWidget);
+      expect(serviceRow(salon.services[0].id), findsOneWidget);
+      expect(serviceRow(salon.services[1].id), findsOneWidget);
+      expect(serviceRow(salon.services[2].id), findsOneWidget);
 
       // Tapping Explore More Services expands the remainder of the list.
       await tester.tap(find.text('Explore More Services'));
       await tester.pumpAndSettle();
 
       for (final service in salon.services) {
-        expect(find.text(service.name), findsOneWidget);
+        expect(serviceRow(service.id), findsOneWidget);
+      }
+    });
+
+    testWidgets(
+      'every service row is tagged with its sub-type',
+      (WidgetTester tester) async {
+      final zalono = ZalonoProvider();
+      final salon = zalono.salons.first;
+      await pumpScreen(
+        tester,
+        SalonDetailScreen(salon: salon),
+        provider: zalono,
+      );
+
+      // Expand so the whole catalogue, dummy services included, is on screen.
+      await tester.tap(find.text('Explore More Services'));
+      await tester.pumpAndSettle();
+
+      final tags = tester
+          .widgetList<ServiceCategoryTag>(find.byType(ServiceCategoryTag))
+          .map((t) => t.category)
+          .toList();
+
+      // The categories the user browses by all have to be represented.
+      expect(
+        tags,
+        containsAll(<String>[
+          'Haircut',
+          'Hair Color',
+          'Facial',
+          'Beard',
+          'Hair Spa',
+          'Manicure',
+        ]),
+      );
+
+      // And no row is left untagged.
+      for (final service in salon.services) {
+        expect(tags, contains(service.category));
+      }
+
+      // Hair colour services were tagged Haircut, which contradicted the
+      // category the user reached them from. Count the tags rather than just
+      // checking membership: "Haircut" is a real category for other rows.
+      expect(
+        tags.where((t) => t == 'Haircut').length,
+        salon.services.where((s) => s.category == 'Haircut').length,
+        reason: 'the hair colour service must not be counted as a Haircut',
+      );
+    });
+
+    testWidgets(
+      'sub-type tags and the Book Now bar survive a 2x text scale',
+      (WidgetTester tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+      final zalono = ZalonoProvider();
+      await pumpScreen(
+        tester,
+        SalonDetailScreen(salon: zalono.salons.first),
+        provider: zalono,
+        size: const Size(320, 568),
+      );
+
+      expect(tester.takeException(), isNull);
+
+      // No tag is clipped by its pill.
+      for (final element in find.byType(ServiceCategoryTag).evaluate()) {
+        final label = find.descendant(
+          of: find.byElementPredicate((e) => e == element),
+          matching: find.byType(Text),
+        );
+        final paragraph = tester.renderObject<RenderParagraph>(label.first);
+        final needed = (TextPainter(
+          text: paragraph.text,
+          textDirection: TextDirection.ltr,
+        )..layout()).width;
+        expect(
+          paragraph.size.width,
+          greaterThanOrEqualTo(needed - 0.5),
+          reason: '"${paragraph.text.toPlainText()}" is clipped',
+        );
       }
     });
 
@@ -198,7 +291,7 @@ testWidgets('opens on services with a Book Now CTA',
       );
 
       // Needs at least one service before the CTA is live.
-      await tester.tap(find.text(salon.services.first.name));
+      await tester.tap(serviceRow(salon.services.first.id));
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Book Now'));
