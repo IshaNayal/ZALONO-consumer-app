@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:zalono/main.dart';
 import 'package:zalono/config/app_config.dart';
 import 'package:zalono/providers/zalono_provider.dart';
+import 'package:zalono/models/models.dart';
 import 'package:zalono/screens/consumer/home_screen.dart';
 import 'package:zalono/components/consumer/location_header.dart';
 import 'package:zalono/components/consumer/salon_search_bar.dart';
@@ -79,26 +80,22 @@ Finder inFilterPanel(String text) {
 }
 
 /// Salon names currently rendered, in render order (sort order matters).
+///
+/// Matched on the results card's name styling rather than a hardcoded list of
+/// names: the seeded catalogue keeps growing, and a name list silently caps how
+/// many cards these filter assertions can see.
 List<String> renderedSalonNames(WidgetTester tester) {
   return tester
       .widgetList<Text>(find.byType(Text))
+      .where((t) => _isSalonName(t))
       .map((t) => t.data ?? '')
-      .where(_isSalonName)
       .toList();
 }
 
-bool _isSalonName(String text) {
-  const names = {
-    'Looks Salon',
-    'Belle Beauty Parlour',
-    'Style Studio Unisex',
-    'Glow Spa & Salon',
-  };
-  if (names.contains(text)) return true;
-  // "The Men's Studio" uses a typographic apostrophe in the seed data, so match
-  // on a stable prefix rather than the exact character.
-  return text.startsWith('The Men');
-}
+/// The results card renders the salon name at 17px bold; nothing else on the
+/// page uses that combination.
+bool _isSalonName(Text text) =>
+    text.style?.fontSize == 17 && text.style?.fontWeight == FontWeight.bold;
 
 /// Whether the men's salon is among the rendered names.
 bool _hasMensStudio(List<String> names) =>
@@ -215,16 +212,33 @@ void main() {
   testWidgets('Salons are filtered to the selected location',
       (WidgetTester tester) async {
     final zalono = ZalonoProvider();
-    // Patia is a pilot area with no seeded coverage yet.
-    zalono.setLocation('Patia');
+    // Khandagiri is a pilot area the seeded catalogue still does not cover.
+    zalono.setLocation('Khandagiri');
 
     await pumpHome(tester, const Size(390, 844), provider: zalono);
 
     // The location header reflects the change...
-    expect(find.text('Patia'), findsWidgets);
-    // ...and the Saheed Nagar salon is not shown for it.
+    expect(find.text('Khandagiri'), findsWidgets);
+    // ...and no salon from a covered area is shown for it.
     expect(find.text('Looks Salon'), findsNothing);
-    expect(find.textContaining('Coming soon in Patia'), findsOneWidget);
+    expect(find.textContaining('Coming soon in Khandagiri'), findsOneWidget);
+  });
+
+  testWidgets('a covered pilot area lists only its own salons',
+      (WidgetTester tester) async {
+    final zalono = ZalonoProvider();
+    zalono.setLocation('Patia');
+
+    await pumpHome(tester, const Size(390, 844), provider: zalono);
+
+    // Patia now has seeded coverage, so the empty state is gone and the
+    // Saheed Nagar salons are gone with it.
+    expect(find.textContaining('Coming soon in Patia'), findsNothing);
+    expect(find.text('Looks Salon'), findsNothing);
+    expect(
+      zalono.salonsForCurrentLocation.every((s) => s.area.contains('Patia')),
+      isTrue,
+    );
   });
 
   group('Home search', () {
@@ -610,8 +624,9 @@ testWidgets('still shows salon details after the layout fix',
     Future<ZalonoProvider> pumpResults(WidgetTester tester) async {
       // Tall surface so every seeded card is built. With a phone-sized viewport
       // the lazy list only builds two cards, which makes it impossible to
-      // assert what a filter removed.
-      tester.view.physicalSize = const Size(390, 2400);
+      // assert what a filter removed — and the seeded catalogue is now 17
+      // salons, so the surface has to grow with it.
+      tester.view.physicalSize = const Size(390, 8000);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
@@ -791,10 +806,21 @@ testWidgets('still shows salon details after the layout fix',
       await tester.tap(inPicker('Highest first'));
       await tester.pumpAndSettle();
 
+      final zalono = Provider.of<ZalonoProvider>(
+        tester.element(find.byType(SalonListScreen)),
+        listen: false,
+      );
+
       final ratings = renderedSalonNames(tester);
-      // Belle (4.8) sorts above Looks (4.7) and Style Studio (4.3).
-      expect(ratings.first, 'Belle Beauty Parlour');
-      expect(ratings.last, 'Style Studio Unisex');
+      // Derived from the catalogue rather than hardcoded: the seeded set now
+      // includes a 4.9 and a 4.0 salon, so Belle/Style Studio are no longer
+      // the extremes.
+      final sorted = List<Salon>.of(zalono.salons)
+        ..sort((a, b) => b.rating.compareTo(a.rating));
+      expect(ratings.first, sorted.first.name);
+      expect(ratings.last, sorted.last.name);
+      expect(ratings.first, 'Scalp Science Clinic'); // 4.9
+      expect(ratings.last, 'Velvet Touch Salon'); // 4.0
     });
 
     testWidgets('filters combine rather than override each other',

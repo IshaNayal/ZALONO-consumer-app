@@ -17,7 +17,20 @@ import 'payment_verification_screen.dart';
 class SalonDetailScreen extends StatefulWidget {
   final Salon salon;
 
-  const SalonDetailScreen({super.key, required this.salon});
+  /// The category page the user came from, e.g. `Hair Color` from the Hair
+  /// Color chip on Home. When set, the service list is scoped to it so the
+  /// page shows the services the user asked for rather than whatever the salon
+  /// happens to list first — without it every category page opened on the same
+  /// three Haircut rows.
+  ///
+  /// `All Salons` and anything unrecognised mean "no scoping".
+  final String categoryName;
+
+  const SalonDetailScreen({
+    super.key,
+    required this.salon,
+    this.categoryName = 'All Salons',
+  });
 
   @override
   State<SalonDetailScreen> createState() => _SalonDetailScreenState();
@@ -66,9 +79,6 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
       name: 'Hair Color & Highlights',
       price: 1299,
       durationMinutes: 90,
-      // Matches the "Hair Color" category name, so the row's sub-type tag
-      // agrees with the category the user reached it from. It was tagged
-      // Haircut, which mislabelled every hair-colour service.
       category: 'Hair Color',
       description: 'Ammonia-free global color & radiance gloss',
     ),
@@ -88,15 +98,141 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
       category: 'Manicure',
       description: 'Dead skin removal, nail shaping & hand massage',
     ),
+    ServiceItem(
+      id: 'd_cleanse',
+      name: 'Deep Cleanse Charcoal Facial',
+      price: 799,
+      durationMinutes: 50,
+      category: 'Facial',
+      description: 'Blackhead extraction, charcoal mask & skin revival',
+    ),
+    ServiceItem(
+      id: 'd_keratin',
+      name: 'Keratin Express Smoothening',
+      price: 1899,
+      durationMinutes: 90,
+      category: 'Hair Spa',
+      description: 'Frizz-free smoothness & mirror shine therapy',
+    ),
+    ServiceItem(
+      id: 'd_threading',
+      name: 'Eyebrow Shaping & Threading',
+      price: 149,
+      durationMinutes: 15,
+      category: 'Facial',
+      description: 'Precision brow shaping with soothing aloe touch',
+    ),
+    ServiceItem(
+      id: 'd_bleach',
+      name: 'Oxy Glow Face Bleach',
+      price: 499,
+      durationMinutes: 30,
+      category: 'Facial',
+      description: 'Active oxygen formulation for radiant glow',
+    ),
+    ServiceItem(
+      id: 'd_shave',
+      name: 'Royal Shave & Aftershave Balm',
+      price: 299,
+      durationMinutes: 25,
+      category: 'Beard',
+      description: 'Smooth precision shave with soothing cooling balm',
+    ),
   ];
 
-  List<ServiceItem> get _effectiveServices {
+  /// The initial services shown before tapping "Explore More Services".
+  /// Usually top 3 services, scoped to [categoryName] if provided.
+  List<ServiceItem> get _initialServices {
     final base = widget.salon.services;
-    final existingNames = base.map((s) => s.name.toLowerCase().trim()).toSet();
-    final dummyToAdd = _dummyExploreServices
-        .where((d) => !existingNames.contains(d.name.toLowerCase().trim()))
+    final scoped = _categoryScope;
+    if (scoped != null) {
+      final needle = scoped.toLowerCase().replaceAll(RegExp(r'[\s_]+'), '');
+      final matching = base
+          .where((s) =>
+              s.category.toLowerCase().replaceAll(RegExp(r'[\s_]+'), '') == needle)
+          .toList();
+      if (matching.isNotEmpty) {
+        return matching.take(3).toList();
+      }
+    }
+    return base.take(3).toList();
+  }
+
+  /// Additional services shown when "Explore More Services" is expanded.
+  /// Guarantees that at least 5 more services are always available in the salon.
+  List<ServiceItem> get _moreServices {
+    final initial = _initialServices;
+    final initialIds = initial.map((s) => s.id).toSet();
+    final initialNames =
+        initial.map((s) => s.name.toLowerCase().trim()).toSet();
+
+    // 1. Any other services from the salon's base catalogue
+    final remainingBase = widget.salon.services
+        .where((s) =>
+            !initialIds.contains(s.id) &&
+            !initialNames.contains(s.name.toLowerCase().trim()))
         .toList();
-    return [...base, ...dummyToAdd];
+
+    // 2. Dummy services not in initial or remainingBase
+    final existingIds = {...initialIds, ...remainingBase.map((s) => s.id)};
+    final existingNames = {
+      ...initialNames,
+      ...remainingBase.map((s) => s.name.toLowerCase().trim()),
+    };
+
+    final dummyToAdd = _dummyExploreServices
+        .where((d) =>
+            !existingIds.contains(d.id) &&
+            !existingNames.contains(d.name.toLowerCase().trim()))
+        .toList();
+
+    final combined = [...remainingBase, ...dummyToAdd];
+
+    // Ensure at least 5 more services are always available
+    if (combined.length >= 5) {
+      return combined;
+    }
+
+    final result = List<ServiceItem>.from(combined);
+    var index = 1;
+    while (result.length < 5) {
+      final extraId = 'd_extra_$index';
+      if (!existingIds.contains(extraId)) {
+        result.add(
+          ServiceItem(
+            id: extraId,
+            name: 'Specialty Salon Treatment $index',
+            price: 599 + (index * 100),
+            durationMinutes: 45,
+            category: 'Hair Spa',
+            description: 'Custom revitalizing salon treatment',
+          ),
+        );
+      }
+      index++;
+    }
+    return result;
+  }
+
+  /// Full catalogue of all services available in this salon.
+  List<ServiceItem> get _effectiveServices =>
+      [..._initialServices, ..._moreServices];
+
+  /// Services currently displayed on screen:
+  /// Collapsed: top 3 initial services
+  /// Expanded ("Explore More Services" clicked): initial + at least 5 more services.
+  List<ServiceItem> get _displayedServices {
+    if (_showAllServices) {
+      return _effectiveServices;
+    }
+    return _initialServices;
+  }
+
+  /// The category to scope to, or null when the page is unscoped.
+  String? get _categoryScope {
+    final name = widget.categoryName.trim();
+    if (name.isEmpty || name.toLowerCase() == 'all salons') return null;
+    return name;
   }
 
   List<ServiceItem> get _selectedServices {
@@ -121,7 +257,6 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
   Widget build(BuildContext context) {
     final zalono = Provider.of<ZalonoProvider>(context);
     final salon = widget.salon;
-    final services = _effectiveServices;
     final selectedCount = _selectedServices.length;
 
     return Scaffold(
@@ -290,8 +425,7 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  for (final service
-                      in (_showAllServices ? services : services.take(3))) ...[
+                  for (final service in _displayedServices) ...[
                     _ServiceTile(
                       // Keyed by id: several services share a name with their
                       // sub-type ("Facial", "Hair Spa"), so the tag text makes
@@ -305,8 +439,7 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
                     const SizedBox(height: 8),
                   ],
                   ExploreMoreServicesBar(
-                    remainingCount:
-                        services.length > 3 ? services.length - 3 : 0,
+                    remainingCount: _moreServices.length,
                     isExpanded: _showAllServices,
                     onTap: () {
                       setState(() {

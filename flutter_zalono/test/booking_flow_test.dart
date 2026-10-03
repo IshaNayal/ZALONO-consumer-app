@@ -9,6 +9,7 @@ import 'package:zalono/screens/consumer/booking_confirmation_screen.dart';
 import 'package:zalono/screens/consumer/my_bookings_screen.dart';
 import 'package:zalono/screens/consumer/payment_verification_screen.dart';
 import 'package:zalono/screens/consumer/salon_detail_screen.dart';
+import 'package:zalono/screens/consumer/salon_list_screen.dart';
 import 'package:zalono/theme/app_theme.dart';
 import 'package:zalono/components/common/consumer_notification_host.dart';
 import 'package:zalono/components/consumer/service_category_tag.dart';
@@ -188,13 +189,24 @@ testWidgets('opens on services with a Book Now CTA',
       expect(serviceRow(salon.services[1].id), findsOneWidget);
       expect(serviceRow(salon.services[2].id), findsOneWidget);
 
-      // Tapping Explore More Services expands the remainder of the list.
+      // Tapping Explore More Services expands the remainder of the list,
+      // showing all salon services and at least 5 more services available in the salon.
       await tester.tap(find.text('Explore More Services'));
       await tester.pumpAndSettle();
 
       for (final service in salon.services) {
         expect(serviceRow(service.id), findsOneWidget);
       }
+      expect(
+        tester
+            .widgetList(find.byWidgetPredicate((w) =>
+                w.key is ValueKey<String> &&
+                (w.key as ValueKey<String>)
+                    .value
+                    .startsWith('service-tile-')))
+            .length,
+        greaterThanOrEqualTo(8),
+      );
     });
 
     testWidgets(
@@ -279,6 +291,72 @@ testWidgets('opens on services with a Book Now CTA',
         );
       }
     });
+
+    testWidgets(
+      'every category page lists ten or more salons, all tagged for it',
+      (WidgetTester tester) async {
+    final zalono = ZalonoProvider();
+
+    for (final category in zalono.categories) {
+      final matching = zalono.salons
+          .where((s) => s.services.any((x) => x.category == category.name))
+          .toList();
+
+      // Each category page used to resolve to one or two salons, and opening
+      // one showed a list of haircuts rather than the category tapped.
+      expect(
+        matching.length,
+        greaterThanOrEqualTo(10),
+        reason: '${category.name} only has ${matching.length} salons',
+      );
+    }
+  });
+
+    testWidgets(
+      'a category page scopes both the salon list and its services',
+      (WidgetTester tester) async {
+    final zalono = ZalonoProvider();
+
+    await pumpScreen(
+      tester,
+      const SalonListScreen(categoryName: 'Beard', timeOption: 'now'),
+      provider: zalono,
+      size: const Size(390, 8000),
+    );
+
+    // Only salons that actually offer a beard service are listed.
+    final names = tester
+        .widgetList<Text>(find.byType(Text))
+        .where((t) => t.style?.fontSize == 17 && t.style?.fontWeight == FontWeight.bold)
+        .map((t) => t.data ?? '')
+        .toList();
+    expect(names.length, greaterThanOrEqualTo(10));
+
+    final listed = names
+        .map((name) => zalono.salons.firstWhere((s) => s.name == name))
+        .toList();
+    for (final salon in listed) {
+      expect(
+        salon.services.any((s) => s.category == 'Beard'),
+        isTrue,
+        reason: '${salon.name} has no Beard service',
+      );
+    }
+
+    // Opening one shows only beard services, each tagged Beard.
+    await pumpScreen(
+      tester,
+      SalonDetailScreen(salon: listed.first, categoryName: 'Beard'),
+      provider: zalono,
+    );
+
+    final tags = tester
+        .widgetList<ServiceCategoryTag>(find.byType(ServiceCategoryTag))
+        .map((t) => t.category)
+        .toList();
+    expect(tags, isNotEmpty);
+    expect(tags.toSet(), {'Beard'});
+  });
 
     testWidgets('Book Now leads to payment/verification',
         (WidgetTester tester) async {

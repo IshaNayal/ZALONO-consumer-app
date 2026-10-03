@@ -120,8 +120,38 @@ class _SalonListScreenState extends State<SalonListScreen> {
     zalono.setSelectedSalon(salon);
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => SalonDetailScreen(salon: salon)),
+      MaterialPageRoute(
+          builder: (_) => SalonDetailScreen(
+            salon: salon,
+            categoryName: widget.categoryName,
+          ),
+        ),
     );
+  }
+
+  /// The category this page is scoped to, or null when it is unscoped.
+  String? get _categoryScope {
+    final name = widget.categoryName.trim();
+    if (name.isEmpty || name.toLowerCase() == 'all salons') return null;
+    return name;
+  }
+
+  /// Lowercases and drops separators so 'Hair Color', 'hair_color' and
+  /// 'HairColor' all compare equal.
+  String _normalise(String value) =>
+      value.toLowerCase().replaceAll(RegExp(r'[\s_]+'), '');
+
+  /// Cheapest price for this page's category at [salon], so a Beard page quotes
+  /// beard prices rather than the salon's overall starting price.
+  double _startingPrice(Salon salon) {
+    final category = _categoryScope;
+    if (category == null) return salon.priceStart;
+    final needle = _normalise(category);
+    final matching = salon.services
+        .where((s) => _normalise(s.category) == needle)
+        .map((s) => s.price);
+    if (matching.isEmpty) return salon.priceStart;
+    return matching.reduce((a, b) => a < b ? a : b);
   }
 
   /// Applies the filter dropdowns: distance, salon type, price and rating.
@@ -129,6 +159,21 @@ class _SalonListScreenState extends State<SalonListScreen> {
   /// Each step narrows the previous one, so all chosen filters combine.
   List<Salon> _applyFilters(List<Salon> all) {
     var result = all;
+
+    // A category page lists only the salons that actually offer that service.
+    // Without this every category page showed the same full catalogue, so a
+    // salon with no Beard service could appear on the Beard page and then open
+    // onto a list of haircuts.
+    final category = _categoryScope;
+    if (category != null) {
+      final needle = _normalise(category);
+      result = result
+          .where(
+            (salon) =>
+                salon.services.any((s) => _normalise(s.category) == needle),
+          )
+          .toList();
+    }
 
     if (_filters.distance == SalonDistance.under2Km) {
       result = result.where((salon) => salon.distanceKm <= 2.0).toList();
@@ -207,6 +252,7 @@ class _SalonListScreenState extends State<SalonListScreen> {
               MaterialPageRoute(
                 builder: (_) => SalonDetailScreen(
                   salon: salon,
+                  categoryName: widget.categoryName,
                 ),
               ),
             );
@@ -327,11 +373,13 @@ class _SalonListScreenState extends State<SalonListScreen> {
                             ],
                           ),
                           const SizedBox(height: 5),
-                          // Service-agnostic detail line.
+                          // The category this page is scoped to, so a Beard
+                          // page does not advertise "Haircut" on every card.
                           Text(
-                            salon.services.isEmpty
-                                ? 'Salon services'
-                                : salon.services.first.category,
+                            _categoryScope ??
+                                (salon.services.isEmpty
+                                    ? 'Salon services'
+                                    : salon.services.first.category),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
@@ -436,15 +484,15 @@ class _SalonListScreenState extends State<SalonListScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
-                          'Haircut starting from',
-                          style: TextStyle(
+                        Text(
+                          '${_categoryScope ?? 'Haircut'} starting from',
+                          style: const TextStyle(
                             fontSize: 10,
                             color: Colors.grey,
                           ),
                         ),
                         Text(
-                          '₹${salon.priceStart.toInt()}',
+                          '₹${_startingPrice(salon).toInt()}',
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
