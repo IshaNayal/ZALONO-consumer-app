@@ -303,42 +303,47 @@ class _DropdownRow extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 9),
             child: Row(
               children: [
-                // Both the label and the value flex: a rigid label overflowed
-                // the row at large text scales.
-                Flexible(
+                SizedBox(
+                  width: 105,
                   child: Text(
                     label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontSize: 13,
+                      fontSize: 13.5,
                       color: ZalonoTheme.textMuted,
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    value,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.end,
-                    style: TextStyle(
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.w600,
-                      color: isActive
-                          ? ZalonoTheme.primaryBurgundy
-                          : ZalonoTheme.textDark,
-                    ),
+                const SizedBox(width: 16),
+                Flexible(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          value,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: isActive
+                                ? ZalonoTheme.primaryBurgundy
+                                : ZalonoTheme.textDark,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        size: 18,
+                        color: isActive
+                            ? ZalonoTheme.primaryBurgundy
+                            : ZalonoTheme.textMuted,
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 4),
-                Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  size: 18,
-                  color: isActive
-                      ? ZalonoTheme.primaryBurgundy
-                      : ZalonoTheme.textMuted,
                 ),
               ],
             ),
