@@ -8,7 +8,7 @@ import '../../screens/consumer/salon_detail_screen.dart';
 ///
 /// Laid out like the reference design: image on the left with an overlay
 /// status badge and a rating pill, name and meta underneath on the right, and
-/// a slot + booking action on a second row.
+/// a seat + booking action on a second row.
 class SalonCard extends StatelessWidget {
   const SalonCard({super.key, required this.salon, this.onBook});
 
@@ -112,7 +112,7 @@ class SalonCard extends StatelessWidget {
                         const SizedBox(width: 5),
                         Flexible(
                           child: Text(
-                            'Next slot ${salon.nextSlotTime}',
+                            'Next seat ${salon.nextSlotTime}',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(

@@ -91,7 +91,7 @@ class ApiService {
     return null;
   }
 
-  /// Toggle slot availability
+  /// Toggle seat availability
   static Future<bool> toggleSlot(String salonId, String slotId) async {
     try {
       final res = await _client.patch(

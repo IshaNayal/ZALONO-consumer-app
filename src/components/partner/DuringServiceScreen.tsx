@@ -29,7 +29,7 @@ export const DuringServiceScreen: React.FC = () => {
     completeService(bookings[0]?.id || 'bk-101', paymentMethod);
     showNotification(
       'Service Finished & Payment Recorded',
-      `₹${hasAddOn ? 599 : 399} recorded. Slot opened for next customer.`
+      `₹${hasAddOn ? 599 : 399} recorded. Seat opened for next customer.`
     );
     setPartnerScreen('dashboard');
   };

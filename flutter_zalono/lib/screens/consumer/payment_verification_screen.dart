@@ -22,13 +22,13 @@ class PaymentVerificationScreen extends StatefulWidget {
   /// summed for the payment step.
   final List<ServiceItem> services;
 
-  final LiveSlot slot;
+  final LiveSlot seat;
 
   const PaymentVerificationScreen({
     super.key,
     required this.salon,
     required this.services,
-    required this.slot,
+    required this.seat,
   });
 
   /// Combined price of [services].
@@ -439,7 +439,7 @@ class _PaymentVerificationScreenState extends State<PaymentVerificationScreen> {
     final phone = _phoneController.text.trim();
     final booking = zalono.holdBooking(
       salon: widget.salon,
-      slot: widget.slot,
+      seat: widget.seat,
       services: widget.services,
       phone: phone,
     );

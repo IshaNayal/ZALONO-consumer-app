@@ -338,14 +338,14 @@ class ZalonoProvider extends ChangeNotifier {
   /// once the mobile number has been verified.
   Booking holdBooking({
     required Salon salon,
-    required LiveSlot slot,
+    required LiveSlot seat,
     required List<ServiceItem> services,
     String? stylistName,
     String? phone,
   }) {
-    final chosenStylist = stylistName ?? slot.stylistName ?? salon.stylists.first.name;
+    final chosenStylist = stylistName ?? seat.stylistName ?? salon.stylists.first.name;
 
-    slot.status = SlotStatus.booked;
+    seat.status = SlotStatus.booked;
 
     // Several services collapse into the booking's flat fields: names joined,
     // prices and durations summed. Keeps the booking record and the API shape
@@ -363,7 +363,7 @@ class ZalonoProvider extends ChangeNotifier {
       serviceName: names,
       servicePrice: totalPrice,
       serviceDuration: totalDuration,
-      slotTime: slot.time,
+      slotTime: seat.time,
       date: _formatDateLabel(_now()),
       distanceKm: salon.distanceKm,
       travelTimeMin: salon.travelTimeMin,
@@ -373,8 +373,8 @@ class ZalonoProvider extends ChangeNotifier {
       status: AppointmentStatus.booked,
       expectedWaitMin: '0-5 minutes',
       queuePosition: 1,
-      estimatedStartTime: slot.time,
-      startsAt: _resolveStart(slot.time),
+      estimatedStartTime: seat.time,
+      startsAt: _resolveStart(seat.time),
     );
 
     _bookings.insert(0, newBooking);
@@ -403,13 +403,13 @@ class ZalonoProvider extends ChangeNotifier {
   /// Delegates to the hold + confirm pair.
   void bookSlot({
     required Salon salon,
-    required LiveSlot slot,
+    required LiveSlot seat,
     required ServiceItem service,
     String? stylistName,
   }) {
     final booking = holdBooking(
       salon: salon,
-      slot: slot,
+      seat: seat,
       services: [service],
       stylistName: stylistName,
     );
@@ -424,7 +424,7 @@ class ZalonoProvider extends ChangeNotifier {
     return 'Today, ${now.day} ${months[now.month - 1]}';
   }
 
-  /// Turns a "11:40 AM" style slot label into a concrete time today, or null
+  /// Turns a "11:40 AM" style seat label into a concrete time today, or null
   /// when the label cannot be parsed.
   DateTime? _resolveStart(String slotLabel) {
     final match = RegExp(r'^(\d{1,2}):(\d{2})\s*(AM|PM)$', caseSensitive: false)
@@ -565,9 +565,9 @@ class ZalonoProvider extends ChangeNotifier {
   void toggleSlotStatus(String salonId, String slotId) {
     for (var salon in _salons) {
       if (salon.id == salonId) {
-        for (var slot in salon.slots) {
-          if (slot.id == slotId) {
-            slot.status = slot.status == SlotStatus.available 
+        for (var seat in salon.slots) {
+          if (seat.id == slotId) {
+            seat.status = seat.status == SlotStatus.available 
                 ? SlotStatus.booked 
                 : SlotStatus.available;
             notifyListeners();

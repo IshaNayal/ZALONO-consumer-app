@@ -30,7 +30,7 @@ export const StaffManagementModal: React.FC = () => {
 
       <div className="w-full max-w-6xl mx-auto p-4 sm:px-6 space-y-4">
         <p className="text-xs text-slate-600 bg-blue-50 border border-blue-200 p-2.5 rounded-xl">
-          👥 <strong>Live Roster & Shifts:</strong> Toggle stylist availability or set breaks so online slot bookings sync dynamically without overbooking.
+          👥 <strong>Live Roster & Shifts:</strong> Toggle stylist availability or set breaks so online seat bookings sync dynamically without overbooking.
         </p>
 
         <div className="grid gap-3 md:grid-cols-2">

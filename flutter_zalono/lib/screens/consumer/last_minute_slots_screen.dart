@@ -196,16 +196,16 @@ class LastMinuteSlotsScreen extends StatelessWidget {
                               Wrap(
                                 spacing: 8,
                                 runSpacing: 8,
-                                children: availableSlots.map((slot) {
+                                children: availableSlots.map((seat) {
                                   return Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                     decoration: BoxDecoration(
-                                      color: slot.status == SlotStatus.limited
+                                      color: seat.status == SlotStatus.limited
                                           ? Colors.amber.shade50
                                           : ZalonoTheme.accentGreenLight,
                                       borderRadius: BorderRadius.circular(8),
                                       border: Border.all(
-                                        color: slot.status == SlotStatus.limited
+                                        color: seat.status == SlotStatus.limited
                                             ? Colors.amber.shade200
                                             : ZalonoTheme.accentGreen,
                                       ),
@@ -214,22 +214,22 @@ class LastMinuteSlotsScreen extends StatelessWidget {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text(
-                                          slot.time,
+                                          seat.time,
                                           style: TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.bold,
-                                            color: slot.status == SlotStatus.limited
+                                            color: seat.status == SlotStatus.limited
                                                 ? Colors.amber.shade900
                                                 : ZalonoTheme.accentGreen,
                                           ),
                                         ),
                                         const SizedBox(width: 6),
                                         Text(
-                                          slot.status == SlotStatus.limited ? 'Limited' : 'Available',
+                                          seat.status == SlotStatus.limited ? 'Limited' : 'Available',
                                           style: TextStyle(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w600,
-                                            color: slot.status == SlotStatus.limited
+                                            color: seat.status == SlotStatus.limited
                                                 ? Colors.amber.shade800
                                                 : ZalonoTheme.accentGreen,
                                           ),

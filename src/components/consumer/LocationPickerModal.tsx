@@ -34,7 +34,7 @@ export const LocationPickerModal: React.FC = () => {
         <div className="p-3 bg-blue-50 border border-blue-200 rounded-2xl flex items-start gap-2.5">
           <Compass className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
           <p className="text-xs text-blue-900 leading-relaxed">
-            <strong>Bhubaneswar Beta Pilot:</strong> Selecting your locality recalculates live transit times and slot recommendation buffers (travel + 5m buffer) dynamically.
+            <strong>Bhubaneswar Beta Pilot:</strong> Selecting your locality recalculates live transit times and seat recommendation buffers (travel + 5m buffer) dynamically.
           </p>
         </div>
 

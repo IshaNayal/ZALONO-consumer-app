@@ -320,7 +320,7 @@ class _BookByTimeScreenState extends State<BookByTimeScreen> {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    'Pick exact slot on calendar',
+                    'Pick exact seat on calendar',
                     style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                   ),
                   const SizedBox(height: 4),
@@ -380,7 +380,7 @@ class _BookByTimeScreenState extends State<BookByTimeScreen> {
               Icon(Icons.auto_awesome_rounded, size: 18, color: ZalonoTheme.primaryBurgundy),
               SizedBox(width: 8),
               Text(
-                'AI Slot Finder',
+                'AI Seat Finder',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,

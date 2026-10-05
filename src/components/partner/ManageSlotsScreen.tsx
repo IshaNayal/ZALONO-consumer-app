@@ -17,19 +17,19 @@ export const ManageSlotsScreen: React.FC = () => {
     { num: 1, day: 'Fri' }
   ];
 
-  const handleToggle = (slot: LiveSlot) => {
-    const nextStatus = slot.status === 'available' ? 'booked' : 'available';
-    updateSlotStatus(salon.id, slot.id, nextStatus);
+  const handleToggle = (seat: LiveSlot) => {
+    const nextStatus = seat.status === 'available' ? 'booked' : 'available';
+    updateSlotStatus(salon.id, seat.id, nextStatus);
     showNotification(
-      'Slot Updated',
-      `${slot.time} slot is now marked as ${nextStatus.toUpperCase()}. Synced with customer app.`
+      'Seat Updated',
+      `${seat.time} seat is now marked as ${nextStatus.toUpperCase()}. Synced with customer app.`
     );
   };
 
   const handleAddManualSlot = () => {
     showNotification(
-      'New Slot Added',
-      'Manual slot 2:30 PM added and opened for online bookings.'
+      'New Seat Added',
+      'Manual seat 2:30 PM added and opened for online bookings.'
     );
   };
 
@@ -73,30 +73,30 @@ export const ManageSlotsScreen: React.FC = () => {
 
         {/* Info Helper */}
         <p className="text-xs text-slate-500 px-1">
-          Tap any slot toggle to instantly open or block it on the Zalono customer app in real time.
+          Tap any seat toggle to instantly open or block it on the Zalono customer app in real time.
         </p>
 
         {/* Slots List */}
         <div className="grid gap-2 md:grid-cols-2">
-          {salon.slots.map((slot) => {
-            const isAvailable = slot.status === 'available';
-            const isBooked = slot.status === 'booked';
+          {salon.slots.map((seat) => {
+            const isAvailable = seat.status === 'available';
+            const isBooked = seat.status === 'booked';
 
             return (
               <div
-                key={slot.id}
+                key={seat.id}
                 className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-bold text-slate-900 font-mono w-16">{slot.time}</span>
+                  <span className="text-sm font-bold text-slate-900 font-mono w-16">{seat.time}</span>
                   <div>
                     {isBooked ? (
                       <div>
                         <span className="text-xs font-bold text-slate-700">
-                          Booked ({slot.stylistName || 'Stylist'})
+                          Booked ({seat.stylistName || 'Stylist'})
                         </span>
-                        {slot.customerName && (
-                          <p className="text-[11px] text-slate-500">{slot.customerName} · {slot.serviceName}</p>
+                        {seat.customerName && (
+                          <p className="text-[11px] text-slate-500">{seat.customerName} · {seat.serviceName}</p>
                         )}
                       </div>
                     ) : (
@@ -110,7 +110,7 @@ export const ManageSlotsScreen: React.FC = () => {
 
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => handleToggle(slot)}
+                    onClick={() => handleToggle(seat)}
                     className={`px-3 py-1.5 text-xs font-bold rounded-xl border transition-all ${
                       isAvailable
                         ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
@@ -125,13 +125,13 @@ export const ManageSlotsScreen: React.FC = () => {
           })}
         </div>
 
-        {/* Add Manual Slot Button */}
+        {/* Add Manual Seat Button */}
         <button
           onClick={handleAddManualSlot}
           className="w-full py-3 bg-white hover:bg-slate-50 border-2 border-dashed border-[#80142B] text-[#80142B] rounded-2xl font-bold text-xs flex items-center justify-center gap-2 transition-colors"
         >
           <Plus className="w-4 h-4" />
-          <span>+ Add Manual Slot</span>
+          <span>+ Add Manual Seat</span>
         </button>
       </div>
     </div>

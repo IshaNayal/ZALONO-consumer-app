@@ -69,7 +69,7 @@ class BookingConfirmationScreen extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               Text(
-                'Your slot is reserved. Zero waiting required.',
+                'Your seat is reserved. Zero waiting required.',
                 style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
               ),
               const SizedBox(height: 28),
@@ -145,7 +145,7 @@ class BookingConfirmationScreen extends StatelessWidget {
                     // Key Details
                     _buildDetailRow(
                       Icons.schedule_rounded,
-                      'Slot Time',
+                      'Seat Time',
                       '${booking.slotTime} (${booking.date})',
                       isBold: true,
                     ),

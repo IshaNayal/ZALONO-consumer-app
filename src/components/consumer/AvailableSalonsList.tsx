@@ -160,10 +160,10 @@ export const AvailableSalonsList: React.FC = () => {
             {/* Smart Slots Section: Earliest vs Recommended */}
             <div className="pt-2 border-t border-slate-100">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
-                Smart Slot Selection (Traffic Aware)
+                Smart Seat Selection (Traffic Aware)
               </span>
               <div className="grid grid-cols-2 gap-2">
-                {/* Earliest Slot */}
+                {/* Earliest Seat */}
                 <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-col justify-between">
                   <div>
                     <span className="text-[10px] text-slate-500 block">Earliest you can make</span>
@@ -177,7 +177,7 @@ export const AvailableSalonsList: React.FC = () => {
                   </button>
                 </div>
 
-                {/* Recommended Slot with buffer */}
+                {/* Recommended Seat with buffer */}
                 <div className="p-2.5 bg-[#F9E8EC] border border-[#80142B]/30 rounded-xl flex flex-col justify-between">
                   <div>
                     <div className="flex items-center justify-between">

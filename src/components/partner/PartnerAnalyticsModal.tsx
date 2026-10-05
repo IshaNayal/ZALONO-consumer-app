@@ -99,7 +99,7 @@ export const PartnerAnalyticsModal: React.FC = () => {
           </div>
 
           <p className="text-[11px] text-slate-500 text-center">
-            Zero-wait slot algorithm reduced empty chair time by <strong>4.2 hours/day</strong>.
+            Zero-wait seat algorithm reduced empty chair time by <strong>4.2 hours/day</strong>.
           </p>
         </div>
       </div>

@@ -389,7 +389,7 @@ testWidgets('opens on services with a Book Now CTA',
         PaymentVerificationScreen(
           salon: salon,
           services: [salon.services.first],
-          slot: salon.slots.first,
+          seat: salon.slots.first,
         ),
         provider: zalono,
       );

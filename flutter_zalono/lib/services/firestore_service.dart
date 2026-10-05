@@ -19,7 +19,7 @@ class ZalonoFirestoreService {
     // Handled in ZalonoProvider
   }
 
-  // Toggle slot availability stub
+  // Toggle seat availability stub
   Future<void> updateSlotStatus(String salonId, String slotId, SlotStatus status) async {
     // Handled in ZalonoProvider
   }

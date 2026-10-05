@@ -16,7 +16,7 @@ import '../../screens/consumer/salon_list_screen.dart';
 ///   location -> search -> promo banner (reserved) -> top categories ->
 ///   salons nearby -> filters -> salon list.
 ///
-/// The heavier features that used to live here (AI slot finder, live
+/// The heavier features that used to live here (AI seat finder, live
 /// appointment, last-minute openings, usual-salon rebook, time chips) are not
 /// deleted — their screens and logic remain in the project and stay reachable
 /// from Bookings, Profile and the showcase router.

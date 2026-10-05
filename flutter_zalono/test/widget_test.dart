@@ -173,7 +173,7 @@ void main() {
     expect(find.text('Reverse Search'), findsNothing);
     expect(find.text('Your usual salon'), findsNothing);
     expect(find.text('Last-Minute Openings'), findsNothing);
-    expect(find.textContaining('AI Slot Finder'), findsNothing);
+    expect(find.textContaining('AI Seat Finder'), findsNothing);
   });
 
   testWidgets('Home renders without overflow on a small phone',
@@ -321,12 +321,12 @@ void main() {
     );
   });
 
-  testWidgets('Visit-time page never uses the word "slot"',
+  testWidgets('Visit-time page never uses the word "seat"',
       (WidgetTester tester) async {
     await pumpTimePage(tester, const Size(390, 844));
 
     final offenders = visibleText(tester)
-        .where((t) => t.toLowerCase().contains('slot'))
+        .where((t) => t.toLowerCase().contains('seat'))
         .toList();
     expect(offenders, isEmpty);
   });
@@ -417,8 +417,8 @@ testWidgets('still shows salon details after the layout fix',
       expect(find.text('Looks Salon'), findsOneWidget);
       // One "Select Seat" button per card in the seeded area.
       expect(find.text('Select Seat'), findsWidgets);
-      // Booking ahead keeps the next-slot pill.
-      expect(find.text('Next slot: 11:30 AM'), findsWidgets);
+      // Booking ahead keeps the next-seat pill.
+      expect(find.text('Next seat: 11:30 AM'), findsWidgets);
       expect(zalono.salons, isNotEmpty);
     });
 
@@ -934,12 +934,12 @@ testWidgets('still shows salon details after the layout fix',
     }
 
     for (final immediate in const ['now', 'within_30_min']) {
-      testWidgets('"$immediate" shows the tag and hides the next-slot pill',
+      testWidgets('"$immediate" shows the tag and hides the next-seat pill',
           (WidgetTester tester) async {
         await pumpAt(tester, immediate);
 
         expect(find.text('Available now'), findsOneWidget);
-        expect(find.textContaining('Next slot:'), findsNothing);
+        expect(find.textContaining('Next seat:'), findsNothing);
       });
     }
 
@@ -952,7 +952,7 @@ testWidgets('still shows salon details after the layout fix',
         await pumpAt(tester, later);
 
         expect(find.text('Available now'), findsNothing);
-        expect(find.textContaining('Next slot:'), findsWidgets);
+        expect(find.textContaining('Next seat:'), findsWidgets);
       });
     }
   });

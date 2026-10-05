@@ -62,7 +62,7 @@ export const ConsumerHome: React.FC = () => {
     e.preventDefault();
     if (!aiSearchInput.trim()) return;
     showNotification(
-      'AI Slot Match Found ⚡',
+      'AI Seat Match Found ⚡',
       `Found 3 open slots in ${currentLocation.name} matching "${aiSearchInput}" with zero waiting!`,
       'View Match',
       () => setConsumerScreen('salon_list')
@@ -114,13 +114,13 @@ export const ConsumerHome: React.FC = () => {
         {/* User Greeting */}
         
 
-        {/* AI Natural Language Slot Finder */}
+        {/* AI Natural Language Seat Finder */}
         <form onSubmit={handleAiSearch} className="relative">
           <input
             type="text"
             value={aiSearchInput}
             onChange={(e) => setAiSearchInput(e.target.value)}
-            placeholder="AI Slot Finder: 'Haircut tomorrow after 6 near Patia'..."
+            placeholder="AI Seat Finder: 'Haircut tomorrow after 6 near Patia'..."
             className="w-full text-xs pl-8 pr-16 py-2.5 bg-white border border-slate-200 rounded-xl shadow-xs focus:outline-none focus:ring-1 focus:ring-[#80142B] focus:border-[#80142B]"
           />
           <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-3" />
@@ -326,10 +326,10 @@ export const ConsumerHome: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Next Slot Quick Action */}
+                {/* Next Seat Quick Action */}
                 <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-slate-400 font-medium block">Earliest Slot</span>
+                    <span className="text-[10px] text-slate-400 font-medium block">Earliest Seat</span>
                     <span className="text-xs font-bold text-slate-900">{salon.nextSlotTime}</span>
                   </div>
                   <div className="flex items-center gap-2">

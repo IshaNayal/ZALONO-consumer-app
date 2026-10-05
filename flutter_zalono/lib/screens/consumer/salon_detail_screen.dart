@@ -461,7 +461,7 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
         selectedServices: _selectedServices,
         totalPrice: _totalPrice,
         totalDuration: _totalDuration,
-        slot: _targetSlot(salon),
+        seat: _targetSlot(salon),
         onBook: selectedCount == 0
             ? null
             : () {
@@ -472,7 +472,7 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
                     builder: (_) => PaymentVerificationScreen(
                       salon: salon,
                       services: _selectedServices,
-                      slot: _targetSlot(salon),
+                      seat: _targetSlot(salon),
                     ),
                   ),
                 );
@@ -583,14 +583,14 @@ class _BookNowBar extends StatelessWidget {
     required this.selectedServices,
     required this.totalPrice,
     required this.totalDuration,
-    required this.slot,
+    required this.seat,
     required this.onBook,
   });
 
   final List<ServiceItem> selectedServices;
   final double totalPrice;
   final int totalDuration;
-  final LiveSlot slot;
+  final LiveSlot seat;
 
   /// Null when nothing is selected, which disables the CTA.
   final VoidCallback? onBook;
@@ -632,7 +632,7 @@ class _BookNowBar extends StatelessWidget {
                   Text(
                     count == 0
                         ? 'Pick one or more to continue'
-                        : '${slot.time} · $totalDuration min',
+                        : '${seat.time} · $totalDuration min',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(

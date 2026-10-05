@@ -21,7 +21,7 @@ SCREENS = [
     },
     {
         "id": "salon_detail",
-        "title": "3. Salon Profile & Slot Picker",
+        "title": "3. Salon Profile & Seat Picker",
         "module": "Consumer Experience",
         "desc": "Full salon profile with stylist roster, live available time slots, ratings, and service catalog."
     },
@@ -33,9 +33,9 @@ SCREENS = [
     },
     {
         "id": "book_by_time",
-        "title": "5. Book By Time Slot",
+        "title": "5. Book By Time Seat",
         "module": "Consumer Experience",
-        "desc": "Instant slot booking matrix matching customer schedules with salon chairs."
+        "desc": "Instant seat booking matrix matching customer schedules with salon chairs."
     },
     {
         "id": "last_minute",
@@ -83,7 +83,7 @@ SCREENS = [
         "id": "manage_slots",
         "title": "13. Manage Slots Availability",
         "module": "Partner Management",
-        "desc": "Interactive slot matrix allowing salon managers to toggle slot status (available/booked/blocked)."
+        "desc": "Interactive seat matrix allowing salon managers to toggle seat status (available/booked/blocked)."
     },
     {
         "id": "staff_management",

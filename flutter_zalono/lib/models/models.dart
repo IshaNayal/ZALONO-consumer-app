@@ -1,5 +1,5 @@
 // Zalono Flutter Models
-// Real-time slot booking, live queue position, and partner salon management
+// Real-time seat booking, live queue position, and partner salon management
 
 enum BusyLevel { quiet, moderate, busy }
 enum SlotStatus { available, limited, booked, blocked }

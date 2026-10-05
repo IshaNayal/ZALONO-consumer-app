@@ -106,7 +106,7 @@ const List<Term> terms = [
     'Bookings',
     'A booking is confirmed once you complete the OTP verification and the '
         'payment step, or choose to pay at the salon. Please arrive within the '
-        'gap you were given, as the slot may be released if you are late.',
+        'gap you were given, as the seat may be released if you are late.',
   ),
   Term(
     'Payments',

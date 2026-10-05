@@ -33,7 +33,7 @@ export const BookingConfirmationModal: React.FC = () => {
 
         <div>
           <h1 className="text-2xl font-bold text-slate-900">You're booked! 🎉</h1>
-          <p className="text-sm text-slate-500 mt-1">Your slot is reserved with zero wait promise.</p>
+          <p className="text-sm text-slate-500 mt-1">Your seat is reserved with zero wait promise.</p>
         </div>
 
         {/* Booking Summary Card */}
@@ -95,7 +95,7 @@ export const BookingConfirmationModal: React.FC = () => {
               <span>Add to Calendar</span>
             </button>
             <button
-              onClick={() => showNotification('Reschedule', 'Choose another time slot from the salon details.')}
+              onClick={() => showNotification('Reschedule', 'Choose another time seat from the salon details.')}
               className="py-2.5 px-3 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-semibold text-slate-700 flex items-center justify-center gap-1.5 transition-colors"
             >
               <RotateCcw className="w-3.5 h-3.5" />

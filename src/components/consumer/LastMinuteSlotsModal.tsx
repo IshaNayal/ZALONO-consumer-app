@@ -79,7 +79,7 @@ export const LastMinuteSlotsModal: React.FC = () => {
                 <p className="text-xs text-slate-600">{item.salon.name} · {item.distance}</p>
                 <div className="flex items-center gap-1 text-[11px] text-slate-500 mt-0.5">
                   <Clock className="w-3 h-3 text-[#80142B]" />
-                  <span className="font-semibold text-slate-800">{item.time} slot</span>
+                  <span className="font-semibold text-slate-800">{item.time} seat</span>
                 </div>
               </div>
             </div>

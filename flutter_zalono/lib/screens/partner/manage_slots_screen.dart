@@ -21,7 +21,7 @@ class ManageSlotsScreen extends StatelessWidget {
             icon: const Icon(Icons.add_circle_outline),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Add Manual Slot modal opened')),
+                const SnackBar(content: Text('Add Manual Seat modal opened')),
               );
             },
           ),
@@ -31,8 +31,8 @@ class ManageSlotsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         itemCount: salon.slots.length,
         itemBuilder: (context, index) {
-          final slot = salon.slots[index];
-          final isBooked = slot.status == SlotStatus.booked;
+          final seat = salon.slots[index];
+          final isBooked = seat.status == SlotStatus.booked;
 
           return Container(
             margin: const EdgeInsets.only(bottom: 8),
@@ -48,13 +48,13 @@ class ManageSlotsScreen extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      slot.time,
+                      seat.time,
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                     ),
                     const SizedBox(width: 14),
                     if (isBooked)
                       Text(
-                        'Booked (${slot.stylistName ?? 'Stylist'})',
+                        'Booked (${seat.stylistName ?? 'Stylist'})',
                         style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
                       )
                     else
@@ -68,7 +68,7 @@ class ManageSlotsScreen extends StatelessWidget {
                   value: !isBooked,
                   activeTrackColor: ZalonoTheme.accentGreen,
                   onChanged: (val) {
-                    zalono.toggleSlotStatus(salon.id, slot.id);
+                    zalono.toggleSlotStatus(salon.id, seat.id);
                   },
                 ),
               ],

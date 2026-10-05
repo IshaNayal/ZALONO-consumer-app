@@ -144,7 +144,7 @@ export const ServiceTimeSelection: React.FC = () => {
               <p className="text-xs text-slate-500">📍 {fastestSalon.distanceKm} km · {fastestSalon.travelTimeMin} min drive</p>
               <div className="flex items-center gap-1 text-xs text-emerald-700 font-semibold mt-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                <span>Next slot: 11:20 AM</span>
+                <span>Next seat: 11:20 AM</span>
               </div>
             </div>
             <button

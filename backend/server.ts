@@ -171,19 +171,19 @@ app.get('/api/salons/:id', (req: Request, res: Response) => {
   res.json(salon);
 });
 
-// 5. Toggle Slot Availability
+// 5. Toggle Seat Availability
 app.patch('/api/salons/:salonId/slots/:slotId/toggle', (req: Request, res: Response) => {
   const { salonId, slotId } = req.params;
   const salon = findSalon(salonId);
   if (!salon) return res.status(404).json({ error: 'Salon not found' });
 
-  const slot = salon.slots.find((s: any) => s.id === slotId);
-  if (!slot) return res.status(404).json({ error: 'Slot not found' });
+  const seat = salon.slots.find((s: any) => s.id === slotId);
+  if (!seat) return res.status(404).json({ error: 'Seat not found' });
 
-  slot.status = slot.status === 'available' ? 'booked' : 'available';
+  seat.status = seat.status === 'available' ? 'booked' : 'available';
 
-  broadcastLiveEvent('SLOT_UPDATED', { salonId, slotId, status: slot.status });
-  res.json({ message: 'Slot updated', slot });
+  broadcastLiveEvent('SLOT_UPDATED', { salonId, slotId, status: seat.status });
+  res.json({ message: 'Seat updated', seat });
 });
 
 // 6. Stylist Status Update
@@ -221,10 +221,10 @@ app.post('/api/bookings', (req: Request, res: Response) => {
   if (!salon) return res.status(404).json({ error: 'Salon not found' });
 
   const service = salon.services.find((s: any) => s.id === serviceId) || salon.services[0];
-  const slot = salon.slots.find((s: any) => s.id === slotId);
+  const seat = salon.slots.find((s: any) => s.id === slotId);
 
-  if (slot) {
-    slot.status = 'booked';
+  if (seat) {
+    seat.status = 'booked';
   }
 
   const newBooking = {
@@ -234,17 +234,17 @@ app.post('/api/bookings', (req: Request, res: Response) => {
     serviceName: service.name,
     servicePrice: service.price,
     serviceDuration: service.durationMinutes,
-    slotTime: slot ? slot.time : '12:00 PM',
+    slotTime: seat ? seat.time : '12:00 PM',
     date: 'Today, 28 Sep',
     distanceKm: salon.distanceKm,
     travelTimeMin: salon.travelTimeMin,
-    stylistName: stylistName || (slot?.stylistName ?? salon.stylists[0]?.name ?? 'Stylist'),
+    stylistName: stylistName || (seat?.stylistName ?? salon.stylists[0]?.name ?? 'Stylist'),
     customerName: customerName || 'Isha ',
     customerPhone: customerPhone || '+91 98765 43210',
     status: 'booked',
     expectedWaitMin: '0-5 minutes',
     queuePosition: salon.queueCount + 1,
-    estimatedStartTime: slot ? slot.time : '12:00 PM'
+    estimatedStartTime: seat ? seat.time : '12:00 PM'
   };
 
   salon.queueCount += 1;

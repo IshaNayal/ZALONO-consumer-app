@@ -39,7 +39,7 @@ export const LiveAppointmentTracker: React.FC = () => {
   }
 
   const steps = [
-    { key: 'booked', label: 'Booked', time: activeBooking.bookedAt, desc: 'Slot confirmed with zero-wait guarantee' },
+    { key: 'booked', label: 'Booked', time: activeBooking.bookedAt, desc: 'Seat confirmed with zero-wait guarantee' },
     { key: 'checked_in', label: 'Checked in', time: '11:28 AM', desc: 'Arrived at salon' },
     { key: 'you_are_next', label: "You're next ✂️", time: `Est. ${activeBooking.estimatedStartTime}`, desc: `Position: ${activeBooking.queuePosition} in queue` },
     { key: 'in_service', label: 'In service', time: '~45 min', desc: 'Stylist active with customer' },
@@ -212,7 +212,7 @@ export const LiveAppointmentTracker: React.FC = () => {
           </button>
 
           <button
-            onClick={() => showNotification('Zero-Wait Guarantee', 'Zalono Guarantee: If you wait >10 minutes after scheduled slot, your service is 100% reimbursed.')}
+            onClick={() => showNotification('Zero-Wait Guarantee', 'Zalono Guarantee: If you wait >10 minutes after scheduled seat, your service is 100% reimbursed.')}
             className="w-full py-2 px-4 rounded-xl text-xs text-slate-500 flex items-center justify-center gap-1.5 hover:text-slate-800 transition-colors"
           >
             <HelpCircle className="w-3.5 h-3.5" />

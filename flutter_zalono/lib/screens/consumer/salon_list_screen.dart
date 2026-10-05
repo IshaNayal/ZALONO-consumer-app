@@ -26,7 +26,7 @@ class _SalonListScreenState extends State<SalonListScreen> {
   SalonFilterState _filters = const SalonFilterState();
 
   /// "Now" and "Within 30 min" are the immediate pages: they get the
-  /// Available now tag and drop the next-slot pill.
+  /// Available now tag and drop the next-seat pill.
   bool get _isImmediateTime =>
       widget.timeOption == 'now' || widget.timeOption == 'within_30_min';
 
@@ -418,8 +418,8 @@ class _SalonListScreenState extends State<SalonListScreen> {
 
                 const SizedBox(height: 12),
 
-                // Live Slot Status
-                // Next slot only matters when the customer is booking ahead. On "Now" and
+                // Live Seat Status
+                // Next seat only matters when the customer is booking ahead. On "Now" and
                 // "Within 30 min" the page already carries an Available now
                 // tag, so the pill is hidden.
                 if (showNextSlot)
@@ -449,7 +449,7 @@ class _SalonListScreenState extends State<SalonListScreen> {
                               const SizedBox(width: 4),
                               Flexible(
                                 child: Text(
-                                  'Next slot: ${salon.nextSlotTime}',
+                                  'Next seat: ${salon.nextSlotTime}',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(

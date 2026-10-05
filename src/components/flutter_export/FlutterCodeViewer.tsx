@@ -46,7 +46,7 @@ class ZalonoFirestoreService {
         .map((snapshot) => snapshot.docs.map((d) => Booking.fromFirestore(d)).toList());
   }
 
-  // Create slot booking
+  // Create seat booking
   Future<void> createBooking(Booking booking) async {
     await _firestore.collection('bookings').doc(booking.id).set(booking.toMap());
   }
@@ -193,7 +193,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       language: 'dart',
       category: 'models',
       content: `// Zalono Flutter Models
-// Real-time slot booking, live queue position, and partner salon management
+// Real-time seat booking, live queue position, and partner salon management
 
 enum BusyLevel { quiet, moderate, busy }
 enum SlotStatus { available, limited, booked, blocked }
@@ -400,14 +400,14 @@ class ZalonoProvider extends ChangeNotifier {
 
   void bookSlot({
     required Salon salon,
-    required LiveSlot slot,
+    required LiveSlot seat,
     required ServiceItem service,
     String? stylistName,
   }) {
-    final chosenStylist = stylistName ?? slot.stylistName ?? salon.stylists.first.name;
+    final chosenStylist = stylistName ?? seat.stylistName ?? salon.stylists.first.name;
 
-    // Mark slot as booked
-    slot.status = SlotStatus.booked;
+    // Mark seat as booked
+    seat.status = SlotStatus.booked;
 
     final newBooking = Booking(
       id: 'bk_\${DateTime.now().millisecondsSinceEpoch}',
@@ -416,7 +416,7 @@ class ZalonoProvider extends ChangeNotifier {
       serviceName: service.name,
       servicePrice: service.price,
       serviceDuration: service.durationMinutes,
-      slotTime: slot.time,
+      slotTime: seat.time,
       date: 'Today, 27 Sep',
       distanceKm: salon.distanceKm,
       travelTimeMin: salon.travelTimeMin,
@@ -426,7 +426,7 @@ class ZalonoProvider extends ChangeNotifier {
       status: AppointmentStatus.booked,
       expectedWaitMin: '0-5 minutes',
       queuePosition: 1,
-      estimatedStartTime: slot.time,
+      estimatedStartTime: seat.time,
     );
 
     _bookings.insert(0, newBooking);
@@ -453,9 +453,9 @@ class ZalonoProvider extends ChangeNotifier {
   void toggleSlotStatus(String salonId, String slotId) {
     for (var salon in _salons) {
       if (salon.id == salonId) {
-        for (var slot in salon.slots) {
-          if (slot.id == slotId) {
-            slot.status = slot.status == SlotStatus.available 
+        for (var seat in salon.slots) {
+          if (seat.id == slotId) {
+            seat.status = seat.status == SlotStatus.available 
                 ? SlotStatus.booked 
                 : SlotStatus.available;
             notifyListeners();
@@ -489,7 +489,7 @@ class ZalonoProvider extends ChangeNotifier {
       language: 'dart',
       category: 'screens',
       content: `// Availability-First Customer Home Screen
-// Header, Categories, Smart Slot recommendations, Usual Salon Rebook
+// Header, Categories, Smart Seat recommendations, Usual Salon Rebook
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -574,7 +574,7 @@ class ConsumerHomeScreen extends StatelessWidget {
       content: `// Salon Detail & Live Slots Screen
 // 4-Tab Navigation (Overview, Services, Stylists, Reviews)
 // Live Availability Timeline (10 AM - 2 PM) with Travel Buffer Calculation
-// Sticky Dual CTA (Earliest slot vs Recommended slot)`
+// Sticky Dual CTA (Earliest seat vs Recommended seat)`
     },
     {
       name: 'live_appointment_screen.dart',
@@ -598,8 +598,8 @@ class ConsumerHomeScreen extends StatelessWidget {
       path: 'lib/screens/partner/manage_slots_screen.dart',
       language: 'dart',
       category: 'screens',
-      content: `// Partner Real-Time Slot Management Screen
-// Date scroller, slot status toggle, manual slot creation, live cloud sync`
+      content: `// Partner Real-Time Seat Management Screen
+// Date scroller, seat status toggle, manual seat creation, live cloud sync`
     },
     {
       name: 'app_theme.dart',

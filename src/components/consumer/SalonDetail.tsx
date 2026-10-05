@@ -360,33 +360,33 @@ export const SalonDetail: React.FC = () => {
             ))}
           </div>
 
-          {/* Slot Cards Grid */}
+          {/* Seat Cards Grid */}
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 mt-3">
             {selectedSalon.slots
               .filter(s => s.hourGroup === selectedHour)
-              .map((slot) => {
-                const isSelected = selectedSlotId === slot.id;
-                const isBooked = slot.status === 'booked';
-                const isLimited = slot.status === 'limited';
+              .map((seat) => {
+                const isSelected = selectedSlotId === seat.id;
+                const isBooked = seat.status === 'booked';
+                const isLimited = seat.status === 'limited';
 
                 return (
                   <button
-                    key={slot.id}
+                    key={seat.id}
                     disabled={isBooked}
-                    onClick={() => setSelectedSlotId(slot.id)}
+                    onClick={() => setSelectedSlotId(seat.id)}
                     className={`py-2 px-1 rounded-xl text-center border transition-all flex flex-col items-center justify-center ${
                       isBooked
                         ? 'bg-slate-100 border-slate-200 text-slate-400 opacity-60 cursor-not-allowed'
                         : isSelected
                         ? 'bg-[#80142B] border-[#80142B] text-white font-bold shadow-xs'
-                        : slot.isRecommended
+                        : seat.isRecommended
                         ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
                         : isLimited
                         ? 'bg-amber-50 border-amber-300 text-amber-900'
                         : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
                     }`}
                   >
-                    <span className="text-xs font-bold">{slot.time}</span>
+                    <span className="text-xs font-bold">{seat.time}</span>
                     <span className={`text-[9px] mt-0.5 ${isSelected ? 'text-rose-100' : ''}`}>
                       {isBooked ? 'Booked' : isLimited ? 'Limited' : 'Available'}
                     </span>
@@ -433,7 +433,7 @@ export const SalonDetail: React.FC = () => {
             className="py-2.5 px-2 border-2 border-[#80142B] text-[#80142B] rounded-xl font-bold text-xs hover:bg-rose-50 transition-colors text-center"
           >
             <div>Book 11:15 AM</div>
-            <div className="text-[10px] font-normal">(Earliest slot)</div>
+            <div className="text-[10px] font-normal">(Earliest seat)</div>
           </button>
 
           <button

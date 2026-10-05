@@ -131,7 +131,7 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   
   const [activeNotification, setActiveNotification] = useState<{ title: string; message: string; actionText?: string; onAction?: () => void } | null>({
     title: 'Zalono Pilot · Leave in 8 minutes',
-    message: 'Your slot at Looks Salon (Saheed Nagar) is at 11:40 AM. Live traffic is 8 min. Leave now for zero-wait arrival! 🚗',
+    message: 'Your seat at Looks Salon (Saheed Nagar) is at 11:40 AM. Live traffic is 8 min. Leave now for zero-wait arrival! 🚗',
     actionText: 'View Route',
     onAction: () => setConsumerScreen('live_appointment')
   });
@@ -273,8 +273,8 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const bookSlot = (salonId: string, slotId: string, serviceId: string, stylistName?: string): Booking => {
     const salon = salons.find(s => s.id === salonId) || salons[0];
     const service = salon.services.find(s => s.id === serviceId) || salon.services[0];
-    const slot = salon.slots.find(sl => sl.id === slotId);
-    const chosenStylist = stylistName || slot?.stylistName || salon.stylists[0].name;
+    const seat = salon.slots.find(sl => sl.id === slotId);
+    const chosenStylist = stylistName || seat?.stylistName || salon.stylists[0].name;
 
     const updatedSlots = salon.slots.map(sl => sl.id === slotId ? { 
       ...sl, 
@@ -301,7 +301,7 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       serviceName: service.name,
       servicePrice: service.price,
       serviceDuration: service.durationMinutes,
-      slotTime: slot?.time || '11:40 AM',
+      slotTime: seat?.time || '11:40 AM',
       date: 'Today, 27 Sep',
       distanceKm: salon.distanceKm,
       travelTimeMin: salon.travelTimeMin,
@@ -312,7 +312,7 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       status: 'booked',
       expectedWaitMin: '0-5 minutes',
       queuePosition: 1,
-      estimatedStartTime: slot?.time || '11:40 AM',
+      estimatedStartTime: seat?.time || '11:40 AM',
       bookedAt: 'Just now',
       paymentStatus: 'pending',
       invoiceId
@@ -329,7 +329,7 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     showNotification(
       'Booking Confirmed! ⚡',
-      `Your slot at ${salon.name} for ${service.name} is reserved in Firestore for ${newBooking.slotTime}.`,
+      `Your seat at ${salon.name} for ${service.name} is reserved in Firestore for ${newBooking.slotTime}.`,
       'Track Live',
       () => setConsumerScreen('live_appointment')
     );
@@ -343,7 +343,7 @@ export const ZalonoProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setActiveBooking(null);
     }
     FirestoreService.updateBookingStatus(bookingId, { status: 'cancelled' });
-    showNotification('Booking Cancelled', 'Slot released and returned to public availability.');
+    showNotification('Booking Cancelled', 'Seat released and returned to public availability.');
   };
 
   const advanceBookingQueueStatus = (bookingId: string) => {

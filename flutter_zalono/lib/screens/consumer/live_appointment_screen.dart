@@ -77,7 +77,7 @@ class LiveAppointmentScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildQuickStat('Slot Time', currentBooking.slotTime),
+                      _buildQuickStat('Seat Time', currentBooking.slotTime),
                       _buildQuickStat('Expected Wait', '0-5 min'),
                       _buildQuickStat('Stylist', currentBooking.stylistName.isEmpty ? 'Assigned Expert' : currentBooking.stylistName),
                     ],
@@ -105,7 +105,7 @@ class LiveAppointmentScreen extends StatelessWidget {
                   _buildTimelineStep(
                     icon: Icons.check,
                     title: 'Booked',
-                    subtitle: '11:15 AM · Slot confirmed',
+                    subtitle: '11:15 AM · Seat confirmed',
                     isDone: true,
                   ),
                   _buildTimelineStep(

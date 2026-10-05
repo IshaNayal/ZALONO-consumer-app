@@ -9,7 +9,7 @@
 
 ### 1. Consumer Journey
 - **Personalized Home**: Immediate visibility into live openings near you (Bhubaneswar, etc.) with real-time wait estimates and quick 1-tap rebooking of usual salons.
-- **Fastest Slot Selection**: Travel-time calculation engine with automatic buffer times (e.g., 8 min travel + 5 min buffer = recommended 11:40 AM slot).
+- **Fastest Seat Selection**: Travel-time calculation engine with automatic buffer times (e.g., 8 min travel + 5 min buffer = recommended 11:40 AM seat).
 - **Salon Detail & Live Slots Matrix**: 4-Tab availability breakdown across 10 AM, 11 AM, 12 PM, 1 PM, 2 PM with color-coded live statuses:
   - 🟢 **Available** (Instant booking)
   - 🟡 **Limited** (Few slots left)
@@ -19,7 +19,7 @@
 
 ### 2. Partner Journey (Salon Owners & Staff)
 - **Real-Time Salon Dashboard**: Appointments, expected revenue, walk-ins, and available slots at a glance.
-- **Interactive Slot Manager**: Open or close slots on the fly with instant propagation to the customer app.
+- **Interactive Seat Manager**: Open or close slots on the fly with instant propagation to the customer app.
 - **Walk-in Queue Manager**: Add in-store walk-in clients directly to the queue to keep digital wait times accurate.
 - **Stylist Management**: Real-time status toggling (Available, With Customer, On Break).
 
@@ -59,11 +59,11 @@ flutter_zalono/
 │   ├── screens/
 │   │   ├── consumer/
 │   │   │   ├── home_screen.dart       # Availability-first customer home
-│   │   │   ├── salon_detail_screen.dart # Live slot timeline & booking
+│   │   │   ├── salon_detail_screen.dart # Live seat timeline & booking
 │   │   │   └── live_appointment_screen.dart # Queue tracker & on-time status
 │   │   └── partner/
 │   │       ├── partner_dashboard_screen.dart # Salon owner stats & staff
-│   │       └── manage_slots_screen.dart      # Real-time slot management
+│   │       └── manage_slots_screen.dart      # Real-time seat management
 │   └── widgets/
 │       └── smart_slot_badge.dart
 ```
