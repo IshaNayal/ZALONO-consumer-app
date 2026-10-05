@@ -31,6 +31,23 @@
 
   <title>zalono</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    /* Prevent Flutter Web semantics DOM elements from being styled or rendered visibly by extensions or custom CSS */
+    flt-semantics,
+    flt-semantics *,
+    flt-semantics-placeholder,
+    flt-semantics-container,
+    [flt-semantics-identifier],
+    .flt-semantics {
+      color: transparent !important;
+      background: transparent !important;
+      opacity: 0 !important;
+      text-shadow: none !important;
+      -webkit-text-fill-color: transparent !important;
+      user-select: none !important;
+    }
+  </style>
 </head>
 <body>
   <!--
